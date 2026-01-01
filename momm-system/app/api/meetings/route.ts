@@ -1,0 +1,81 @@
+import { NextRequest } from "next/server";
+import { MeetingService } from "@/services";
+import {
+  successResponse,
+  errorResponse,
+  handleApiError,
+  parsePaginationParams,
+} from "@/lib/api-utils";
+
+/**
+ * GET /api/meetings
+ * Get all meetings with filters
+ */
+export async function GET(request: NextRequest) {
+  try {
+    const searchParams = request.nextUrl.searchParams;
+    const { page, limit } = parsePaginationParams(searchParams);
+
+    const filters = {
+      page,
+      limit,
+      startDate: searchParams.get("startDate") || undefined,
+      endDate: searchParams.get("endDate") || undefined,
+      meetingTypeId: searchParams.get("meetingTypeId")
+        ? parseInt(searchParams.get("meetingTypeId")!, 10)
+        : undefined,
+      organizerStaffId: searchParams.get("organizerStaffId")
+        ? parseInt(searchParams.get("organizerStaffId")!, 10)
+        : undefined,
+      venueId: searchParams.get("venueId")
+        ? parseInt(searchParams.get("venueId")!, 10)
+        : undefined,
+      isCancelled: searchParams.has("isCancelled")
+        ? searchParams.get("isCancelled") === "true"
+        : undefined,
+      search: searchParams.get("search") || undefined,
+    };
+
+    const result = await MeetingService.getAll(filters);
+    return successResponse(result);
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+
+/**
+ * POST /api/meetings
+ * Create a new meeting
+ */
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+
+    // Validate required fields
+    if (!body.meetingTitle) {
+      return errorResponse("Meeting title is required");
+    }
+    if (!body.meetingDate) {
+      return errorResponse("Meeting date is required");
+    }
+    if (!body.meetingStartTime) {
+      return errorResponse("Meeting start time is required");
+    }
+    if (!body.meetingEndTime) {
+      return errorResponse("Meeting end time is required");
+    }
+    if (!body.organizerStaffId) {
+      return errorResponse("Organizer is required");
+    }
+
+    // Validate end time is after start time
+    if (new Date(body.meetingEndTime) <= new Date(body.meetingStartTime)) {
+      return errorResponse("End time must be after start time");
+    }
+
+    const meeting = await MeetingService.create(body);
+    return successResponse(meeting, "Meeting created successfully");
+  } catch (error) {
+    return handleApiError(error);
+  }
+}

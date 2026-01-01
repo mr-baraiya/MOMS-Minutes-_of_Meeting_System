@@ -52,12 +52,39 @@ A comprehensive web-based application designed to streamline how meetings are sc
 ```
 momm-system/
 ├── app/
+│   ├── api/                 # API routes
+│   │   ├── dashboard/       # Dashboard endpoints
+│   │   ├── departments/     # Department CRUD
+│   │   ├── meeting-types/   # Meeting type CRUD
+│   │   ├── meetings/        # Meeting CRUD + members, attendance, documents
+│   │   ├── staff/           # Staff CRUD
+│   │   ├── users/           # User CRUD
+│   │   └── venues/          # Venue CRUD
 │   ├── generated/prisma/    # Prisma client (auto-generated)
 │   ├── globals.css          # Global styles
 │   ├── layout.tsx           # Root layout
 │   └── page.tsx             # Home page
 ├── lib/
+│   ├── api-utils.ts         # API response helpers
+│   ├── index.ts             # Library exports
 │   └── prisma.ts            # Prisma client singleton
+├── services/                # Business logic layer (reusable for mobile app)
+│   ├── auth.service.ts      # Authentication service
+│   ├── dashboard.service.ts # Dashboard service
+│   ├── department.service.ts
+│   ├── document.service.ts
+│   ├── meeting-member.service.ts
+│   ├── meeting-type.service.ts
+│   ├── meeting.service.ts
+│   ├── report.service.ts
+│   ├── staff.service.ts
+│   ├── user.service.ts
+│   ├── venue.service.ts
+│   └── index.ts             # Service exports
+├── types/                   # TypeScript types (reusable for mobile app)
+│   ├── api.ts               # API request/response types
+│   ├── models.ts            # Database model types
+│   └── index.ts             # Type exports
 ├── prisma/
 │   ├── migrations/          # Database migrations
 │   ├── schema.prisma        # Database schema
@@ -66,8 +93,47 @@ momm-system/
 ├── .env                     # Environment variables
 ├── package.json
 ├── prisma.config.ts         # Prisma configuration
-├── tailwind.config.ts       # Tailwind configuration
 └── tsconfig.json            # TypeScript configuration
+```
+
+## 🏗️ Architecture
+
+The project follows a **layered architecture** for code reusability:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    Frontend (Next.js)                    │
+│              React Components, Pages, Hooks              │
+└──────────────────────────┬──────────────────────────────┘
+                           │
+┌──────────────────────────▼──────────────────────────────┐
+│                    API Routes (/api)                     │
+│              Request validation, Auth checks             │
+└──────────────────────────┬──────────────────────────────┘
+                           │
+┌──────────────────────────▼──────────────────────────────┐
+│                 Services Layer (/services)               │
+│     Business logic - REUSABLE FOR MOBILE APP            │
+└──────────────────────────┬──────────────────────────────┘
+                           │
+┌──────────────────────────▼──────────────────────────────┐
+│                   Prisma ORM (/lib/prisma)               │
+│                  Database operations                     │
+└──────────────────────────┬──────────────────────────────┘
+                           │
+┌──────────────────────────▼──────────────────────────────┐
+│                   PostgreSQL (Supabase)                  │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Mobile App Reusability
+
+The `services/` and `types/` folders can be directly reused in a React Native or other mobile app:
+
+```typescript
+// In mobile app, just change the import
+import { MeetingService } from '@shared/services';
+import { Meeting, CreateMeetingRequest } from '@shared/types';
 ```
 
 ## 🚀 Getting Started
