@@ -1,20 +1,8 @@
 // Database model types (matching Prisma schema)
+import { Role, VenueType, ReportType } from "@/app/generated/prisma";
 
-export enum Role {
-  ADMIN = "ADMIN",
-  CONVENER = "CONVENER",
-  STAFF = "STAFF",
-}
-
-export enum VenueType {
-  PHYSICAL = "PHYSICAL",
-  VIRTUAL = "VIRTUAL",
-}
-
-export enum ReportType {
-  SUMMARY = "SUMMARY",
-  MEETING_WISE = "MEETING_WISE",
-}
+// Re-export Prisma enums for convenience
+export { Role, VenueType, ReportType };
 
 // User types
 export interface User {
