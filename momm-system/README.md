@@ -1,36 +1,266 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MOMM - Minutes of Meeting Management System
 
-## Getting Started
+A comprehensive web-based application designed to streamline how meetings are scheduled, recorded, and documented within an organization.
 
-First, run the development server:
+![Next.js](https://img.shields.io/badge/Next.js-16.1.1-black?style=flat-square&logo=next.js)
+![React](https://img.shields.io/badge/React-19.2.3-61DAFB?style=flat-square&logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript)
+![Prisma](https://img.shields.io/badge/Prisma-7.2.0-2D3748?style=flat-square&logo=prisma)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-336791?style=flat-square&logo=postgresql)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=flat-square&logo=tailwind-css)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 📋 Table of Contents
+
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Getting Started](#-getting-started)
+- [Database Schema](#-database-schema)
+- [User Roles](#-user-roles)
+- [Demo Credentials](#-demo-credentials)
+- [Scripts](#-scripts)
+- [API Routes](#-api-routes)
+- [Contributing](#-contributing)
+
+## ✨ Features
+
+### Core Features
+- **Meeting Management** - Create, edit, cancel, and view meetings
+- **Attendance Tracking** - Add participants and mark attendance digitally
+- **Document Management** - Upload, view, and download MOM documents
+- **Reports & Analytics** - Generate meeting-wise and summary reports
+- **Calendar View** - Visual representation of scheduled meetings
+
+### User Features
+- **Role-Based Access Control** - Admin, Convener, and Staff roles
+- **Dashboard** - Overview of upcoming, completed, and cancelled meetings
+- **Profile Management** - View and update user details
+- **Export Options** - Export reports to Excel/PDF
+
+## 🛠 Tech Stack
+
+| Category | Technology |
+|----------|------------|
+| **Frontend** | Next.js 16, React 19, TypeScript |
+| **Styling** | Tailwind CSS 4 |
+| **Database** | PostgreSQL (Supabase) |
+| **ORM** | Prisma 7 |
+| **Authentication** | (To be implemented) |
+
+## 📁 Project Structure
+
+```
+momm-system/
+├── app/
+│   ├── generated/prisma/    # Prisma client (auto-generated)
+│   ├── globals.css          # Global styles
+│   ├── layout.tsx           # Root layout
+│   └── page.tsx             # Home page
+├── lib/
+│   └── prisma.ts            # Prisma client singleton
+├── prisma/
+│   ├── migrations/          # Database migrations
+│   ├── schema.prisma        # Database schema
+│   └── seed.ts              # Demo data seeder
+├── public/                  # Static assets
+├── .env                     # Environment variables
+├── package.json
+├── prisma.config.ts         # Prisma configuration
+├── tailwind.config.ts       # Tailwind configuration
+└── tsconfig.json            # TypeScript configuration
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Getting Started
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Prerequisites
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Node.js 18+ 
+- npm or yarn
+- PostgreSQL database (or Supabase account)
 
-## Learn More
+### Installation
 
-To learn more about Next.js, take a look at the following resources:
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd momm-system
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. **Set up environment variables**
+   
+   Create a `.env` file in the root directory:
+   ```env
+   # Connect to Supabase via connection pooling (for queries)
+   DATABASE_URL="postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-1-ap-southeast-2.pooler.supabase.com:6543/postgres?pgbouncer=true"
 
-## Deploy on Vercel
+   # Direct connection to the database (for migrations)
+   DIRECT_URL="postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-1-ap-southeast-2.pooler.supabase.com:5432/postgres"
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4. **Run database migrations**
+   ```bash
+   npx prisma migrate dev
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+5. **Seed demo data**
+   ```bash
+   npm run db:seed
+   ```
+
+6. **Start the development server**
+   ```bash
+   npm run dev
+   ```
+
+7. **Open your browser**
+   
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+## 🗄 Database Schema
+
+### Entity Relationship Diagram
+
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   users     │────<│    staff    │>────│ department  │
+└─────────────┘     └─────────────┘     └─────────────┘
+      │                   │
+      │                   │
+      ▼                   ▼
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│  documents  │>────│  meetings   │────<│meeting_type │
+└─────────────┘     └─────────────┘     └─────────────┘
+                          │                   
+      ┌───────────────────┼───────────────────┐
+      │                   │                   │
+      ▼                   ▼                   ▼
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   reports   │     │meeting_member│     │    venue    │
+└─────────────┘     └─────────────┘     └─────────────┘
+```
+
+### Tables Overview
+
+| Table | Description |
+|-------|-------------|
+| `users` | Authentication and authorization details |
+| `department` | Organization departments |
+| `staff` | Staff profiles linked to users |
+| `meeting_type` | Categories of meetings |
+| `venue` | Physical and virtual meeting locations |
+| `meetings` | Core meeting information |
+| `meeting_member` | Participants and attendance tracking |
+| `documents` | MOM files and attachments |
+| `reports` | Generated summary and meeting reports |
+
+## 👥 User Roles
+
+### Admin
+- System management and maintenance
+- Master data management (Meeting Types, Departments, Venues, Staff)
+- View all meetings, attendance, and reports
+- User access control and system configuration
+
+### Convener (Meeting Organizer)
+- Create, edit, and cancel meetings
+- Add participants and mark attendance
+- Upload MOM documents and related files
+- View meeting-wise and summary reports
+
+### Staff
+- View assigned meetings and details
+- Check attendance status
+- View and download MOM documents
+- Limited access based on assigned permissions
+
+## 🔑 Demo Credentials
+
+| Role | Username | Password |
+|------|----------|----------|
+| Admin | `admin` | `password123` |
+| Convener | `rajesh.kumar` | `password123` |
+| Convener | `priya.sharma` | `password123` |
+| Staff | `amit.patel` | `password123` |
+| Staff | `sneha.verma` | `password123` |
+| Staff | `vikram.singh` | `password123` |
+| Staff | `neha.gupta` | `password123` |
+| Staff | `rahul.joshi` | `password123` |
+
+## 📜 Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
+| `npm run db:seed` | Seed database with demo data |
+| `npm run db:studio` | Open Prisma Studio |
+
+## 🔌 API Routes (Planned)
+
+```
+Authentication
+├── POST   /api/auth/login
+├── POST   /api/auth/logout
+└── GET    /api/auth/me
+
+Users
+├── GET    /api/users
+├── GET    /api/users/:id
+├── POST   /api/users
+├── PUT    /api/users/:id
+└── DELETE /api/users/:id
+
+Meetings
+├── GET    /api/meetings
+├── GET    /api/meetings/:id
+├── POST   /api/meetings
+├── PUT    /api/meetings/:id
+├── DELETE /api/meetings/:id
+└── POST   /api/meetings/:id/cancel
+
+Attendance
+├── GET    /api/meetings/:id/members
+├── POST   /api/meetings/:id/members
+├── PUT    /api/meetings/:id/attendance
+└── DELETE /api/meetings/:id/members/:memberId
+
+Documents
+├── GET    /api/meetings/:id/documents
+├── POST   /api/meetings/:id/documents
+└── DELETE /api/documents/:id
+
+Master Data
+├── GET    /api/departments
+├── GET    /api/meeting-types
+├── GET    /api/venues
+└── GET    /api/staff
+
+Reports
+├── GET    /api/reports/summary
+└── GET    /api/reports/meeting/:id
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+<p align="center">
+  Made with ❤️ for efficient meeting management
+</p>
