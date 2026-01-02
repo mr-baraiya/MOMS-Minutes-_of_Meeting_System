@@ -39,7 +39,7 @@ export default function Navbar() {
               Contact
             </Link>
             <Link
-              href="/login"
+              href="/auth/login"
               className="px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
             >
               Login
@@ -109,7 +109,7 @@ export default function Navbar() {
               Contact
             </Link>
             <Link
-              href="/login"
+              href="/auth/login"
               className="block px-4 py-2 text-center text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
