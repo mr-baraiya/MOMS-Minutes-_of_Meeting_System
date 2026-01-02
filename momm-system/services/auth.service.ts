@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { LoginRequest, LoginResponse } from "@/types";
+import bcrypt from "bcrypt";
 
 export class AuthService {
   /**
@@ -17,12 +18,11 @@ export class AuthService {
       return null;
     }
 
-    // TODO: Implement proper password hashing comparison
-    // For now, this is a placeholder - use bcrypt in production
-    // const isValidPassword = await bcrypt.compare(data.password, user.passwordHash);
-
-    // Placeholder: In production, compare hashed passwords
-    const isValidPassword = user.passwordHash.includes("dummyhash");
+    // Verify password using bcrypt
+    const isValidPassword = await bcrypt.compare(
+      data.password,
+      user.passwordHash
+    );
 
     if (!isValidPassword) {
       return null;
@@ -76,14 +76,19 @@ export class AuthService {
       return false;
     }
 
-    // TODO: Verify current password and hash new password
-    // const isValid = await bcrypt.compare(currentPassword, user.passwordHash);
-    // const newHash = await bcrypt.hash(newPassword, 10);
+    // Verify current password
+    const isValid = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!isValid) {
+      return false;
+    }
+
+    // Hash new password
+    const newHash = await bcrypt.hash(newPassword, 10);
 
     await prisma.user.update({
       where: { id: userId },
       data: {
-        passwordHash: `$2b$10$newhash${newPassword}`, // Placeholder
+        passwordHash: newHash,
       },
     });
 

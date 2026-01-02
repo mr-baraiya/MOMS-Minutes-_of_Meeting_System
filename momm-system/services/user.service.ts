@@ -4,6 +4,7 @@ import {
   UpdateUserRequest,
   PaginationParams,
 } from "@/types";
+import bcrypt from "bcrypt";
 
 export class UserService {
   /**
@@ -84,8 +85,8 @@ export class UserService {
    * Create new user
    */
   static async create(data: CreateUserRequest) {
-    // TODO: Hash password with bcrypt
-    const passwordHash = `$2b$10$dummyhash${data.password}`;
+    // Hash password with bcrypt (10 rounds)
+    const passwordHash = await bcrypt.hash(data.password, 10);
 
     return prisma.user.create({
       data: {
@@ -114,8 +115,8 @@ export class UserService {
       updateData.profilePicture = data.profilePicture;
     if (data.isActive !== undefined) updateData.isActive = data.isActive;
     if (data.password) {
-      // TODO: Hash password with bcrypt
-      updateData.passwordHash = `$2b$10$dummyhash${data.password}`;
+      // Hash password with bcrypt (10 rounds)
+      updateData.passwordHash = await bcrypt.hash(data.password, 10);
     }
 
     return prisma.user.update({
