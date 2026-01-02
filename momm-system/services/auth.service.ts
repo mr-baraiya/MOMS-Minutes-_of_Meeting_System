@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { LoginRequest, LoginResponse } from "@/types";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 export class AuthService {
   /**
