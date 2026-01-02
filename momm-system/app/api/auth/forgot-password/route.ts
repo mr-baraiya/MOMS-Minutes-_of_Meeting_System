@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { sendPasswordResetEmail } from '@/lib/email';
 import crypto from 'crypto';
 
 export async function POST(request: NextRequest) {
@@ -55,18 +56,23 @@ export async function POST(request: NextRequest) {
     // Generate reset URL
     const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/reset-password?token=${resetToken}`;
 
-    // TODO: Send email with reset link
-    // For now, we'll just log it to console (in production, use an email service like SendGrid, AWS SES, etc.)
+    // Send email with reset link
+    const emailResult = await sendPasswordResetEmail(email, resetUrl, user.username);
+
+    if (!emailResult.success) {
+      console.error('Failed to send password reset email:', emailResult.error);
+      // Log but don't reveal to user for security
+    }
+
+    // Log for debugging (remove in production)
     console.log('='.repeat(80));
     console.log('PASSWORD RESET REQUEST');
     console.log('='.repeat(80));
     console.log(`User: ${user.username} (${email})`);
     console.log(`Reset URL: ${resetUrl}`);
     console.log(`Token expires: ${resetTokenExpiry.toLocaleString()}`);
+    console.log(`Email sent: ${emailResult.success ? 'Yes' : 'Failed'}`);
     console.log('='.repeat(80));
-
-    // In a real application, you would send an email here:
-    // await sendPasswordResetEmail(email, resetUrl, user.username);
 
     return NextResponse.json({
       success: true,
