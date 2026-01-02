@@ -21,19 +21,19 @@ export default function Navbar() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             <Link
-              href="#features"
+              href="/#features"
               className="text-gray-600 hover:text-blue-600 transition-colors"
             >
               Features
             </Link>
             <Link
-              href="#about"
+              href="/about"
               className="text-gray-600 hover:text-blue-600 transition-colors"
             >
               About
             </Link>
             <Link
-              href="#contact"
+              href="/contact"
               className="text-gray-600 hover:text-blue-600 transition-colors"
             >
               Contact
@@ -88,21 +88,21 @@ export default function Navbar() {
         <div className="md:hidden bg-white border-t">
           <div className="px-4 py-4 space-y-3">
             <Link
-              href="#features"
+              href="/#features"
               className="block text-gray-600 hover:text-blue-600 transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               Features
             </Link>
             <Link
-              href="#about"
+              href="/about"
               className="block text-gray-600 hover:text-blue-600 transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               About
             </Link>
             <Link
-              href="#contact"
+              href="/contact"
               className="block text-gray-600 hover:text-blue-600 transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
