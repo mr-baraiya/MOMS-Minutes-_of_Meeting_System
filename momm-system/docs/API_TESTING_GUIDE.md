@@ -2,7 +2,7 @@
 
 Base URL: `http://localhost:3000/api`
 
-## 📋 Table of Contents
+## Table of Contents
 1. [Dashboard](#dashboard)
 2. [Users](#users)
 3. [Departments](#departments)
@@ -16,7 +16,7 @@ Base URL: `http://localhost:3000/api`
 
 ---
 
-## 🎯 Dashboard
+## Dashboard
 
 ### Get Dashboard Statistics
 ```http

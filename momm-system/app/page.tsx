@@ -38,7 +38,7 @@ export default function Home() {
           </div>
 
           {/* Demo Credentials */}
-          <div className="mt-12 max-w-2xl mx-auto bg-blue-50 border border-blue-200 rounded-lg p-6">
+          {/* <div className="mt-12 max-w-2xl mx-auto bg-blue-50 border border-blue-200 rounded-lg p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-3">
               Demo Credentials
             </h3>
@@ -56,7 +56,7 @@ export default function Home() {
                 <p className="text-gray-600">amit.patel / password123</p>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </section>
 

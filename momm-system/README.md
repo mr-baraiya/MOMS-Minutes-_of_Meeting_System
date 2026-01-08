@@ -9,7 +9,7 @@ A comprehensive web-based application designed to streamline how meetings are sc
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-336791?style=flat-square&logo=postgresql)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=flat-square&logo=tailwind-css)
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Features](#-features)
 - [Tech Stack](#-tech-stack)
@@ -22,7 +22,7 @@ A comprehensive web-based application designed to streamline how meetings are sc
 - [API Routes](#-api-routes)
 - [Contributing](#-contributing)
 
-## ✨ Features
+## Features
 
 ### Core Features
 - **Meeting Management** - Create, edit, cancel, and view meetings
@@ -47,7 +47,7 @@ A comprehensive web-based application designed to streamline how meetings are sc
 | **ORM** | Prisma 7 |
 | **Authentication** | (To be implemented) |
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 momm-system/
@@ -96,7 +96,7 @@ momm-system/
 └── tsconfig.json            # TypeScript configuration
 ```
 
-## 🏗️ Architecture
+## Architecture
 
 The project follows a **layered architecture** for code reusability:
 
@@ -136,7 +136,7 @@ import { MeetingService } from '@shared/services';
 import { Meeting, CreateMeetingRequest } from '@shared/types';
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -224,7 +224,7 @@ import { Meeting, CreateMeetingRequest } from '@shared/types';
 | `documents` | MOM files and attachments |
 | `reports` | Generated summary and meeting reports |
 
-## 👥 User Roles
+## User Roles
 
 ### Admin
 - System management and maintenance
@@ -244,7 +244,7 @@ import { Meeting, CreateMeetingRequest } from '@shared/types';
 - View and download MOM documents
 - Limited access based on assigned permissions
 
-## 🔑 Demo Credentials
+## Demo Credentials
 
 | Role | Username | Password |
 |------|----------|----------|
@@ -257,7 +257,7 @@ import { Meeting, CreateMeetingRequest } from '@shared/types';
 | Staff | `neha.gupta` | `password123` |
 | Staff | `rahul.joshi` | `password123` |
 
-## 📜 Scripts
+## Scripts
 
 | Command | Description |
 |---------|-------------|
@@ -268,7 +268,7 @@ import { Meeting, CreateMeetingRequest } from '@shared/types';
 | `npm run db:seed` | Seed database with demo data |
 | `npm run db:studio` | Open Prisma Studio |
 
-## 🔌 API Routes (Planned)
+## API Routes (Planned)
 
 ```
 Authentication
@@ -313,7 +313,7 @@ Reports
 └── GET    /api/reports/meeting/:id
 ```
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
@@ -321,7 +321,7 @@ Reports
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License.
 

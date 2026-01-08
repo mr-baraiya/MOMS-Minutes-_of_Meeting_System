@@ -365,7 +365,7 @@ NEXT_PUBLIC_API_URL="http://localhost:3000"
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/MOMS-Minutes_of_Meeting_System.git
+   git clone https://github.com/mr-baraiya/MOMS-Minutes-_of_Meeting_System.git
    cd MOMS-Minutes_of_Meeting_System/momm-system
    ```
 

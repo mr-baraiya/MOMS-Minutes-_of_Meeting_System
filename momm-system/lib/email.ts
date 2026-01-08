@@ -146,7 +146,7 @@ export async function sendPasswordResetEmail(
   <div class="container">
     <div class="email-wrapper">
       <div class="header">
-        <h1>🔐 Password Reset Request</h1>
+        <h1>Password Reset Request</h1>
       </div>
       
       <div class="content">
@@ -161,7 +161,7 @@ export async function sendPasswordResetEmail(
         </div>
         
         <div class="info-box">
-          <p><strong>⏰ This link will expire in 1 hour</strong></p>
+          <p><strong>This link will expire in 1 hour</strong></p>
         </div>
         
         <p>If the button doesn't work, copy and paste this link into your browser:</p>

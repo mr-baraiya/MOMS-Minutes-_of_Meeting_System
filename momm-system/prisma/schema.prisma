@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
   output   = "../app/generated/prisma"
@@ -10,9 +7,142 @@ datasource db {
   provider = "postgresql"
 }
 
-// ============================================
-// ENUMS
-// ============================================
+model User {
+  id             Int        @id @default(autoincrement()) @map("user_id")
+  username       String     @unique @db.VarChar(100)
+  email          String     @unique @db.VarChar(150)
+  passwordHash   String     @map("password_hash") @db.VarChar(255)
+  role           Role       @default(STAFF)
+  profilePicture String?    @map("profile_picture") @db.VarChar(255)
+  isActive       Boolean    @default(true) @map("is_active")
+  createdAt      DateTime   @default(now()) @map("created_at")
+  modifiedAt     DateTime   @updatedAt @map("modified_at")
+  documents      Document[]
+  reports        Report[]
+  staff          Staff?
+
+  @@map("users")
+}
+
+model Department {
+  id             Int      @id @default(autoincrement()) @map("department_id")
+  departmentName String   @unique @map("department_name") @db.VarChar(100)
+  isActive       Boolean  @default(true) @map("is_active")
+  createdAt      DateTime @default(now()) @map("created_at")
+  staff          Staff[]
+
+  @@map("department")
+}
+
+model Staff {
+  id                Int             @id @default(autoincrement()) @map("staff_id")
+  userId            Int             @unique @map("user_id")
+  staffName         String          @map("staff_name") @db.VarChar(150)
+  designation       String?         @db.VarChar(100)
+  mobileNo          String?         @map("mobile_no") @db.VarChar(15)
+  emailAddress      String          @unique @map("email_address") @db.VarChar(150)
+  departmentId      Int?            @map("department_id")
+  profilePicture    String?         @map("profile_picture") @db.VarChar(255)
+  isActive          Boolean         @default(true) @map("is_active")
+  createdAt         DateTime        @default(now()) @map("created_at")
+  meetingMembers    MeetingMember[]
+  organizedMeetings Meeting[]       @relation("Organizer")
+  department        Department?     @relation(fields: [departmentId], references: [id])
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("staff")
+}
+
+model MeetingType {
+  id              Int       @id @default(autoincrement()) @map("meeting_type_id")
+  meetingTypeName String    @unique @map("meeting_type_name") @db.VarChar(100)
+  isActive        Boolean   @default(true) @map("is_active")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  meetings        Meeting[]
+
+  @@map("meeting_type")
+}
+
+model Venue {
+  id        Int       @id @default(autoincrement()) @map("venue_id")
+  venueName String    @map("venue_name") @db.VarChar(150)
+  venueType VenueType @default(PHYSICAL) @map("venue_type")
+  location  String?
+  isActive  Boolean   @default(true) @map("is_active")
+  createdAt DateTime  @default(now()) @map("created_at")
+  meetings  Meeting[]
+
+  @@map("venue")
+}
+
+model Meeting {
+  id                 Int             @id @default(autoincrement()) @map("meeting_id")
+  meetingTitle       String          @map("meeting_title") @db.VarChar(255)
+  meetingDescription String?         @map("meeting_description")
+  meetingDate        DateTime        @map("meeting_date") @db.Date
+  meetingStartTime   DateTime        @map("meeting_start_time")
+  meetingEndTime     DateTime        @map("meeting_end_time")
+  meetingTypeId      Int?            @map("meeting_type_id")
+  organizerStaffId   Int?            @map("organizer_staff_id")
+  venueId            Int?            @map("venue_id")
+  meetingLink        String?         @map("meeting_link")
+  isCancelled        Boolean         @default(false) @map("is_cancelled")
+  cancellationReason String?         @map("cancellation_reason")
+  cancelledAt        DateTime?       @map("cancelled_at")
+  createdAt          DateTime        @default(now()) @map("created_at")
+  modifiedAt         DateTime        @updatedAt @map("modified_at")
+  documents          Document[]
+  meetingMembers     MeetingMember[]
+  meetingType        MeetingType?    @relation(fields: [meetingTypeId], references: [id])
+  organizer          Staff?          @relation("Organizer", fields: [organizerStaffId], references: [id])
+  venue              Venue?          @relation(fields: [venueId], references: [id])
+  reports            Report[]
+
+  @@map("meetings")
+}
+
+model MeetingMember {
+  id                 Int       @id @default(autoincrement()) @map("meeting_member_id")
+  meetingId          Int       @map("meeting_id")
+  staffId            Int       @map("staff_id")
+  isPresent          Boolean   @default(false) @map("is_present")
+  attendanceMarkedAt DateTime? @map("attendance_marked_at")
+  remarks            String?
+  createdAt          DateTime  @default(now()) @map("created_at")
+  meeting            Meeting   @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  staff              Staff     @relation(fields: [staffId], references: [id], onDelete: Cascade)
+
+  @@unique([meetingId, staffId])
+  @@map("meeting_member")
+}
+
+model Document {
+  id            Int      @id @default(autoincrement()) @map("document_id")
+  meetingId     Int      @map("meeting_id")
+  documentTitle String   @map("document_title") @db.VarChar(255)
+  fileName      String   @map("file_name") @db.VarChar(255)
+  filePath      String   @map("file_path")
+  uploadedBy    Int      @map("uploaded_by")
+  uploadedAt    DateTime @default(now()) @map("uploaded_at")
+  meeting       Meeting  @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  uploader      User     @relation(fields: [uploadedBy], references: [id])
+
+  @@map("documents")
+}
+
+model Report {
+  id          Int        @id @default(autoincrement()) @map("report_id")
+  reportName  String     @map("report_name") @db.VarChar(255)
+  reportType  ReportType @map("report_type")
+  meetingId   Int?       @map("meeting_id")
+  filePath    String     @map("file_path")
+  generatedBy Int        @map("generated_by")
+  generatedAt DateTime   @default(now()) @map("generated_at")
+  generator   User       @relation(fields: [generatedBy], references: [id])
+  meeting     Meeting?   @relation(fields: [meetingId], references: [id])
+
+  @@map("reports")
+}
 
 enum Role {
   ADMIN
@@ -28,174 +158,4 @@ enum VenueType {
 enum ReportType {
   SUMMARY
   MEETING_WISE
-}
-
-// ============================================
-// MODELS
-// ============================================
-
-// Users table - Authentication and authorization
-model User {
-  id               Int       @id @default(autoincrement()) @map("user_id")
-  username         String    @unique @db.VarChar(100)
-  email            String    @unique @db.VarChar(150)
-  passwordHash     String    @map("password_hash") @db.VarChar(255)
-  role             Role      @default(STAFF)
-  profilePicture   String?   @map("profile_picture") @db.VarChar(255)
-  isActive         Boolean   @default(true) @map("is_active")
-  resetToken       String?   @map("reset_token") @db.VarChar(255)
-  resetTokenExpiry DateTime? @map("reset_token_expiry")
-  createdAt        DateTime  @default(now()) @map("created_at")
-  modifiedAt       DateTime  @updatedAt @map("modified_at")
-
-  // Relations
-  staff            Staff?
-  documents        Document[]
-  reports          Report[]
-
-  @@map("users")
-}
-
-// Department table - Organization structure
-model Department {
-  id             Int       @id @default(autoincrement()) @map("department_id")
-  departmentName String    @unique @map("department_name") @db.VarChar(100)
-  isActive       Boolean   @default(true) @map("is_active")
-  createdAt      DateTime  @default(now()) @map("created_at")
-
-  // Relations
-  staff          Staff[]
-
-  @@map("department")
-}
-
-// Staff table - Staff profiles
-model Staff {
-  id             Int       @id @default(autoincrement()) @map("staff_id")
-  userId         Int       @unique @map("user_id")
-  staffName      String    @map("staff_name") @db.VarChar(150)
-  designation    String?   @db.VarChar(100)
-  mobileNo       String?   @map("mobile_no") @db.VarChar(15)
-  emailAddress   String    @unique @map("email_address") @db.VarChar(150)
-  departmentId   Int?      @map("department_id")
-  profilePicture String?   @map("profile_picture") @db.VarChar(255)
-  isActive       Boolean   @default(true) @map("is_active")
-  createdAt      DateTime  @default(now()) @map("created_at")
-
-  // Relations
-  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  department        Department?     @relation(fields: [departmentId], references: [id])
-  organizedMeetings Meeting[]       @relation("Organizer")
-  meetingMembers    MeetingMember[]
-
-  @@map("staff")
-}
-
-// Meeting Type table - Categories of meetings
-model MeetingType {
-  id              Int       @id @default(autoincrement()) @map("meeting_type_id")
-  meetingTypeName String    @unique @map("meeting_type_name") @db.VarChar(100)
-  isActive        Boolean   @default(true) @map("is_active")
-  createdAt       DateTime  @default(now()) @map("created_at")
-
-  // Relations
-  meetings        Meeting[]
-
-  @@map("meeting_type")
-}
-
-// Venue table - Meeting locations
-model Venue {
-  id        Int       @id @default(autoincrement()) @map("venue_id")
-  venueName String    @map("venue_name") @db.VarChar(150)
-  venueType VenueType @default(PHYSICAL) @map("venue_type")
-  location  String?   @db.Text
-  isActive  Boolean   @default(true) @map("is_active")
-  createdAt DateTime  @default(now()) @map("created_at")
-
-  // Relations
-  meetings  Meeting[]
-
-  @@map("venue")
-}
-
-// Meetings table - Core meeting data
-model Meeting {
-  id                 Int       @id @default(autoincrement()) @map("meeting_id")
-  meetingTitle       String    @map("meeting_title") @db.VarChar(255)
-  meetingDescription String?   @map("meeting_description") @db.Text
-  meetingDate        DateTime  @map("meeting_date") @db.Date
-  meetingStartTime   DateTime  @map("meeting_start_time")
-  meetingEndTime     DateTime  @map("meeting_end_time")
-  meetingTypeId      Int?      @map("meeting_type_id")
-  organizerStaffId   Int?      @map("organizer_staff_id")
-  venueId            Int?      @map("venue_id")
-  meetingLink        String?   @map("meeting_link") @db.Text
-  isCancelled        Boolean   @default(false) @map("is_cancelled")
-  cancellationReason String?   @map("cancellation_reason") @db.Text
-  cancelledAt        DateTime? @map("cancelled_at")
-  createdAt          DateTime  @default(now()) @map("created_at")
-  modifiedAt         DateTime  @updatedAt @map("modified_at")
-
-  // Relations
-  meetingType    MeetingType?    @relation(fields: [meetingTypeId], references: [id])
-  organizer      Staff?          @relation("Organizer", fields: [organizerStaffId], references: [id])
-  venue          Venue?          @relation(fields: [venueId], references: [id])
-  meetingMembers MeetingMember[]
-  documents      Document[]
-  reports        Report[]
-
-  @@map("meetings")
-}
-
-// Meeting Member table - Participants and attendance
-model MeetingMember {
-  id               Int       @id @default(autoincrement()) @map("meeting_member_id")
-  meetingId        Int       @map("meeting_id")
-  staffId          Int       @map("staff_id")
-  isPresent        Boolean   @default(false) @map("is_present")
-  attendanceMarkedAt DateTime? @map("attendance_marked_at")
-  remarks          String?   @db.Text
-  createdAt        DateTime  @default(now()) @map("created_at")
-
-  // Relations
-  meeting Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
-  staff   Staff   @relation(fields: [staffId], references: [id], onDelete: Cascade)
-
-  @@unique([meetingId, staffId])
-  @@map("meeting_member")
-}
-
-// Documents table - MOM files and meeting documents
-model Document {
-  id            Int      @id @default(autoincrement()) @map("document_id")
-  meetingId     Int      @map("meeting_id")
-  documentTitle String   @map("document_title") @db.VarChar(255)
-  fileName      String   @map("file_name") @db.VarChar(255)
-  filePath      String   @map("file_path") @db.Text
-  uploadedBy    Int      @map("uploaded_by")
-  uploadedAt    DateTime @default(now()) @map("uploaded_at")
-
-  // Relations
-  meeting  Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
-  uploader User    @relation(fields: [uploadedBy], references: [id])
-
-  @@map("documents")
-}
-
-// Reports table - Generated reports
-model Report {
-  id          Int        @id @default(autoincrement()) @map("report_id")
-  reportName  String     @map("report_name") @db.VarChar(255)
-  reportType  ReportType @map("report_type")
-  meetingId   Int?       @map("meeting_id")
-  filePath    String     @map("file_path") @db.Text
-  generatedBy Int        @map("generated_by")
-  generatedAt DateTime   @default(now()) @map("generated_at")
-
-  // Relations
-  meeting   Meeting? @relation(fields: [meetingId], references: [id])
-  generator User     @relation(fields: [generatedBy], references: [id])
-
-  @@map("reports")
 }

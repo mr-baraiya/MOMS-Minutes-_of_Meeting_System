@@ -1,59 +1,74 @@
 import prisma from "@/lib/prisma";
 import { DashboardStats, RecentMeeting } from "@/types";
 
-export class DashboardService {
-  /**
-   * Get dashboard statistics
-   */
-  static async getStats(): Promise<DashboardStats> {
-    const now = new Date();
-    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+/**
+ * Normalize date for @db.Date fields
+ */
+function normalizeDate(date = new Date()) {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
 
-    const [
-      totalMeetings,
-      upcomingMeetings,
-      completedMeetings,
-      cancelledMeetings,
-      totalStaff,
-      totalDocuments,
-    ] = await Promise.all([
-      prisma.meeting.count(),
+const TODAY = normalizeDate();
+
+/* -------------------------------------------------------------
+   DASHBOARD SERVICE
+-------------------------------------------------------------- */
+export class DashboardService {
+  /* -----------------------------------------------------------
+      GET OVERALL DASHBOARD STATS
+  ----------------------------------------------------------- */
+  static async getStats(): Promise<DashboardStats> {
+    return await Promise.all([
+      prisma.meeting.count(), // total
+
       prisma.meeting.count({
         where: {
-          meetingDate: { gte: startOfToday },
+          meetingDate: { gte: TODAY },
           isCancelled: false,
         },
       }),
+
       prisma.meeting.count({
         where: {
-          meetingDate: { lt: startOfToday },
+          meetingDate: { lt: TODAY },
           isCancelled: false,
         },
       }),
+
       prisma.meeting.count({
         where: { isCancelled: true },
       }),
+
       prisma.staff.count({
         where: { isActive: true },
       }),
-      prisma.document.count(),
-    ]);
 
-    return {
-      totalMeetings,
-      upcomingMeetings,
-      completedMeetings,
-      cancelledMeetings,
-      totalStaff,
-      totalDocuments,
-    };
+      prisma.document.count(),
+    ]).then(
+      ([
+        totalMeetings,
+        upcomingMeetings,
+        completedMeetings,
+        cancelledMeetings,
+        totalStaff,
+        totalDocuments,
+      ]) => ({
+        totalMeetings,
+        upcomingMeetings,
+        completedMeetings,
+        cancelledMeetings,
+        totalStaff,
+        totalDocuments,
+      })
+    );
   }
 
-  /**
-   * Get recent meetings for dashboard
-   */
+  /* -----------------------------------------------------------
+      RECENT MEETINGS
+  ----------------------------------------------------------- */
   static async getRecentMeetings(limit = 5): Promise<RecentMeeting[]> {
-    const now = new Date();
     const meetings = await prisma.meeting.findMany({
       include: {
         meetingType: true,
@@ -73,20 +88,19 @@ export class DashboardService {
       organizer: m.organizer?.staffName,
       status: m.isCancelled
         ? "cancelled"
-        : new Date(m.meetingDate) < now
-          ? "completed"
-          : "upcoming",
+        : m.meetingDate < TODAY
+        ? "completed"
+        : "upcoming",
     }));
   }
 
-  /**
-   * Get upcoming meetings for dashboard
-   */
+  /* -----------------------------------------------------------
+      UPCOMING MEETINGS (>= today)
+  ----------------------------------------------------------- */
   static async getUpcomingMeetings(limit = 5) {
-    const now = new Date();
     return prisma.meeting.findMany({
       where: {
-        meetingDate: { gte: now },
+        meetingDate: { gte: TODAY },
         isCancelled: false,
       },
       include: {
@@ -102,20 +116,13 @@ export class DashboardService {
     });
   }
 
-  /**
-   * Get today's meetings
-   */
+  /* -----------------------------------------------------------
+      TODAY'S MEETINGS (== today)
+  ----------------------------------------------------------- */
   static async getTodaysMeetings() {
-    const now = new Date();
-    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-
     return prisma.meeting.findMany({
       where: {
-        meetingDate: {
-          gte: startOfDay,
-          lt: endOfDay,
-        },
+        meetingDate: { equals: TODAY },
         isCancelled: false,
       },
       include: {
@@ -137,20 +144,12 @@ export class DashboardService {
     });
   }
 
-  /**
-   * Get dashboard data for a specific staff member
-   */
+  /* -----------------------------------------------------------
+      STAFF DASHBOARD
+  ----------------------------------------------------------- */
   static async getStaffDashboard(staffId: number) {
-    const now = new Date();
-    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-    const [
-      totalMeetings,
-      upcomingMeetings,
-      organizedMeetings,
-      recentMeetings,
-    ] = await Promise.all([
-      // Total meetings (as member or organizer)
+    return await Promise.all([
+      // Total meetings involving this staff
       prisma.meeting.count({
         where: {
           OR: [
@@ -159,10 +158,11 @@ export class DashboardService {
           ],
         },
       }),
-      // Upcoming meetings
+
+      // Upcoming meetings for this staff
       prisma.meeting.count({
         where: {
-          meetingDate: { gte: startOfToday },
+          meetingDate: { gte: TODAY },
           isCancelled: false,
           OR: [
             { organizerStaffId: staffId },
@@ -170,11 +170,13 @@ export class DashboardService {
           ],
         },
       }),
+
       // Meetings organized by this staff
       prisma.meeting.count({
         where: { organizerStaffId: staffId },
       }),
-      // Recent meetings
+
+      // List of recent meetings
       prisma.meeting.findMany({
         where: {
           OR: [
@@ -192,15 +194,20 @@ export class DashboardService {
         orderBy: { meetingDate: "desc" },
         take: 5,
       }),
-    ]);
-
-    return {
-      stats: {
+    ]).then(
+      ([
         totalMeetings,
         upcomingMeetings,
         organizedMeetings,
-      },
-      recentMeetings,
-    };
+        recentMeetings,
+      ]) => ({
+        stats: {
+          totalMeetings,
+          upcomingMeetings,
+          organizedMeetings,
+        },
+        recentMeetings,
+      })
+    );
   }
 }
