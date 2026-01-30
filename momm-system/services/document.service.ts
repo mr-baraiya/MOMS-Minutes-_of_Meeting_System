@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { UploadDocumentRequest } from "@/types";
 
 export class DocumentService {

@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { CreateDepartmentRequest, UpdateDepartmentRequest } from "@/types";
 
 export class DepartmentService {

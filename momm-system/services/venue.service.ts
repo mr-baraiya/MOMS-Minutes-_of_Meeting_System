@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { CreateVenueRequest, UpdateVenueRequest } from "@/types";
 
 export class VenueService {

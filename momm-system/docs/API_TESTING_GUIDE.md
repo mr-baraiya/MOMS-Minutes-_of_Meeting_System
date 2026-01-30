@@ -54,7 +54,7 @@ curl http://localhost:3000/api/dashboard?staffId=1
 
 ---
 
-## 👤 Users
+## Users
 
 ### Get All Users
 ```http
@@ -82,7 +82,7 @@ Content-Type: application/json
   "username": "john.doe",
   "email": "john.doe@example.com",
   "password": "SecurePass123!",
-  "role": "USER"
+  "role": "STAFF"
 }
 ```
 
@@ -94,7 +94,7 @@ curl -X POST http://localhost:3000/api/users \
     "username": "john.doe",
     "email": "john.doe@example.com",
     "password": "SecurePass123!",
-    "role": "USER"
+    "role": "STAFF"
   }'
 ```
 
@@ -145,7 +145,7 @@ curl -X DELETE http://localhost:3000/api/users/1
 
 ---
 
-## 🏢 Departments
+## Departments
 
 ### Get All Departments
 ```http
