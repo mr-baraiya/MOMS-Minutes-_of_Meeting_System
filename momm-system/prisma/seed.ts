@@ -1,4 +1,4 @@
-import { PrismaClient, Role, VenueType, ReportType } from "../app/generated/prisma";
+import { PrismaClient, Role, VenueType, ReportType } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import pg from "pg";
 import "dotenv/config";
