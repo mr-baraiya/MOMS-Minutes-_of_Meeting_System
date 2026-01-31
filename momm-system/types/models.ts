@@ -1,5 +1,5 @@
 // Database model types (matching Prisma schema)
-import { Role, VenueType, ReportType } from "@/app/generated/prisma";
+import { Role, VenueType, ReportType } from "../app/generated/prisma";
 
 // Re-export Prisma enums for convenience
 export { Role, VenueType, ReportType };
