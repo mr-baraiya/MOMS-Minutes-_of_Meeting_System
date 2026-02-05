@@ -144,19 +144,19 @@ export default function AdminDashboard() {
           <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors flex flex-col items-center">
-              <UserPlus className="h-8 w-8 text-gray-600 mb-2" />
+              <span className="text-2xl text-gray-600 mb-2">◉</span>
               <div className="font-medium">Add User</div>
             </button>
             <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors flex flex-col items-center">
-              <Building2 className="h-8 w-8 text-gray-600 mb-2" />
+              <span className="text-2xl text-gray-600 mb-2">▪</span>
               <div className="font-medium">Add Department</div>
             </button>
             <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors flex flex-col items-center">
-              <MapPin className="h-8 w-8 text-gray-600 mb-2" />
+              <span className="text-2xl text-gray-600 mb-2">⌘</span>
               <div className="font-medium">Add Venue</div>
             </button>
             <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors flex flex-col items-center">
-              <TrendingUp className="h-8 w-8 text-gray-600 mb-2" />
+              <span className="text-2xl text-gray-600 mb-2">◐</span>
               <div className="font-medium">View Reports</div>
             </button>
           </div>
