@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
     return response;
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return errorResponse(error.errors[0].message, 400);
+      return errorResponse(error.issues[0].message, 400);
     }
     return handleApiError(error);
   }
