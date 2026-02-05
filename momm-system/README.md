@@ -25,6 +25,8 @@ A comprehensive web-based application designed to streamline how meetings are sc
 ## Features
 
 ### Core Features
+- **Authentication & Authorization** - JWT-based login/register with role-based access control
+- **Role-Based Dashboards** - Personalized dashboards for Admin, Convener, and Staff
 - **Meeting Management** - Create, edit, cancel, and view meetings
 - **Attendance Tracking** - Add participants and mark attendance digitally
 - **Document Management** - Upload, view, and download MOM documents
@@ -32,10 +34,18 @@ A comprehensive web-based application designed to streamline how meetings are sc
 - **Calendar View** - Visual representation of scheduled meetings
 
 ### User Features
-- **Role-Based Access Control** - Admin, Convener, and Staff roles
-- **Dashboard** - Overview of upcoming, completed, and cancelled meetings
+- **Secure Authentication** - bcrypt password hashing + JWT tokens with HTTP-only cookies
+- **Role-Based Access Control** - Admin, Convener, and Staff roles with different permissions
+- **Personalized Dashboard** - Overview of relevant meetings, stats, and quick actions
 - **Profile Management** - View and update user details
 - **Export Options** - Export reports to Excel/PDF
+
+### Security Features
+- **Password Hashing** - bcrypt with 10 salt rounds
+- **JWT Tokens** - Secure token-based authentication with 7-day expiration
+- **Input Validation** - Zod schemas for all user inputs
+- **HTTP-Only Cookies** - XSS protection for authentication tokens
+- **Role Verification** - Permission checks on all protected routes
 
 ## 🛠 Tech Stack
 
@@ -43,9 +53,11 @@ A comprehensive web-based application designed to streamline how meetings are sc
 |----------|------------|
 | **Frontend** | Next.js 16, React 19, TypeScript |
 | **Styling** | Tailwind CSS 4 |
+| **Icons** | Lucide React |
 | **Database** | PostgreSQL (Supabase) |
 | **ORM** | Prisma 7 |
-| **Authentication** | (To be implemented) |
+| **Authentication** | JWT + bcryptjs |
+| **Validation** | Zod |
 
 ## Project Structure
 
@@ -53,24 +65,58 @@ A comprehensive web-based application designed to streamline how meetings are sc
 momm-system/
 ├── app/
 │   ├── api/                 # API routes
-│   │   ├── dashboard/       # Dashboard endpoints
+│   │   ├── auth/            # Authentication endpoints
+│   │   │   ├── login/       # Login endpoint
+│   │   │   ├── register/    # Registration endpoint
+│   │   │   ├── logout/      # Logout endpoint
+│   │   │   ├── me/          # Get current user
+│   │   │   ├── forgot-password/
+│   │   │   └── reset-password/
+│   │   ├── dashboard/       # Dashboard endpoints (role-based)
 │   │   ├── departments/     # Department CRUD
 │   │   ├── meeting-types/   # Meeting type CRUD
 │   │   ├── meetings/        # Meeting CRUD + members, attendance, documents
 │   │   ├── staff/           # Staff CRUD
 │   │   ├── users/           # User CRUD
 │   │   └── venues/          # Venue CRUD
+│   ├── auth/                # Authentication pages
+│   │   ├── login/           # Login page (with Lucide icons)
+│   │   ├── register/        # Registration page (with Lucide icons)
+│   │   ├── forgot-password/
+│   │   └── reset-password/
+│   ├── dashboard/           # Role-based dashboards
+│   │   ├── admin/           # Admin dashboard
+│   │   ├── convener/        # Convener dashboard
+│   │   └── staff/           # Staff dashboard
 │   ├── generated/prisma/    # Prisma client (auto-generated)
 │   ├── globals.css          # Global styles
-│   ├── layout.tsx           # Root layout
+│   ├── layout.tsx           # Root layout with AuthProvider
 │   └── page.tsx             # Home page
+├── components/
+│   ├── layouts/             # Layout components
+│   │   ├── DashboardLayout.tsx  # Main dashboard wrapper
+│   │   ├── Sidebar.tsx          # Role-based navigation (Lucide icons)
+│   │   └── Header.tsx           # Header with search & notifications (Lucide icons)
+│   ├── dashboard/           # Dashboard components
+│   │   ├── StatCard.tsx
+│   │   ├── RecentMeetings.tsx
+│   │   ├── UpcomingMeetings.tsx
+│   │   ├── SystemActivity.tsx
+│   │   └── AttendanceHistory.tsx
+│   ├── ContactForm.tsx
+│   ├── Footer.tsx
+│   └── Navbar.tsx
+├── contexts/
+│   └── AuthContext.tsx      # Global authentication state
 ├── lib/
 │   ├── api-utils.ts         # API response helpers
+│   ├── auth.ts              # JWT & bcrypt utilities
+│   ├── validations.ts       # Zod validation schemas
 │   ├── index.ts             # Library exports
 │   └── prisma.ts            # Prisma client singleton
 ├── services/                # Business logic layer (reusable for mobile app)
 │   ├── auth.service.ts      # Authentication service
-│   ├── dashboard.service.ts # Dashboard service
+│   ├── dashboard.service.ts # Dashboard service (role-based methods)
 │   ├── department.service.ts
 │   ├── document.service.ts
 │   ├── meeting-member.service.ts
@@ -89,8 +135,21 @@ momm-system/
 │   ├── migrations/          # Database migrations
 │   ├── schema.prisma        # Database schema
 │   └── seed.ts              # Demo data seeder
+├── docs/
+│   ├── IMPLEMENTATION_SUMMARY.md  # Project status & achievements ⭐
+│   ├── AUTHENTICATION_GUIDE.md    # Auth system documentation
+│   ├── LUCIDE_ICONS_GUIDE.md      # Icon usage guide
+│   ├── DASHBOARD_GUIDE.md
+│   ├── DASHBOARD_API.md
+│   ├── DASHBOARD_COMPONENTS.md
+│   ├── DASHBOARD_SERVICES.md
+│   ├── FOLDER_STRUCTURE.md
+│   ├── API_BASE_URL_GUIDE.md
+│   ├── API_TESTING_GUIDE.md
+│   └── ENVIRONMENT_SETUP.md
 ├── public/                  # Static assets
-├── .env                     # Environment variables
+├── .env                     # Environment variables (JWT_SECRET, DATABASE_URL)
+├── .env.example             # Environment template
 ├── package.json
 ├── prisma.config.ts         # Prisma configuration
 └── tsconfig.json            # TypeScript configuration
@@ -231,18 +290,23 @@ import { Meeting, CreateMeetingRequest } from '@shared/types';
 - Master data management (Meeting Types, Departments, Venues, Staff)
 - View all meetings, attendance, and reports
 - User access control and system configuration
+- **Dashboard**: `/dashboard/admin`
 
 ### Convener (Meeting Organizer)
 - Create, edit, and cancel meetings
 - Add participants and mark attendance
 - Upload MOM documents and related files
 - View meeting-wise and summary reports
+- **Dashboard**: `/dashboard/convener`
 
 ### Staff
 - View assigned meetings and details
 - Check attendance status
 - View and download MOM documents
 - Limited access based on assigned permissions
+- **Dashboard**: `/dashboard/staff`
+
+> **Note**: For detailed dashboard architecture and API integration, see [docs/DASHBOARD_ARCHITECTURE.md](docs/DASHBOARD_ARCHITECTURE.md)
 
 ## Demo Credentials
 

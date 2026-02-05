@@ -176,6 +176,62 @@ export class DashboardService {
         where: { organizerStaffId: staffId },
       }),
 
+      // Attended meetings
+      prisma.meetingMember.count({
+        where: {
+          staffId,
+          attendanceStatus: "present",
+        },
+      }),
+
+      // Missed meetings
+      prisma.meetingMember.count({
+        where: {
+          staffId,
+          attendanceStatus: "absent",
+        },
+      }),
+
+      // Pending meetings
+      prisma.meetingMember.count({
+        where: {
+          staffId,
+          attendanceStatus: "pending",
+        },
+      }),
+
+      // Documents available
+      prisma.document.count({
+        where: {
+          meeting: {
+            meetingMembers: {
+              some: { staffId },
+            },
+          },
+        },
+      }),
+
+      // List of upcoming meetings
+      prisma.meeting.findMany({
+        where: {
+          meetingDate: { gte: TODAY },
+          isCancelled: false,
+          OR: [
+            { organizerStaffId: staffId },
+            { meetingMembers: { some: { staffId } } },
+          ],
+        },
+        include: {
+          meetingType: true,
+          venue: true,
+          meetingMembers: {
+            where: { staffId },
+          },
+        },
+        orderBy: { meetingDate: "asc" },
+        take: 5,
+      }),
+
       // List of recent meetings
       prisma.meeting.findMany({
         where: {
@@ -194,20 +250,365 @@ export class DashboardService {
         orderBy: { meetingDate: "desc" },
         take: 5,
       }),
+
+      // Attendance history
+      prisma.meetingMember.findMany({
+        where: { staffId },
+        include: {
+          meeting: {
+            include: {
+              meetingType: true,
+            },
+          },
+        },
+        orderBy: {
+          meeting: {
+            meetingDate: "desc",
+          },
+        },
+        take: 10,
+      }),
     ]).then(
       ([
-        totalMeetings,
+        assignedMeetings,
         upcomingMeetings,
         organizedMeetings,
+        attendedMeetings,
+        missedMeetings,
+        pendingMeetings,
+        documentsAvailable,
+        upcomingMeetingsList,
         recentMeetings,
+        attendanceHistory,
       ]) => ({
         stats: {
-          totalMeetings,
+          assignedMeetings,
           upcomingMeetings,
-          organizedMeetings,
+          attendedMeetings,
+          missedMeetings,
+          pendingMeetings,
+          documentsAvailable,
         },
-        recentMeetings,
+        upcomingMeetings: upcomingMeetingsList.map((m) => ({
+          id: m.id,
+          title: m.meetingTitle,
+          date: m.meetingDate.toISOString().split('T')[0],
+          time: m.meetingStartTime || 'TBD',
+          type: m.meetingType?.meetingTypeName || 'N/A',
+          venue: m.venue?.venueName || 'N/A',
+        })),
+        recentMeetings: recentMeetings.map((m) => ({
+          id: m.id,
+          title: m.meetingTitle,
+          date: m.meetingDate.toISOString().split('T')[0],
+          type: m.meetingType?.meetingTypeName || 'N/A',
+        })),
+        attendanceHistory: attendanceHistory.map((record) => ({
+          id: record.id,
+          meetingTitle: record.meeting.meetingTitle,
+          date: record.meeting.meetingDate.toISOString().split('T')[0],
+          status: record.attendanceStatus,
+          meetingType: record.meeting.meetingType?.meetingTypeName || 'N/A',
+        })),
       })
     );
   }
+
+  /* -----------------------------------------------------------
+      ADMIN DASHBOARD STATS
+  ----------------------------------------------------------- */
+  static async getAdminStats() {
+    return await Promise.all([
+      prisma.user.count(),
+      prisma.meeting.count(),
+      prisma.department.count(),
+      prisma.venue.count(),
+      prisma.meeting.count({
+        where: {
+          meetingDate: { gte: TODAY },
+          isCancelled: false,
+        },
+      }),
+      prisma.meeting.count({
+        where: {
+          meetingDate: { lt: TODAY },
+          isCancelled: false,
+        },
+      }),
+      prisma.meeting.count({
+        where: { isCancelled: true },
+      }),
+      prisma.staff.count({
+        where: { isActive: true },
+      }),
+    ]).then(
+      ([
+        totalUsers,
+        totalMeetings,
+        totalDepartments,
+        totalVenues,
+        activeMeetings,
+        completedMeetings,
+        cancelledMeetings,
+        totalStaff,
+      ]) => ({
+        totalUsers,
+        totalMeetings,
+        totalDepartments,
+        totalVenues,
+        activeMeetings,
+        completedMeetings,
+        cancelledMeetings,
+        totalStaff,
+      })
+    );
+  }
+
+  /* -----------------------------------------------------------
+      CONVENER DASHBOARD STATS
+  ----------------------------------------------------------- */
+  static async getConvenerStats(userId: number) {
+    // Get staff record for this user
+    const staff = await prisma.staff.findFirst({
+      where: { userId },
+    });
+
+    if (!staff) {
+      return {
+        myMeetings: 0,
+        upcomingMeetings: 0,
+        completedMeetings: 0,
+        pendingDocuments: 0,
+        totalParticipants: 0,
+        thisWeekMeetings: 0,
+      };
+    }
+
+    const weekFromNow = new Date(TODAY);
+    weekFromNow.setDate(weekFromNow.getDate() + 7);
+
+    return await Promise.all([
+      // My meetings
+      prisma.meeting.count({
+        where: { organizerStaffId: staff.id },
+      }),
+
+      // Upcoming meetings
+      prisma.meeting.count({
+        where: {
+          organizerStaffId: staff.id,
+          meetingDate: { gte: TODAY },
+          isCancelled: false,
+        },
+      }),
+
+      // Completed meetings
+      prisma.meeting.count({
+        where: {
+          organizerStaffId: staff.id,
+          meetingDate: { lt: TODAY },
+          isCancelled: false,
+        },
+      }),
+
+      // Meetings without documents
+      prisma.meeting.count({
+        where: {
+          organizerStaffId: staff.id,
+          meetingDate: { lt: TODAY },
+          isCancelled: false,
+          documents: { none: {} },
+        },
+      }),
+
+      // Total participants across all meetings
+      prisma.meetingMember.count({
+        where: {
+          meeting: {
+            organizerStaffId: staff.id,
+          },
+        },
+      }),
+
+      // This week's meetings
+      prisma.meeting.count({
+        where: {
+          organizerStaffId: staff.id,
+          meetingDate: {
+            gte: TODAY,
+            lt: weekFromNow,
+          },
+          isCancelled: false,
+        },
+      }),
+    ]).then(
+      ([
+        myMeetings,
+        upcomingMeetings,
+        completedMeetings,
+        pendingDocuments,
+        totalParticipants,
+        thisWeekMeetings,
+      ]) => ({
+        myMeetings,
+        upcomingMeetings,
+        completedMeetings,
+        pendingDocuments,
+        totalParticipants,
+        thisWeekMeetings,
+      })
+    );
+  }
+
+  /* -----------------------------------------------------------
+      CONVENER UPCOMING MEETINGS
+  ----------------------------------------------------------- */
+  static async getConvenerUpcomingMeetings(userId: number, limit = 5) {
+    const staff = await prisma.staff.findFirst({
+      where: { userId },
+    });
+
+    if (!staff) return [];
+
+    const meetings = await prisma.meeting.findMany({
+      where: {
+        organizerStaffId: staff.id,
+        meetingDate: { gte: TODAY },
+        isCancelled: false,
+      },
+      include: {
+        meetingType: true,
+        venue: true,
+        _count: {
+          select: { meetingMembers: true },
+        },
+      },
+      orderBy: { meetingDate: "asc" },
+      take: limit,
+    });
+
+    return meetings.map((m) => ({
+      id: m.id,
+      title: m.meetingTitle,
+      date: m.meetingDate.toISOString().split('T')[0],
+      time: m.meetingStartTime || 'TBD',
+      type: m.meetingType?.meetingTypeName || 'N/A',
+      venue: m.venue?.venueName || 'N/A',
+      participantsCount: m._count.meetingMembers,
+    }));
+  }
+
+  /* -----------------------------------------------------------
+      CONVENER RECENT MEETINGS
+  ----------------------------------------------------------- */
+  static async getConvenerRecentMeetings(userId: number, limit = 5) {
+    const staff = await prisma.staff.findFirst({
+      where: { userId },
+    });
+
+    if (!staff) return [];
+
+    const meetings = await prisma.meeting.findMany({
+      where: {
+        organizerStaffId: staff.id,
+      },
+      include: {
+        meetingType: true,
+        venue: true,
+        organizer: true,
+      },
+      orderBy: { meetingDate: "desc" },
+      take: limit,
+    });
+
+    return meetings.map((m) => ({
+      id: m.id,
+      title: m.meetingTitle,
+      date: m.meetingDate.toISOString().split('T')[0],
+      time: m.meetingStartTime || 'TBD',
+      type: m.meetingType?.meetingTypeName || 'N/A',
+      venue: m.venue?.venueName || 'N/A',
+      status: m.isCancelled
+        ? "cancelled"
+        : m.meetingDate < TODAY
+        ? "completed"
+        : "scheduled",
+      convener: m.organizer?.staffName,
+    }));
+  }
+
+  /* -----------------------------------------------------------
+      CONVENER PENDING TASKS
+  ----------------------------------------------------------- */
+  static async getConvenerPendingTasks(userId: number) {
+    const staff = await prisma.staff.findFirst({
+      where: { userId },
+    });
+
+    if (!staff) return [];
+
+    const meetingsWithoutDocuments = await prisma.meeting.findMany({
+      where: {
+        organizerStaffId: staff.id,
+        meetingDate: { lt: TODAY },
+        isCancelled: false,
+        documents: { none: {} },
+      },
+      orderBy: { meetingDate: "desc" },
+      take: 5,
+    });
+
+    return meetingsWithoutDocuments.map((m) => ({
+      title: "Upload MOM document",
+      meetingTitle: m.meetingTitle,
+      dueDate: m.meetingDate.toISOString().split('T')[0],
+      meetingId: m.id,
+    }));
+  }
+
+  /* -----------------------------------------------------------
+      SYSTEM ACTIVITY (for Admin)
+  ----------------------------------------------------------- */
+  static async getSystemActivity(limit = 10) {
+    // Get recent meetings and documents as activities
+    const recentMeetings = await prisma.meeting.findMany({
+      include: {
+        organizer: true,
+      },
+      orderBy: { createdAt: "desc" },
+      take: limit / 2,
+    });
+
+    const recentDocuments = await prisma.document.findMany({
+      include: {
+        meeting: true,
+        uploadedByUser: true,
+      },
+      orderBy: { uploadedAt: "desc" },
+      take: limit / 2,
+    });
+
+    const activities = [
+      ...recentMeetings.map((m) => ({
+        id: m.id,
+        action: `Meeting "${m.meetingTitle}" created`,
+        user: m.organizer?.staffName || 'System',
+        timestamp: m.createdAt?.toLocaleString() || 'N/A',
+        type: 'meeting' as const,
+      })),
+      ...recentDocuments.map((d) => ({
+        id: d.id,
+        action: `Document uploaded for "${d.meeting.meetingTitle}"`,
+        user: d.uploadedByUser?.username || 'System',
+        timestamp: d.uploadedAt.toLocaleString(),
+        type: 'document' as const,
+      })),
+    ];
+
+    // Sort by timestamp and return
+    return activities
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      .slice(0, limit);
+  }
 }
+

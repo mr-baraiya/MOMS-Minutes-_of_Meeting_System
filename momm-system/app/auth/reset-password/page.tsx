@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Swal from 'sweetalert2';
 
 function ResetPasswordForm() {
   const router = useRouter();
@@ -13,7 +14,6 @@ function ResetPasswordForm() {
     password: '',
     confirmPassword: '',
   });
-  const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -21,43 +21,70 @@ function ResetPasswordForm() {
 
   useEffect(() => {
     if (!token) {
-      setErrors({ form: 'Invalid or missing reset token' });
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid Token',
+        text: 'The password reset link is invalid or has expired.',
+        confirmButtonColor: '#2563eb',
+      });
     }
   }, [token]);
-
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
-    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
-      newErrors.password = 'Password must contain uppercase, lowercase, and number';
-    }
-
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'Please confirm your password';
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!token) {
-      setErrors({ form: 'Invalid or missing reset token' });
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid Token',
+        text: 'The password reset link is invalid or has expired.',
+        confirmButtonColor: '#2563eb',
+      });
       return;
     }
 
-    if (!validateForm()) return;
+    // Validate password
+    if (!formData.password) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Password Required',
+        text: 'Please enter a new password.',
+        confirmButtonColor: '#2563eb',
+      });
+      return;
+    }
+
+    if (formData.password.length < 8) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Weak Password',
+        text: 'Password must be at least 8 characters long.',
+        confirmButtonColor: '#2563eb',
+      });
+      return;
+    }
+
+    if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Weak Password',
+        text: 'Password must contain uppercase, lowercase, and number.',
+        confirmButtonColor: '#2563eb',
+      });
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Passwords Don\'t Match',
+        text: 'Please make sure your passwords match.',
+        confirmButtonColor: '#2563eb',
+      });
+      return;
+    }
 
     setLoading(true);
-    setErrors({});
 
     try {
       const response = await fetch('/api/auth/reset-password', {
@@ -79,10 +106,20 @@ function ResetPasswordForm() {
           router.push('/auth/login');
         }, 3000);
       } else {
-        setErrors({ form: result.error || 'Failed to reset password' });
+        Swal.fire({
+          icon: 'error',
+          title: 'Reset Failed',
+          text: result.error || 'Failed to reset password. Please try again.',
+          confirmButtonColor: '#2563eb',
+        });
       }
     } catch (error) {
-      setErrors({ form: 'An error occurred. Please try again.' });
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'An error occurred. Please try again later.',
+        confirmButtonColor: '#2563eb',
+      });
     } finally {
       setLoading(false);
     }
@@ -91,9 +128,6 @@ function ResetPasswordForm() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
-    }
   };
 
   if (success) {

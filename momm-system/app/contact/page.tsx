@@ -2,6 +2,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ContactForm from "@/components/ContactForm";
+import { CONTACT_INFO, NAV_LINKS } from "@/lib/constants";
 
 export default function ContactPage() {
   return (
@@ -44,8 +45,8 @@ export default function ContactPage() {
                     </div>
                     <div className="ml-4">
                       <h4 className="text-lg font-semibold mb-1">Email</h4>
-                      <p className="text-blue-100">vvbaraiya32@gmail.com</p>
-                      <p className="text-blue-100">support@mommsystem.com</p>
+                      <p className="text-blue-100">{CONTACT_INFO.email.primary}</p>
+                      <p className="text-blue-100">{CONTACT_INFO.email.support}</p>
                     </div>
                   </div>
 
@@ -59,8 +60,8 @@ export default function ContactPage() {
                     </div>
                     <div className="ml-4">
                       <h4 className="text-lg font-semibold mb-1">Phone</h4>
-                      <p className="text-blue-100">+91 (XXX) XXX-XXXX</p>
-                      <p className="text-blue-100 text-sm">Mon-Fri 9:00 AM - 6:00 PM</p>
+                      <p className="text-blue-100">{CONTACT_INFO.phone.display}</p>
+                      <p className="text-blue-100 text-sm">{CONTACT_INFO.phone.hours}</p>
                     </div>
                   </div>
 
@@ -75,7 +76,7 @@ export default function ContactPage() {
                     </div>
                     <div className="ml-4">
                       <h4 className="text-lg font-semibold mb-1">Office</h4>
-                      <p className="text-blue-100">Gujarat, India</p>
+                      <p className="text-blue-100">{CONTACT_INFO.address.full}</p>
                     </div>
                   </div>
                 </div>
@@ -85,19 +86,19 @@ export default function ContactPage() {
               <div className="bg-gray-50 rounded-2xl p-8 border border-gray-200">
                 <h3 className="text-xl font-bold text-gray-900 mb-4">Quick Links</h3>
                 <div className="space-y-3">
-                  <Link href="/auth/login" className="flex items-center text-gray-700 hover:text-blue-600 transition-colors">
+                  <Link href={NAV_LINKS.login} className="flex items-center text-gray-700 hover:text-blue-600 transition-colors">
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                     Login to Dashboard
                   </Link>
-                  <Link href="/#features" className="flex items-center text-gray-700 hover:text-blue-600 transition-colors">
+                  <Link href={NAV_LINKS.features} className="flex items-center text-gray-700 hover:text-blue-600 transition-colors">
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                     View Features
                   </Link>
-                  <Link href="/about" className="flex items-center text-gray-700 hover:text-blue-600 transition-colors">
+                  <Link href={NAV_LINKS.about} className="flex items-center text-gray-700 hover:text-blue-600 transition-colors">
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
@@ -113,7 +114,7 @@ export default function ContactPage() {
                   Start managing your meetings more efficiently today with our demo account.
                 </p>
                 <Link
-                  href="/dashboard"
+                  href={NAV_LINKS.dashboard}
                   className="inline-block px-6 py-3 bg-white text-green-600 rounded-lg hover:bg-gray-100 transition-colors font-semibold shadow-lg"
                 >
                   Try Demo Now →
@@ -124,15 +125,25 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Map Section (Optional) */}
+      {/* Map Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Visit Us</h2>
             <p className="text-gray-600">We're always happy to meet in person</p>
           </div>
-          <div className="bg-gray-200 rounded-2xl overflow-hidden shadow-xl h-96 flex items-center justify-center">
-            <p className="text-gray-500 text-lg">Map integration placeholder</p>
+          <div className="bg-white rounded-2xl overflow-hidden shadow-xl border border-gray-200">
+            <iframe
+              src={CONTACT_INFO.mapEmbedUrl}
+              width="100%"
+              height="450"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Office Location Map"
+              className="w-full"
+            />
           </div>
         </div>
       </section>

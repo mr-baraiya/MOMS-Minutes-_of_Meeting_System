@@ -36,27 +36,6 @@ export default function Home() {
               </Link>
             </div>
           </div>
-
-          {/* Demo Credentials */}
-          {/* <div className="mt-12 max-w-2xl mx-auto bg-blue-50 border border-blue-200 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">
-              Demo Credentials
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-              <div>
-                <p className="font-semibold text-gray-700">Admin</p>
-                <p className="text-gray-600">admin / password123</p>
-              </div>
-              <div>
-                <p className="font-semibold text-gray-700">Convener</p>
-                <p className="text-gray-600">rajesh.kumar / password123</p>
-              </div>
-              <div>
-                <p className="font-semibold text-gray-700">Staff</p>
-                <p className="text-gray-600">amit.patel / password123</p>
-              </div>
-            </div>
-          </div> */}
         </div>
       </section>
 

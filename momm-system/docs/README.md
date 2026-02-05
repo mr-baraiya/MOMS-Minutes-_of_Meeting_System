@@ -4,11 +4,30 @@ Welcome to the Minutes of Meeting System (MOMS) documentation.
 
 ## 📚 Documentation Index
 
-### Getting Started
+### 🎯 Implementation Overview
+- **[Implementation Summary](./IMPLEMENTATION_SUMMARY.md)** - **START HERE** - Complete project status, features, and achievements
+
+### 🚀 Getting Started
 - [README](../README.md) - Project overview and setup instructions
 - [Environment Setup](./ENVIRONMENT_SETUP.md) - Environment variables configuration guide
 
-### API Documentation
+### 📊 Dashboard System
+- [Dashboard Guide](./DASHBOARD_GUIDE.md) - Role-based dashboard features and usage
+- [Dashboard API](./DASHBOARD_API.md) - Dashboard endpoint reference
+- [Dashboard Components](./DASHBOARD_COMPONENTS.md) - Component API and props
+- [Dashboard Services](./DASHBOARD_SERVICES.md) - Frontend service layer
+
+### 🔐 Authentication & Security
+- [Authentication Guide](./AUTHENTICATION_GUIDE.md) - JWT + bcrypt implementation guide
+- Includes: Login/Register, Token management, Role-based access
+
+### 🎨 UI Components
+- [Lucide Icons Guide](./LUCIDE_ICONS_GUIDE.md) - Icon usage patterns and migration guide
+
+### 📁 Project Structure
+- [Folder Structure](./FOLDER_STRUCTURE.md) - Project organization and conventions
+
+### 🔌 API Documentation
 - [API Testing Guide](./API_TESTING_GUIDE.md) - Complete API endpoint testing documentation
 - [API Base URL Guide](./API_BASE_URL_GUIDE.md) - Understanding API URLs and client-side fetching
 

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { APP_NAME, APP_TAGLINE, COPYRIGHT } from '@/lib/constants';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -13,12 +14,10 @@ export default function Footer() {
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-xl">M</span>
               </div>
-              <span className="text-xl font-bold">MOMM System</span>
+              <span className="text-xl font-bold">{APP_NAME}</span>
             </div>
             <p className="text-gray-400 mb-4">
-              Minutes of Meeting Management System - Streamline your meeting
-              documentation, attendance tracking, and reporting in one
-              comprehensive platform.
+              {APP_TAGLINE}
             </p>
           </div>
 
@@ -80,8 +79,26 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; {currentYear} MOMM System. All rights reserved.</p>
+        <div className="border-t border-gray-800 mt-8 pt-8">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <p className="text-gray-400 text-center md:text-left">
+              &copy; {currentYear} MOMM System. All rights reserved.
+            </p>
+            <div className="flex space-x-6">
+              <Link
+                href="/terms"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                Terms of Service
+              </Link>
+              <Link
+                href="/privacy"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                Privacy Policy
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

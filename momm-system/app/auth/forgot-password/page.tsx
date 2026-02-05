@@ -2,33 +2,39 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
+import Swal from 'sweetalert2';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
-  const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-
-    if (!email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = 'Please enter a valid email address';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!validateForm()) return;
+    // Validate email
+    if (!email.trim()) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Email Required',
+        text: 'Please enter your email address.',
+        confirmButtonColor: '#2563eb',
+      });
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid Email',
+        text: 'Please enter a valid email address.',
+        confirmButtonColor: '#2563eb',
+      });
+      return;
+    }
 
     setLoading(true);
-    setErrors({});
 
     try {
       const response = await fetch('/api/auth/forgot-password', {
@@ -44,10 +50,20 @@ export default function ForgotPasswordPage() {
       if (result.success) {
         setSuccess(true);
       } else {
-        setErrors({ form: result.error || 'Failed to send reset link' });
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: result.error || 'Failed to send reset link. Please try again.',
+          confirmButtonColor: '#2563eb',
+        });
       }
     } catch (error) {
-      setErrors({ form: 'An error occurred. Please try again.' });
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'An error occurred. Please try again later.',
+        confirmButtonColor: '#2563eb',
+      });
     } finally {
       setLoading(false);
     }
@@ -55,9 +71,6 @@ export default function ForgotPasswordPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
-    if (errors.email) {
-      setErrors(prev => ({ ...prev, email: '' }));
-    }
   };
 
   if (success) {
@@ -130,7 +143,17 @@ export default function ForgotPasswordPage() {
         </div>
 
         {/* Form */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6 border border-gray-100">
+        <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6 border border-gray-100\">
+          {/* Back to Home */}
+          <div className=\"mb-4\">
+            <Link
+              href=\"/\"
+              className=\"inline-flex items-center text-purple-600 hover:text-purple-700 font-medium transition-colors\"
+            >
+              <ArrowLeft className=\"w-4 h-4 mr-2\" />
+              Back to Home
+            </Link>
+          </div>
           {errors.form && (
             <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
               <div className="flex items-center">
