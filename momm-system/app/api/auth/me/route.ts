@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
       staff: userDetails.staff ? {
         id: userDetails.staff.id,
         name: userDetails.staff.staffName,
-        department: userDetails.staff.department?.deptName,
+        department: userDetails.staff.department?.departmentName,
         departmentId: userDetails.staff.departmentId,
       } : null,
     });
