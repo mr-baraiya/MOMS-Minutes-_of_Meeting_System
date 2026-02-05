@@ -143,27 +143,17 @@ export default function ForgotPasswordPage() {
         </div>
 
         {/* Form */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6 border border-gray-100\">
+        <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6 border border-gray-100 ">
           {/* Back to Home */}
-          <div className=\"mb-4\">
+          <div className="mb-4">
             <Link
-              href=\"/\"
-              className=\"inline-flex items-center text-purple-600 hover:text-purple-700 font-medium transition-colors\"
+              href="/"
+              className="inline-flex items-center text-purple-600 hover:text-purple-700 font-medium transition-colors"
             >
-              <ArrowLeft className=\"w-4 h-4 mr-2\" />
+              <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Home
             </Link>
           </div>
-          {errors.form && (
-            <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
-              <div className="flex items-center">
-                <svg className="w-5 h-5 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
-                <p className="text-sm text-red-700">{errors.form}</p>
-              </div>
-            </div>
-          )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email Field */}
@@ -184,15 +174,10 @@ export default function ForgotPasswordPage() {
                   autoComplete="email"
                   value={email}
                   onChange={handleChange}
-                  className={`block w-full pl-10 pr-3 py-3 border ${
-                    errors.email ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
-                  } rounded-lg focus:outline-none focus:ring-2 transition-colors duration-200`}
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 rounded-lg focus:outline-none focus:ring-2 transition-colors duration-200"
                   placeholder="Enter your email address"
                 />
               </div>
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-              )}
             </div>
 
             {/* Submit Button */}

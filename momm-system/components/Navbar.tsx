@@ -44,12 +44,6 @@ export default function Navbar() {
             >
               Login
             </Link>
-            <Link
-              href="/dashboard"
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Dashboard
-            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -114,13 +108,6 @@ export default function Navbar() {
               onClick={() => setIsMenuOpen(false)}
             >
               Login
-            </Link>
-            <Link
-              href="/dashboard"
-              className="block px-4 py-2 text-center bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Dashboard
             </Link>
           </div>
         </div>

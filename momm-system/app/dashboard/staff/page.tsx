@@ -5,6 +5,7 @@ import DashboardLayout from '@/components/layouts/DashboardLayout';
 import StatCard from '@/components/dashboard/StatCard';
 import UpcomingMeetings from '@/components/dashboard/UpcomingMeetings';
 import AttendanceHistory from '@/components/dashboard/AttendanceHistory';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { Calendar, TrendingUp, Download, FileText, Info, ClipboardList, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 
 interface StaffDashboardData {
@@ -22,12 +23,15 @@ interface StaffDashboardData {
 }
 
 export default function StaffDashboard() {
+  const { user, loading: authLoading } = useAuthGuard({ allowedRoles: ['staff'] });
   const [data, setData] = useState<StaffDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
+    if (!authLoading && user) {
+      fetchDashboardData();
+    }
+  }, [authLoading, user]);
 
   const fetchDashboardData = async () => {
     try {
@@ -43,7 +47,7 @@ export default function StaffDashboard() {
     }
   };
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <DashboardLayout role="staff">
         <div className="flex items-center justify-center h-full">

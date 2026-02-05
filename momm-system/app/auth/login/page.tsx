@@ -1,19 +1,43 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { LogIn, Eye, EyeOff, Lock, User, ArrowLeft } from 'lucide-react';
 import Swal from 'sweetalert2';
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, isAuthenticated, user, loading: authLoading } = useAuth();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const hasRedirected = useRef(false);
   const [formData, setFormData] = useState({
     username: '',
     password: '',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Redirect if already authenticated (with a small delay to show the redirect message)
+  useEffect(() => {
+    if (isAuthenticated && user && !authLoading && !hasRedirected.current) {
+      hasRedirected.current = true;
+      
+      // Show a brief message before redirecting
+      Swal.fire({
+        icon: 'info',
+        title: 'Already Logged In',
+        text: `Welcome back, ${user.staff?.name || user.username}! Redirecting to your dashboard...`,
+        timer: 2000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+      }).then(() => {
+        const redirect = searchParams.get('redirect') || `/dashboard/${user.role}`;
+        router.push(redirect);
+      });
+    }
+  }, [isAuthenticated, user, authLoading, searchParams, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,6 +86,12 @@ export default function LoginPage() {
     });
   };
 
+  // Temporary function to clear stored token for debugging
+  const clearStoredToken = () => {
+    localStorage.removeItem('token');
+    window.location.reload();
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="max-w-md w-full">
@@ -78,14 +108,36 @@ export default function LoginPage() {
             </Link>
           </div>
           
-          {/* Header */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
-              <LogIn className="w-8 h-8 text-white" />
+          {/* Show loading while checking authentication */}
+          {authLoading ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+              <p className="mt-4 text-gray-600">Checking authentication...</p>
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
-            <p className="text-gray-600">Sign in to your MOMM account</p>
-          </div>
+          ) : isAuthenticated ? (
+            <div className="text-center py-8">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-green-600 rounded-full mb-4">
+                <LogIn className="w-8 h-8 text-white" />
+              </div>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">Already Logged In</h1>
+              <p className="text-gray-600 mb-4">Redirecting to your dashboard...</p>
+              <button
+                onClick={clearStoredToken}
+                className="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Clear Session & Refresh
+              </button>
+            </div>
+          ) : (
+            <>
+              {/* Header */}
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
+                  <LogIn className="w-8 h-8 text-white" />
+                </div>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
+                <p className="text-gray-600">Sign in to your MOMM account</p>
+              </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -204,17 +256,21 @@ export default function LoginPage() {
               Create Account
             </Link>
           </div>
+          </>
+          )}
         </div>
 
-        {/* Demo Credentials */}
-        <div className="mt-6 p-4 bg-white/50 backdrop-blur-sm rounded-lg border border-gray-200">
-          <p className="text-sm text-gray-600 font-medium mb-2">Demo Credentials:</p>
-          <div className="space-y-1 text-xs text-gray-500">
-            <p><strong>Admin:</strong> admin / password123</p>
-            <p><strong>Convener:</strong> rajesh.kumar / password123</p>
-            <p><strong>Staff:</strong> amit.patel / password123</p>
+        {/* Demo Credentials - only show when not authenticated */}
+        {!authLoading && !isAuthenticated && (
+          <div className="mt-6 p-4 bg-white/50 backdrop-blur-sm rounded-lg border border-gray-200">
+            <p className="text-sm text-gray-600 font-medium mb-2">Demo Credentials:</p>
+            <div className="space-y-1 text-xs text-gray-500">
+              <p><strong>Admin:</strong> admin / password123</p>
+              <p><strong>Convener:</strong> rajesh.kumar / password123</p>
+              <p><strong>Staff:</strong> amit.patel / password123</p>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

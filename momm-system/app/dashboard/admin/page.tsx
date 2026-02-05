@@ -5,6 +5,7 @@ import DashboardLayout from '@/components/layouts/DashboardLayout';
 import StatCard from '@/components/dashboard/StatCard';
 import RecentMeetings from '@/components/dashboard/RecentMeetings';
 import SystemActivity from '@/components/dashboard/SystemActivity';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { Users, Calendar, Building2, MapPin, CheckCircle, XCircle, UserPlus, FileText, TrendingUp } from 'lucide-react';
 
 interface AdminDashboardData {
@@ -23,12 +24,15 @@ interface AdminDashboardData {
 }
 
 export default function AdminDashboard() {
+  const { user, loading: authLoading } = useAuthGuard({ allowedRoles: ['admin'] });
   const [data, setData] = useState<AdminDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
+    if (!authLoading && user) {
+      fetchDashboardData();
+    }
+  }, [authLoading, user]);
 
   const fetchDashboardData = async () => {
     try {
@@ -44,7 +48,7 @@ export default function AdminDashboard() {
     }
   };
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <DashboardLayout role="admin">
         <div className="flex items-center justify-center h-full">

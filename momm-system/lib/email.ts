@@ -103,15 +103,42 @@ export async function sendPasswordResetEmail(
     .button {
       display: inline-block;
       padding: 14px 32px;
-      background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
-      color: #ffffff;
-      text-decoration: none;
+      background-color: #2563eb !important;
+      background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%) !important;
+      color: #ffffff !important;
+      text-decoration: none !important;
       border-radius: 6px;
       font-weight: 600;
       margin: 20px 0;
+      text-align: center;
+      font-size: 16px;
+      mso-padding-alt: 0;
+      mso-text-raise: 0;
     }
     .button:hover {
-      background: linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%);
+      background-color: #1d4ed8 !important;
+      background: linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%) !important;
+    }
+    /* Fallback styles for Outlook */
+    .button-td {
+      border-radius: 6px;
+      background-color: #2563eb;
+    }
+    .button-a {
+      background-color: #2563eb;
+      border: 1px solid #2563eb;
+      border-radius: 6px;
+      color: #ffffff;
+      display: inline-block;
+      font-family: sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 44px;
+      text-align: center;
+      text-decoration: none;
+      width: 200px;
+      -webkit-text-size-adjust: none;
+      mso-hide: all;
     }
     .info-box {
       background-color: #eff6ff;
@@ -156,8 +183,16 @@ export async function sendPasswordResetEmail(
         
         <p>To reset your password, click the button below:</p>
         
-        <div style="text-align: center;">
-          <a href="${resetUrl}" class="button">Reset Your Password</a>
+        <div style="text-align: center; margin: 30px 0;">
+          <!--[if mso]>
+          <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${resetUrl}" style="height:44px;v-text-anchor:middle;width:200px;" arcsize="14%" stroke="f" fillcolor="#2563eb">
+          <w:anchorlock/>
+          <center style="color:#ffffff;font-family:sans-serif;font-size:16px;font-weight:600;">Reset Your Password</center>
+          </v:roundrect>
+          <![endif]-->
+          <!--[if !mso]><!-->
+          <a href="${resetUrl}" class="button" style="background-color: #2563eb !important; color: #ffffff !important; text-decoration: none !important; padding: 14px 32px; border-radius: 6px; font-weight: 600; display: inline-block;">Reset Your Password</a>
+          <!--<![endif]-->
         </div>
         
         <div class="info-box">

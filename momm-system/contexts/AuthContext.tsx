@@ -105,8 +105,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(result.data.user);
         localStorage.setItem('token', result.data.token);
         
-        // Redirect to role-specific dashboard
-        router.push(`/dashboard/${result.data.user.role}`);
+        // Check for redirect parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectUrl = urlParams.get('redirect');
+        
+        if (redirectUrl) {
+          router.push(redirectUrl);
+        } else {
+          // Redirect to role-specific dashboard
+          router.push(`/dashboard/${result.data.user.role}`);
+        }
       } else {
         throw new Error('Login failed');
       }

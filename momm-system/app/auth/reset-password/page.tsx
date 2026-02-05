@@ -185,17 +185,6 @@ function ResetPasswordForm() {
 
         {/* Form */}
         <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6 border border-gray-100">
-          {errors.form && (
-            <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
-              <div className="flex items-center">
-                <svg className="w-5 h-5 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
-                <p className="text-sm text-red-700">{errors.form}</p>
-              </div>
-            </div>
-          )}
-
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* New Password Field */}
             <div>
@@ -215,9 +204,7 @@ function ResetPasswordForm() {
                   autoComplete="new-password"
                   value={formData.password}
                   onChange={handleChange}
-                  className={`block w-full pl-10 pr-10 py-3 border ${
-                    errors.password ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
-                  } rounded-lg focus:outline-none focus:ring-2 transition-colors duration-200`}
+                  className="block w-full pl-10 pr-10 py-3 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 rounded-lg focus:outline-none focus:ring-2 transition-colors duration-200"
                   placeholder="Enter new password"
                 />
                 <button
@@ -237,9 +224,6 @@ function ResetPasswordForm() {
                   )}
                 </button>
               </div>
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
-              )}
               <p className="mt-1 text-xs text-gray-500">
                 Must be at least 8 characters with uppercase, lowercase, and number
               </p>
@@ -263,9 +247,7 @@ function ResetPasswordForm() {
                   autoComplete="new-password"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className={`block w-full pl-10 pr-10 py-3 border ${
-                    errors.confirmPassword ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
-                  } rounded-lg focus:outline-none focus:ring-2 transition-colors duration-200`}
+                  className="block w-full pl-10 pr-10 py-3 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 rounded-lg focus:outline-none focus:ring-2 transition-colors duration-200"
                   placeholder="Confirm new password"
                 />
                 <button
@@ -285,9 +267,6 @@ function ResetPasswordForm() {
                   )}
                 </button>
               </div>
-              {errors.confirmPassword && (
-                <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
-              )}
             </div>
 
             {/* Submit Button */}

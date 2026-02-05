@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   LayoutDashboard,
   Calendar,
@@ -109,10 +110,19 @@ const menuItems: MenuItem[] = [
 
 export default function Sidebar({ role }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { logout } = useAuth();
   const pathname = usePathname();
 
   // Filter menu items based on role
   const filteredMenuItems = menuItems.filter((item) => item.roles.includes(role));
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
 
   const getRoleColor = () => {
     switch (role) {
@@ -202,14 +212,14 @@ export default function Sidebar({ role }: SidebarProps) {
 
       {/* Footer */}
       <div className="p-4 border-t border-gray-200">
-        <Link
-          href="/auth/login"
-          className="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors w-full"
           title={isCollapsed ? 'Logout' : ''}
         >
           <LogOut size={20} />
           {!isCollapsed && <span className="font-medium">Logout</span>}
-        </Link>
+        </button>
       </div>
     </aside>
   );

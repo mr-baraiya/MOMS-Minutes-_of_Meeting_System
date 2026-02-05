@@ -5,6 +5,7 @@ import DashboardLayout from '@/components/layouts/DashboardLayout';
 import StatCard from '@/components/dashboard/StatCard';
 import RecentMeetings from '@/components/dashboard/RecentMeetings';
 import UpcomingMeetings from '@/components/dashboard/UpcomingMeetings';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { Plus, Upload, CheckCircle, TrendingUp, AlertTriangle, ClipboardList, Clock, Users, FileText, Calendar } from 'lucide-react';
 
 interface ConvenerDashboardData {
@@ -22,12 +23,15 @@ interface ConvenerDashboardData {
 }
 
 export default function ConvenerDashboard() {
+  const { user, loading: authLoading } = useAuthGuard({ allowedRoles: ['convener'] });
   const [data, setData] = useState<ConvenerDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
+    if (!authLoading && user) {
+      fetchDashboardData();
+    }
+  }, [authLoading, user]);
 
   const fetchDashboardData = async () => {
     try {
@@ -43,7 +47,7 @@ export default function ConvenerDashboard() {
     }
   };
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <DashboardLayout role="convener">
         <div className="flex items-center justify-center h-full">
