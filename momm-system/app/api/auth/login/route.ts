@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
             staff: user.staff ? {
               id: user.staff.id,
               name: user.staff.staffName,
-              department: user.staff.department?.deptName,
+              department: user.staff.department?.departmentName,
             } : null,
           },
         },
