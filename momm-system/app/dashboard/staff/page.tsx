@@ -6,7 +6,8 @@ import StatCard from '@/components/dashboard/StatCard';
 import UpcomingMeetings from '@/components/dashboard/UpcomingMeetings';
 import AttendanceHistory from '@/components/dashboard/AttendanceHistory';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
-import { Calendar, TrendingUp, Download, FileText, Info, ClipboardList, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+
+// Using emoji icons instead of Lucide icons
 
 interface StaffDashboardData {
   stats: {
@@ -71,37 +72,40 @@ export default function StaffDashboard() {
           <StatCard
             title="Assigned"
             value={data?.stats.assignedMeetings || 0}
-            icon={ClipboardList}
+            icon="⌊⌋"
+            iconType="css"
             color="blue"
           />
           <StatCard
             title="Upcoming"
             value={data?.stats.upcomingMeetings || 0}
-            icon={Clock}
+            icon="○"
+            iconType="css"
             color="green"
           />
           <StatCard
             title="Attended"
             value={data?.stats.attendedMeetings || 0}
-            icon={CheckCircle}
+            icon="✓"
             color="purple"
           />
           <StatCard
             title="Missed"
             value={data?.stats.missedMeetings || 0}
-            icon={XCircle}
+            icon="✗"
             color="red"
           />
           <StatCard
             title="Pending"
             value={data?.stats.pendingMeetings || 0}
-            icon={AlertCircle}
+            icon="◒"
             color="orange"
           />
           <StatCard
             title="Documents"
             value={data?.stats.documentsAvailable || 0}
-            icon={FileText}
+            icon="▢"
+            iconType="css"
             color="indigo"
           />
         </div>
@@ -111,7 +115,7 @@ export default function StaffDashboard() {
           <div className="bg-blue-50 border-l-4 border-blue-400 p-4">
             <div className="flex">
               <div className="flex-shrink-0">
-                <Info className="h-6 w-6 text-blue-600" />
+                <span className="text-2xl text-blue-600">◉</span>
               </div>
               <div className="ml-3">
                 <p className="text-sm text-blue-700">

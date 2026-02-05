@@ -43,11 +43,11 @@ export default function UpcomingMeetings({ meetings }: UpcomingMeetingsProps) {
             <div className="flex-1">
               <h3 className="font-semibold text-gray-900">{meeting.title}</h3>
               <div className="mt-2 space-y-1 text-sm text-gray-600">
-                <p>📅 {meeting.date} • {meeting.time}</p>
-                <p>📍 {typeof meeting.venue === 'string' ? meeting.venue : meeting.venue?.venueName || 'N/A'}</p>
-                <p>🏷️ {meeting.type}</p>
+                <p><span className="inline-block w-4 text-center mr-2">▢</span>{meeting.date} • {meeting.time}</p>
+                <p><span className="inline-block w-4 text-center mr-2">⌘</span>{meeting.venue || 'N/A'}</p>
+                <p><span className="inline-block w-4 text-center mr-2">◦</span>{meeting.type}</p>
                 {meeting.participantsCount && (
-                  <p>👥 {meeting.participantsCount} participants</p>
+                  <p><span className="inline-block w-4 text-center mr-2">∘</span>{meeting.participantsCount} participants</p>
                 )}
               </div>
             </div>

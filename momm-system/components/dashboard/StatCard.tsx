@@ -1,9 +1,8 @@
-import { LucideIcon, TrendingUp, TrendingDown } from 'lucide-react';
-
 interface StatCardProps {
   title: string;
   value: number;
-  icon: LucideIcon;
+  icon: string;
+  iconType?: 'unicode' | 'css';
   trend?: {
     value: number;
     isPositive: boolean;
@@ -11,7 +10,7 @@ interface StatCardProps {
   color?: 'blue' | 'green' | 'purple' | 'orange' | 'red' | 'indigo' | 'pink';
 }
 
-export default function StatCard({ title, value, icon: Icon, trend, color = 'blue' }: StatCardProps) {
+export default function StatCard({ title, value, icon, iconType = 'unicode', trend, color = 'blue' }: StatCardProps) {
   const colorClasses = {
     blue: 'bg-blue-50 text-blue-600 border-blue-200',
     green: 'bg-green-50 text-green-600 border-green-200',
@@ -22,6 +21,20 @@ export default function StatCard({ title, value, icon: Icon, trend, color = 'blu
     pink: 'bg-pink-50 text-pink-600 border-pink-200',
   };
 
+  const renderIcon = () => {
+    if (iconType === 'css') {
+      return (
+        <div 
+          className={`w-8 h-8 flex items-center justify-center text-xl font-bold`}
+          style={{ fontFamily: 'serif' }}
+        >
+          {icon}
+        </div>
+      );
+    }
+    return <span className="text-2xl">{icon}</span>;
+  };
+
   return (
     <div className="bg-white rounded-lg shadow p-6 border-l-4 border-transparent hover:shadow-lg transition-shadow">
       <div className="flex items-start justify-between">
@@ -30,18 +43,14 @@ export default function StatCard({ title, value, icon: Icon, trend, color = 'blu
           <p className="text-3xl font-bold text-gray-900">{value}</p>
           {trend && (
             <div className={`flex items-center mt-2 text-sm ${trend.isPositive ? 'text-green-600' : 'text-red-600'}`}>
-              {trend.isPositive ? (
-                <TrendingUp className="h-4 w-4" />
-              ) : (
-                <TrendingDown className="h-4 w-4" />
-              )}
-              <span className="ml-1">{trend.value}%</span>
+              <span className="mr-1">{trend.isPositive ? '↗' : '↘'}</span>
+              <span>{trend.value}%</span>
               <span className="text-gray-500 ml-1">vs last month</span>
             </div>
           )}
         </div>
-        <div className={`p-3 rounded-lg ${colorClasses[color]}`}>
-          <Icon className="h-8 w-8" />
+        <div className={`p-3 rounded-lg ${colorClasses[color]} flex items-center justify-center min-w-[56px] min-h-[56px]`}>
+          {renderIcon()}
         </div>
       </div>
     </div>

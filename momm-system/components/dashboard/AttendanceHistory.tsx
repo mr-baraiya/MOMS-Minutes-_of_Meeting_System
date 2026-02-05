@@ -27,11 +27,11 @@ export default function AttendanceHistory({ history }: AttendanceHistoryProps) {
   const getStatusIcon = (status: string) => {
     switch (status.toLowerCase()) {
       case 'present':
-        return '✅';
+        return '●';
       case 'absent':
-        return '❌';
+        return '○';
       case 'pending':
-        return '⏳';
+        return '◐';
       default:
         return '•';
     }
@@ -56,8 +56,8 @@ export default function AttendanceHistory({ history }: AttendanceHistoryProps) {
             <div className="flex-1">
               <h4 className="font-medium text-gray-900">{record.meetingTitle}</h4>
               <div className="mt-1 space-y-1 text-xs text-gray-600">
-                <p>📅 {record.date}</p>
-                <p>🏷️ {record.meetingType}</p>
+                <p><span className="inline-block w-3 text-center mr-2">▢</span>{record.date}</p>
+                <p><span className="inline-block w-3 text-center mr-2">◦</span>{record.meetingType}</p>
               </div>
             </div>
             <div className="flex flex-col items-end">

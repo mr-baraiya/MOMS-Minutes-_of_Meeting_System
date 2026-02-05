@@ -6,7 +6,8 @@ import StatCard from '@/components/dashboard/StatCard';
 import RecentMeetings from '@/components/dashboard/RecentMeetings';
 import SystemActivity from '@/components/dashboard/SystemActivity';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
-import { Users, Calendar, Building2, MapPin, CheckCircle, XCircle, UserPlus, FileText, TrendingUp } from 'lucide-react';
+
+// Using emoji icons instead of Lucide icons
 
 interface AdminDashboardData {
   stats: {
@@ -72,27 +73,31 @@ export default function AdminDashboard() {
           <StatCard
             title="Total Users"
             value={data?.stats.totalUsers || 0}
-            icon={Users}
+            icon="◉"
+            iconType="css"
             trend={{ value: 12, isPositive: true }}
             color="blue"
           />
           <StatCard
             title="Total Meetings"
             value={data?.stats.totalMeetings || 0}
-            icon={Calendar}
+            icon="▢"
+            iconType="css"
             trend={{ value: 8, isPositive: true }}
             color="green"
           />
           <StatCard
             title="Departments"
             value={data?.stats.totalDepartments || 0}
-            icon={Building2}
+            icon="▪"
+            iconType="css"
             color="purple"
           />
           <StatCard
             title="Venues"
             value={data?.stats.totalVenues || 0}
-            icon={MapPin}
+            icon="⌘"
+            iconType="css"
             color="orange"
           />
         </div>
@@ -102,19 +107,19 @@ export default function AdminDashboard() {
           <StatCard
             title="Active Meetings"
             value={data?.stats.activeMeetings || 0}
-            icon={Calendar}
+            icon="●"
             color="green"
           />
           <StatCard
             title="Completed"
             value={data?.stats.completedMeetings || 0}
-            icon={CheckCircle}
+            icon="✓"
             color="blue"
           />
           <StatCard
             title="Cancelled"
             value={data?.stats.cancelledMeetings || 0}
-            icon={XCircle}
+            icon="✗"
             color="red"
           />
         </div>

@@ -14,13 +14,13 @@ export default function SystemActivity({ activities }: SystemActivityProps) {
   const getActivityIcon = (type: string) => {
     switch (type) {
       case 'meeting':
-        return '📅';
+        return '▢';
       case 'user':
-        return '👤';
+        return '◉';
       case 'document':
-        return '📄';
+        return '▪';
       case 'system':
-        return '⚙️';
+        return '◐';
       default:
         return '•';
     }

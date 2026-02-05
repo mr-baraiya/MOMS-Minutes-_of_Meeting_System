@@ -6,7 +6,8 @@ import StatCard from '@/components/dashboard/StatCard';
 import RecentMeetings from '@/components/dashboard/RecentMeetings';
 import UpcomingMeetings from '@/components/dashboard/UpcomingMeetings';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
-import { Plus, Upload, CheckCircle, TrendingUp, AlertTriangle, ClipboardList, Clock, Users, FileText, Calendar } from 'lucide-react';
+
+// Using emoji icons instead of Lucide icons
 
 interface ConvenerDashboardData {
   stats: {
@@ -71,37 +72,42 @@ export default function ConvenerDashboard() {
           <StatCard
             title="My Meetings"
             value={data?.stats.myMeetings || 0}
-            icon={ClipboardList}
+            icon="⌊⌋"
+            iconType="css"
             color="blue"
           />
           <StatCard
             title="Upcoming"
             value={data?.stats.upcomingMeetings || 0}
-            icon={Clock}
+            icon="○"
+            iconType="css"
             color="green"
           />
           <StatCard
             title="Completed"
             value={data?.stats.completedMeetings || 0}
-            icon={CheckCircle}
+            icon="✓"
             color="purple"
           />
           <StatCard
             title="Pending Docs"
             value={data?.stats.pendingDocuments || 0}
-            icon={FileText}
+            icon="▢"
+            iconType="css"
             color="orange"
           />
           <StatCard
             title="Participants"
             value={data?.stats.totalParticipants || 0}
-            icon={Users}
+            icon="◉"
+            iconType="css"
             color="indigo"
           />
           <StatCard
             title="This Week"
             value={data?.stats.thisWeekMeetings || 0}
-            icon={Calendar}
+            icon="▢"
+            iconType="css"
             color="pink"
           />
         </div>
@@ -111,7 +117,7 @@ export default function ConvenerDashboard() {
           <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
             <div className="flex">
               <div className="flex-shrink-0">
-                <AlertTriangle className="h-6 w-6 text-yellow-600" />
+                <span className="text-2xl text-yellow-600">△</span>
               </div>
               <div className="ml-3">
                 <p className="text-sm text-yellow-700">
@@ -175,19 +181,19 @@ export default function ConvenerDashboard() {
           <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors flex flex-col items-center">
-              <Plus className="h-8 w-8 text-gray-600 mb-2" />
+              <span className="text-4xl mb-2">➕</span>
               <div className="font-medium">Create Meeting</div>
             </button>
             <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors flex flex-col items-center">
-              <Upload className="h-8 w-8 text-gray-600 mb-2" />
+              <span className="text-4xl mb-2">📤</span>
               <div className="font-medium">Upload MOM</div>
             </button>
             <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors flex flex-col items-center">
-              <CheckCircle className="h-8 w-8 text-gray-600 mb-2" />
+              <span className="text-4xl mb-2">✅</span>
               <div className="font-medium">Mark Attendance</div>
             </button>
             <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors flex flex-col items-center">
-              <TrendingUp className="h-8 w-8 text-gray-600 mb-2" />
+              <span className="text-4xl mb-2">📊</span>
               <div className="font-medium">View Reports</div>
             </button>
           </div>
