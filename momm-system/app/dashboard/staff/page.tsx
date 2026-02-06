@@ -159,7 +159,7 @@ export default function StaffDashboard() {
               data.recentMeetings.map((meeting: any, index: number) => (
                 <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                   <div className="flex items-center space-x-3">
-                    <FileText className="h-6 w-6 text-gray-600" />
+                    <span className="text-2xl">📄</span>
                     <div>
                       <p className="font-medium">{meeting.title}</p>
                       <p className="text-sm text-gray-500">{meeting.date} • {meeting.type}</p>
@@ -181,15 +181,15 @@ export default function StaffDashboard() {
           <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-colors flex flex-col items-center">
-              <Calendar className="h-8 w-8 text-gray-600 mb-2" />
+              <span className="text-3xl mb-2">📅</span>
               <div className="font-medium">View Calendar</div>
             </button>
             <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-colors flex flex-col items-center">
-              <TrendingUp className="h-8 w-8 text-gray-600 mb-2" />
+              <span className="text-3xl mb-2">📊</span>
               <div className="font-medium">My Attendance</div>
             </button>
             <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-colors flex flex-col items-center">
-              <Download className="h-8 w-8 text-gray-600 mb-2" />
+              <span className="text-3xl mb-2">⬇️</span>
               <div className="font-medium">Download MOMs</div>
             </button>
           </div>
