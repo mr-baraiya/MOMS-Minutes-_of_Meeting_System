@@ -1,25 +1,20 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { LogIn, Eye, EyeOff, Lock, User, ArrowLeft } from 'lucide-react';
 import Swal from 'sweetalert2';
 
-export default function LoginPage() {
-  const { login, isAuthenticated, user, loading: authLoading } = useAuth();
+// Component that handles redirect logic with search params
+function LoginRedirectHandler() {
+  const { isAuthenticated, user, loading: authLoading } = useAuth();
   const searchParams = useSearchParams();
   const router = useRouter();
   const hasRedirected = useRef(false);
-  const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  // Redirect if already authenticated (with a small delay to show the redirect message)
+  // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated && user && !authLoading && !hasRedirected.current) {
       hasRedirected.current = true;
@@ -38,6 +33,18 @@ export default function LoginPage() {
       });
     }
   }, [isAuthenticated, user, authLoading, searchParams, router]);
+
+  return null;
+}
+
+export default function LoginPage() {
+  const { login, isAuthenticated, loading: authLoading } = useAuth();
+  const [formData, setFormData] = useState({
+    username: '',
+    password: '',
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,7 +100,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <>
+      <Suspense fallback={null}>
+        <LoginRedirectHandler />
+      </Suspense>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         {/* Card */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
@@ -273,5 +284,6 @@ export default function LoginPage() {
         )}
       </div>
     </div>
+    </>
   );
 }

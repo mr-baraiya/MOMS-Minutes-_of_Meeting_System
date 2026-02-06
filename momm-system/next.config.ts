@@ -5,11 +5,6 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ['10.60.4.126'],
   
   // Other config options
-  experimental: {
-    turbo: {
-      // Turbopack configuration
-    }
-  }
 };
 
 export default nextConfig;

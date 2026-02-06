@@ -180,7 +180,7 @@ export class DashboardService {
       prisma.meetingMember.count({
         where: {
           staffId,
-          attendanceStatus: "present",
+          isPresent: true,
         },
       }),
 
@@ -188,7 +188,7 @@ export class DashboardService {
       prisma.meetingMember.count({
         where: {
           staffId,
-          attendanceStatus: "absent",
+          isPresent: false,
         },
       }),
 
@@ -196,7 +196,7 @@ export class DashboardService {
       prisma.meetingMember.count({
         where: {
           staffId,
-          attendanceStatus: "pending",
+          attendanceMarkedAt: null,
         },
       }),
 
@@ -307,7 +307,7 @@ export class DashboardService {
           id: record.id,
           meetingTitle: record.meeting.meetingTitle,
           date: record.meeting.meetingDate.toISOString().split('T')[0],
-          status: record.attendanceStatus,
+          status: record.attendanceMarkedAt ? (record.isPresent ? 'present' : 'absent') : 'pending',
           meetingType: record.meeting.meetingType?.meetingTypeName || 'N/A',
         })),
       })
@@ -582,7 +582,7 @@ export class DashboardService {
     const recentDocuments = await prisma.document.findMany({
       include: {
         meeting: true,
-        uploadedByUser: true,
+        uploader: true,
       },
       orderBy: { uploadedAt: "desc" },
       take: limit / 2,
@@ -599,7 +599,7 @@ export class DashboardService {
       ...recentDocuments.map((d) => ({
         id: d.id,
         action: `Document uploaded for "${d.meeting.meetingTitle}"`,
-        user: d.uploadedByUser?.username || 'System',
+        user: d.uploader?.username || 'System',
         timestamp: d.uploadedAt.toLocaleString(),
         type: 'document' as const,
       })),
