@@ -38,7 +38,7 @@ export const registerSchema = z.object({
     .regex(/[0-9]/, 'Password must contain at least one number'),
   confirmPassword: z.string(),
   role: z.enum(['ADMIN', 'CONVENER', 'STAFF', 'admin', 'convener', 'staff'], {
-    errorMap: () => ({ message: 'Invalid role' }),
+    message: 'Invalid role',
   }).transform(val => val.toUpperCase() as 'ADMIN' | 'CONVENER' | 'STAFF'),
   staffName: z
     .string()
