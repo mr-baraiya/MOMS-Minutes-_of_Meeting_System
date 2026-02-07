@@ -11,6 +11,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "MOMM System - Minutes of Meeting Management",
   description: "Streamline your meeting documentation, attendance tracking, and reporting in one comprehensive platform.",
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({

@@ -90,19 +90,19 @@ Navigate to: **http://localhost:3000/auth/login**
 
 You'll be automatically redirected to your role-specific dashboard:
 
-### Admin Dashboard (`/dashboard/admin`)
+### Admin Dashboard (`/admin/dashboard`)
 - System-wide statistics
 - All meetings overview
 - Recent activity log
 - Quick actions for system management
 
-### Convener Dashboard (`/dashboard/convener`)
+### Convener Dashboard (`/convener/dashboard`)
 - Personal meeting statistics
 - Meetings you're convening
 - Upcoming meetings
 - Participant management
 
-### Staff Dashboard (`/dashboard/staff`)
+### Staff Dashboard (`/staff/dashboard`)
 - Your assigned meetings
 - Attendance history
 - Upcoming meetings

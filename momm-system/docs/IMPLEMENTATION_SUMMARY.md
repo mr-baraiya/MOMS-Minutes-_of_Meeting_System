@@ -6,19 +6,19 @@
 **Status: Complete** 🎉
 
 #### Dashboard Pages
-- ✅ **Admin Dashboard** ([app/dashboard/admin/page.tsx](../app/dashboard/admin/page.tsx))
+- ✅ **Admin Dashboard** ([app/admin/dashboard/page.tsx](../app/admin/dashboard/page.tsx))
   - System-wide statistics (Total Meetings, Active Staff, Departments, Upcoming)
   - Recent meetings list with status badges
   - System activity log
   - Quick actions: Schedule Meeting, Upload Documents, Manage Departments, Generate Reports
   
-- ✅ **Convener Dashboard** ([app/dashboard/convener/page.tsx](../app/dashboard/convener/page.tsx))
+- ✅ **Convener Dashboard** ([app/convener/dashboard/page.tsx](../app/convener/dashboard/page.tsx))
   - Personal meeting statistics (Scheduled, Completed, Total Participants)
   - Upcoming and recent meetings for convener
   - Pending tasks tracker
   - Quick actions: Schedule Meeting, Mark Complete, View Participants, View Reports
   
-- ✅ **Staff Dashboard** ([app/dashboard/staff/page.tsx](../app/dashboard/staff/page.tsx))
+- ✅ **Staff Dashboard** ([app/staff/dashboard/page.tsx](../app/staff/dashboard/page.tsx))
   - Assigned meeting statistics (Assigned, Attended, Pending)
   - Personal attendance history
   - Quick actions: View Meetings, Mark Attendance, View Documents

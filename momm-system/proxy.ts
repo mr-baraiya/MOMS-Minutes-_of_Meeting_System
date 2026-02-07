@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth';
 
 // Define protected routes
-const protectedRoutes = ['/dashboard'];
+const protectedRoutes = ['/admin', '/convener', '/staff'];
 const authRoutes = ['/auth/login', '/auth/register', '/auth/forgot-password'];
 
 export default function proxy(request: NextRequest) {
@@ -49,7 +49,7 @@ export default function proxy(request: NextRequest) {
     try {
       const payload = verifyToken(token);
       if (payload) {
-        return NextResponse.redirect(new URL('/dashboard', request.url));
+        return NextResponse.redirect(new URL(`/${payload.role}/dashboard`, request.url));
       }
     } catch (error) {
       // Token is invalid, let them proceed to auth routes

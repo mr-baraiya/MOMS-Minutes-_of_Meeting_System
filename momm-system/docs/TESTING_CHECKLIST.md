@@ -12,7 +12,7 @@ Use this checklist to verify that all dashboard features are working correctly.
 ## 📊 Admin Dashboard Testing
 
 ### Access
-- [ ] Navigate to `/dashboard/admin`
+- [ ] Navigate to `/admin/dashboard`
 - [ ] Page loads without errors
 - [ ] No console errors in DevTools
 
@@ -77,7 +77,7 @@ Use this checklist to verify that all dashboard features are working correctly.
 ## 👤 Convener Dashboard Testing
 
 ### Access
-- [ ] Navigate to `/dashboard/convener`
+- [ ] Navigate to `/convener/dashboard`
 - [ ] Page loads without errors
 - [ ] No console errors in DevTools
 
@@ -138,7 +138,7 @@ Use this checklist to verify that all dashboard features are working correctly.
 ## 👥 Staff Dashboard Testing
 
 ### Access
-- [ ] Navigate to `/dashboard/staff`
+- [ ] Navigate to `/staff/dashboard`
 - [ ] Page loads without errors
 - [ ] No console errors in DevTools
 
@@ -275,7 +275,7 @@ Use this checklist to verify that all dashboard features are working correctly.
 - [ ] Re-seed database - data appears
 
 ### Invalid Route
-- [ ] Navigate to `/dashboard/invalid-role`
+- [ ] Navigate to `/invalid-role/dashboard`
 - [ ] Appropriate error or redirect occurs
 
 ## 📱 Cross-Browser Testing

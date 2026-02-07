@@ -42,14 +42,14 @@ export const NAV_LINKS = {
   contact: '/contact',
   login: '/auth/login',
   register: '/auth/register',
-  dashboard: '/dashboard',
+  dashboard: '/auth/login',
 };
 
 // Footer Links
 export const FOOTER_LINKS = {
   product: [
     { label: 'Features', href: '/#features' },
-    { label: 'Dashboard', href: '/dashboard' },
+    { label: 'Dashboard', href: '/auth/login' },
     { label: 'About', href: '/about' },
   ],
   company: [
@@ -166,9 +166,9 @@ export const SWAL_CONFIG = {
 
 // Dashboard Role-Based Routing
 export const DASHBOARD_ROUTES = {
-  ADMIN: '/dashboard/admin',
-  CONVENER: '/dashboard/convener',
-  STAFF: '/dashboard/staff',
+  ADMIN: '/admin/dashboard',
+  CONVENER: '/convener/dashboard',
+  STAFF: '/staff/dashboard',
 };
 
 // Copyright

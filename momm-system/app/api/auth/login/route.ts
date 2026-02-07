@@ -16,9 +16,14 @@ export async function POST(request: NextRequest) {
     // Validate input with Zod
     const validatedData = loginSchema.parse(body);
 
-    // Find user by username
-    const user = await prisma.user.findUnique({
-      where: { username: validatedData.username },
+    // Find user by username or email
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { username: { equals: validatedData.username, mode: "insensitive" } },
+          { email: { equals: validatedData.username, mode: "insensitive" } },
+        ],
+      },
       include: {
         staff: {
           include: {
@@ -29,7 +34,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!user) {
-      return errorResponse("Invalid username or password", 401);
+      return errorResponse("Invalid username/email or password", 401);
     }
 
     // Check if user is active
@@ -41,7 +46,7 @@ export async function POST(request: NextRequest) {
     const isPasswordValid = await comparePassword(validatedData.password, user.passwordHash);
 
     if (!isPasswordValid) {
-      return errorResponse("Invalid username or password", 401);
+      return errorResponse("Invalid username/email or password", 401);
     }
 
     // Generate JWT token
@@ -64,6 +69,7 @@ export async function POST(request: NextRequest) {
             username: user.username,
             email: user.email,
             role: user.role.toLowerCase() as 'admin' | 'convener' | 'staff',
+            profilePicture: user.profilePicture || null,
             staff: user.staff ? {
               id: user.staff.id,
               name: user.staff.staffName,

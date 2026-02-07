@@ -131,7 +131,7 @@ export function getRoleColor(role: UserRole): {
  * Get dashboard route for a role
  */
 export function getDashboardRoute(role: UserRole): string {
-  return `/dashboard/${role}`;
+  return `/${role}/dashboard`;
 }
 
 /**
@@ -147,7 +147,7 @@ export function isValidRole(role: string): role is UserRole {
 export function getAllowedRoutes(role: UserRole): string[] {
   const routes: Record<UserRole, string[]> = {
     admin: [
-      '/dashboard',
+      '/admin/dashboard',
       '/meetings',
       '/calendar',
       '/documents',
@@ -157,23 +157,23 @@ export function getAllowedRoutes(role: UserRole): string[] {
       '/departments',
       '/venues',
       '/meeting-types',
-      '/settings',
+      '/admin/settings',
     ],
     convener: [
-      '/dashboard',
+      '/convener/dashboard',
       '/meetings',
       '/calendar',
       '/documents',
       '/reports',
-      '/settings',
+      '/convener/settings',
     ],
     staff: [
-      '/dashboard',
+      '/staff/dashboard',
       '/meetings',
       '/calendar',
       '/documents',
       '/attendance',
-      '/settings',
+      '/staff/settings',
     ],
   };
 

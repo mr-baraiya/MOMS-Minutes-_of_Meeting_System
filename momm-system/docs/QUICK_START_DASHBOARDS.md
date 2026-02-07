@@ -5,9 +5,9 @@ This guide will help you quickly understand and use the role-based dashboard sys
 ## 🚀 Accessing Dashboards
 
 ### Direct Routes:
-- **Admin Dashboard**: `http://localhost:3000/dashboard/admin`
-- **Convener Dashboard**: `http://localhost:3000/dashboard/convener`
-- **Staff Dashboard**: `http://localhost:3000/dashboard/staff`
+- **Admin Dashboard**: `http://localhost:3000/admin/dashboard`
+- **Convener Dashboard**: `http://localhost:3000/convener/dashboard`
+- **Staff Dashboard**: `http://localhost:3000/staff/dashboard`
 
 ### Auto-Redirect:
 Navigate to `http://localhost:3000/dashboard` and the system will automatically redirect you based on your role.
@@ -90,13 +90,13 @@ npm run dev
 #### Option A: Direct URL Access
 ```bash
 # Admin Dashboard
-http://localhost:3000/dashboard/admin
+http://localhost:3000/admin/dashboard
 
 # Convener Dashboard  
-http://localhost:3000/dashboard/convener
+http://localhost:3000/convener/dashboard
 
 # Staff Dashboard
-http://localhost:3000/dashboard/staff
+http://localhost:3000/staff/dashboard
 ```
 
 #### Option B: Using Demo Credentials

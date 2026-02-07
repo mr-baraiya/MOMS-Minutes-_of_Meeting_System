@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Search, Bell, User, Settings as SettingsIcon, HelpCircle, LogOut, ChevronDown } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface HeaderProps {
   role: 'admin' | 'convener' | 'staff';
@@ -10,6 +11,22 @@ interface HeaderProps {
 export default function Header({ role }: HeaderProps) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const { user } = useAuth();
+
+  const displayName = user?.staff?.name || user?.username || 'User';
+  const displayEmail = user?.email || 'user@example.com';
+  const displayRole = (user?.role || role || 'user').toString();
+  const profileHref = `/${displayRole}/profile`;
+  const settingsHref = `/${displayRole}/settings`;
+  const profileSrc = user?.profilePicture?.trim() || '';
+
+  const getInitials = (name: string) => {
+    const parts = name.trim().split(' ').filter(Boolean);
+    if (parts.length === 0) return 'U';
+    const first = parts[0]?.[0] || 'U';
+    const last = parts.length > 1 ? parts[parts.length - 1]?.[0] : '';
+    return `${first}${last}`.toUpperCase();
+  };
 
   // Mock data - replace with actual data from context/API
   const notifications = [
@@ -92,12 +109,20 @@ export default function Header({ role }: HeaderProps) {
               onClick={() => setShowProfile(!showProfile)}
               className="flex items-center gap-3 p-2 hover:bg-gray-100 rounded-lg transition-colors"
             >
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
-                <User size={20} />
-              </div>
+              {profileSrc ? (
+                <img
+                  src={profileSrc}
+                  alt={`${displayName} profile`}
+                  className="w-10 h-10 rounded-full object-cover border border-gray-200"
+                />
+              ) : (
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
+                  {getInitials(displayName)}
+                </div>
+              )}
               <div className="hidden md:block text-left">
-                <p className="text-sm font-semibold text-gray-900">Admin User</p>
-                <p className="text-xs text-gray-500 capitalize">{role}</p>
+                <p className="text-sm font-semibold text-gray-900">{displayName}</p>
+                <p className="text-xs text-gray-500 capitalize">{displayRole}</p>
               </div>
               <ChevronDown size={16} className="text-gray-400" />
             </button>
@@ -106,15 +131,15 @@ export default function Header({ role }: HeaderProps) {
             {showProfile && (
               <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
                 <div className="p-4 border-b border-gray-200">
-                  <p className="font-semibold text-gray-900">Admin User</p>
-                  <p className="text-sm text-gray-500">admin@example.com</p>
+                  <p className="font-semibold text-gray-900">{displayName}</p>
+                  <p className="text-sm text-gray-500">{displayEmail}</p>
                 </div>
                 <div className="py-2">
-                  <a href="/profile" className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  <a href={profileHref} className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                     <User size={16} />
                     My Profile
                   </a>
-                  <a href="/settings" className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  <a href={settingsHref} className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                     <SettingsIcon size={16} />
                     Settings
                   </a>

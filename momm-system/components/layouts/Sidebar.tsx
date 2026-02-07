@@ -36,7 +36,7 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   {
     label: 'Dashboard',
-    href: '/dashboard',
+    href: '/admin/dashboard',
     icon: LayoutDashboard,
     roles: ['admin', 'convener', 'staff'],
   },
@@ -102,7 +102,7 @@ const menuItems: MenuItem[] = [
   },
   {
     label: 'Settings',
-    href: '/settings',
+    href: '/admin/settings',
     icon: Settings,
     roles: ['admin', 'convener', 'staff'],
   },
@@ -114,7 +114,15 @@ export default function Sidebar({ role }: SidebarProps) {
   const pathname = usePathname();
 
   // Filter menu items based on role
-  const filteredMenuItems = menuItems.filter((item) => item.roles.includes(role));
+  const filteredMenuItems = menuItems
+    .filter((item) => item.roles.includes(role))
+    .map((item) =>
+      item.label === 'Dashboard'
+        ? { ...item, href: `/${role}/dashboard` }
+        : item.label === 'Settings'
+        ? { ...item, href: `/${role}/settings` }
+        : item
+    );
 
   const handleLogout = async () => {
     try {

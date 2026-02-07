@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 
 export default function Navbar() {
@@ -11,11 +12,19 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">M</span>
+          <Link href="/" className="flex items-center space-x-3">
+            <Image
+              src="/logo.png"
+              alt="MOMM logo"
+              width={48}
+              height={48}
+              priority
+              className="h-12 w-12"
+            />
+            <div className="leading-tight">
+              <div className="text-2xl font-bold text-blue-600">MOMS</div>
+              <div className="text-sm font-medium text-gray-600">Minutes of Meeting System</div>
             </div>
-            <span className="text-xl font-bold text-gray-900">MOMM System</span>
           </Link>
 
           {/* Desktop Navigation */}

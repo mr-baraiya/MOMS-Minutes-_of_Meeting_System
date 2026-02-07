@@ -40,6 +40,7 @@ export async function GET(request: NextRequest) {
       username: userDetails.username,
       email: userDetails.email,
       role: userDetails.role.toLowerCase() as 'admin' | 'convener' | 'staff',
+      profilePicture: userDetails.profilePicture || null,
       staff: userDetails.staff ? {
         id: userDetails.staff.id,
         name: userDetails.staff.staffName,

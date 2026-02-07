@@ -290,21 +290,21 @@ import { Meeting, CreateMeetingRequest } from '@shared/types';
 - Master data management (Meeting Types, Departments, Venues, Staff)
 - View all meetings, attendance, and reports
 - User access control and system configuration
-- **Dashboard**: `/dashboard/admin`
+- **Dashboard**: `/admin/dashboard`
 
 ### Convener (Meeting Organizer)
 - Create, edit, and cancel meetings
 - Add participants and mark attendance
 - Upload MOM documents and related files
 - View meeting-wise and summary reports
-- **Dashboard**: `/dashboard/convener`
+- **Dashboard**: `/convener/dashboard`
 
 ### Staff
 - View assigned meetings and details
 - Check attendance status
 - View and download MOM documents
 - Limited access based on assigned permissions
-- **Dashboard**: `/dashboard/staff`
+- **Dashboard**: `/staff/dashboard`
 
 > **Note**: For detailed dashboard architecture and API integration, see [docs/DASHBOARD_ARCHITECTURE.md](docs/DASHBOARD_ARCHITECTURE.md)
 

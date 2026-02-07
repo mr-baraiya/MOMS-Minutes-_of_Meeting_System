@@ -29,7 +29,7 @@ export function useAuthGuard(options: UseAuthGuardOptions = {}) {
       if (allowedRoles && user && !allowedRoles.includes(user.role)) {
         // User doesn't have the required role
         hasRedirected.current = true;
-        router.push('/dashboard'); // Redirect to general dashboard
+        router.push(`/${user.role}/dashboard`); // Redirect to role dashboard
         return;
       }
     }

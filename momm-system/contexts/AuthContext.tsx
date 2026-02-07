@@ -8,6 +8,7 @@ export interface User {
   username: string;
   email: string;
   role: 'admin' | 'convener' | 'staff';
+  profilePicture?: string | null;
   staff?: {
     id: number;
     name: string;
@@ -113,7 +114,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           router.push(redirectUrl);
         } else {
           // Redirect to role-specific dashboard
-          router.push(`/dashboard/${result.data.user.role}`);
+          router.push(`/${result.data.user.role}/dashboard`);
         }
       } else {
         throw new Error('Login failed');

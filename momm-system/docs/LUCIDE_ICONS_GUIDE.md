@@ -39,21 +39,21 @@ npm install lucide-react
 Need to update Quick Actions sections:
 
 #### Admin Dashboard
-File: `app/dashboard/admin/page.tsx`
+File: `app/admin/dashboard/page.tsx`
 - ➕ → `Plus`
 - 📤 → `Upload`
 - ✅ → `CheckSquare`
 - 📊 → `BarChart`
 
 #### Convener Dashboard
-File: `app/dashboard/convener/page.tsx`
+File: `app/convener/dashboard/page.tsx`
 - ➕ → `Plus`
 - ✅ → `CheckCircle`
 - 👥 → `Users`
 - 📊 → `TrendingUp`
 
 #### Staff Dashboard
-File: `app/dashboard/staff/page.tsx`
+File: `app/staff/dashboard/page.tsx`
 - 📅 → `Calendar`
 - ✅ → `CheckSquare`
 - 📄 → `FileText`
