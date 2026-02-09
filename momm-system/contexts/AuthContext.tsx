@@ -24,6 +24,7 @@ interface AuthContextType {
   login: (username: string, password: string) => Promise<void>;
   register: (data: RegisterData) => Promise<void>;
   logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
   isAuthenticated: boolean;
 }
 
@@ -168,6 +169,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const refreshUser = async () => {
+    try {
+      const storedToken = token || localStorage.getItem('token');
+      if (!storedToken) {
+        setUser(null);
+        return;
+      }
+
+      const response = await fetch('/api/auth/me', {
+        headers: {
+          'Authorization': `Bearer ${storedToken}`,
+        },
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          setUser(result.data);
+        }
+      }
+    } catch (error) {
+      console.error('Refresh user failed:', error);
+    }
+  };
+
   const value = {
     user,
     token,
@@ -175,6 +201,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     login,
     register,
     logout,
+    refreshUser,
     isAuthenticated: !!user,
   };
 

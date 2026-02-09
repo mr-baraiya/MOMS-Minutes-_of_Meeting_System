@@ -18,7 +18,10 @@ function createPrismaClient() {
   return new PrismaClient({ adapter });
 }
 
-export const prisma = globalForPrisma.prisma ?? createPrismaClient();
+const cachedPrisma = globalForPrisma.prisma;
+const needsRefresh = cachedPrisma && !(cachedPrisma as PrismaClient & { supportTicket?: unknown }).supportTicket;
+
+export const prisma = cachedPrisma && !needsRefresh ? cachedPrisma : createPrismaClient();
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 

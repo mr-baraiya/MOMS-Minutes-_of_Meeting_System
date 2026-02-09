@@ -11,7 +11,7 @@ interface HeaderProps {
 export default function Header({ role }: HeaderProps) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   const displayName = user?.staff?.name || user?.username || 'User';
   const displayEmail = user?.email || 'user@example.com';
@@ -30,18 +30,28 @@ export default function Header({ role }: HeaderProps) {
 
   // Mock data - replace with actual data from context/API
   const notifications = [
-    { id: 1, message: 'New meeting scheduled for tomorrow', time: '10 min ago', unread: true },
-    { id: 2, message: 'MOM document uploaded', time: '1 hour ago', unread: true },
-    { id: 3, message: 'Meeting cancelled', time: '2 hours ago', unread: false },
+    { id: 1, type: 'Meeting created', message: 'Quarterly planning meeting was scheduled.', time: '10 min ago', unread: true },
+    { id: 2, type: 'MOM uploaded', message: 'MOM document uploaded for Project Sync.', time: '1 hour ago', unread: true },
+    { id: 3, type: 'Attendance marked', message: 'Attendance marked for Sprint Review.', time: '2 hours ago', unread: false },
+    { id: 4, type: 'Report generated', message: 'Monthly report is ready to download.', time: 'Yesterday', unread: false },
   ];
 
   const unreadCount = notifications.filter(n => n.unread).length;
+
+  const handleLogout = async () => {
+    setShowProfile(false);
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
 
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
         {/* Search Bar */}
-        <div className="flex-1 max-w-xl">
+        <div className="flex-1 max-w-lg">
           <div className="relative">
             <input
               type="text"
@@ -69,7 +79,7 @@ export default function Header({ role }: HeaderProps) {
             >
               <Bell size={24} />
               {unreadCount > 0 && (
-                <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center font-bold">
                   {unreadCount}
                 </span>
               )}
@@ -89,7 +99,13 @@ export default function Header({ role }: HeaderProps) {
                         notification.unread ? 'bg-blue-50' : ''
                       }`}
                     >
-                      <p className="text-sm text-gray-900">{notification.message}</p>
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs font-semibold text-blue-600">{notification.type}</p>
+                        {notification.unread && (
+                          <span className="text-[10px] font-semibold text-blue-600">NEW</span>
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-900 mt-1">{notification.message}</p>
                       <p className="text-xs text-gray-500 mt-1">{notification.time}</p>
                     </div>
                   ))}
@@ -103,6 +119,7 @@ export default function Header({ role }: HeaderProps) {
             )}
           </div>
 
+          <div className="hidden h-8 w-px bg-gray-200 md:block" />
           {/* Profile */}
           <div className="relative">
             <button
@@ -149,10 +166,14 @@ export default function Header({ role }: HeaderProps) {
                   </a>
                 </div>
                 <div className="border-t border-gray-200 py-2">
-                  <a href="/auth/login" className="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="flex w-full items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                  >
                     <LogOut size={16} />
                     Logout
-                  </a>
+                  </button>
                 </div>
               </div>
             )}

@@ -1,24 +1,37 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
-import emailjs from '@emailjs/browser';
-import Swal from 'sweetalert2';
+import { useEffect, useState, FormEvent } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ContactFormProps {
   className?: string;
 }
 
 export default function ContactForm({ className = '' }: ContactFormProps) {
+  const { user, token } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    category: 'MEETING_ISSUE',
     subject: '',
     message: '',
   });
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [successMessage, setSuccessMessage] = useState('');
+  const [submitError, setSubmitError] = useState('');
+
+  useEffect(() => {
+    if (!user) return;
+    setFormData((prev) => ({
+      ...prev,
+      name: user.staff?.name || user.username || prev.name,
+      email: user.email || prev.email,
+    }));
+  }, [user]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -27,66 +40,58 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setErrors({});
+    setSuccessMessage('');
+    setSubmitError('');
 
-    // Validate form
-    if (!formData.name || !formData.email || !formData.subject || !formData.message) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Missing Fields',
-        text: 'Please fill in all fields.',
-        confirmButtonColor: '#2563eb',
-      });
-      setLoading(false);
-      return;
+    const nextErrors: Record<string, string> = {};
+
+    if (!formData.name.trim()) nextErrors.name = 'Full name is required.';
+    if (!formData.email.trim()) nextErrors.email = 'Email is required.';
+    if (!formData.subject.trim()) nextErrors.subject = 'Subject is required.';
+    if (!formData.message.trim()) nextErrors.message = 'Message is required.';
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (formData.email && !emailRegex.test(formData.email)) {
+      nextErrors.email = 'Enter a valid email address.';
     }
 
-    // Validate email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Invalid Email',
-        text: 'Please enter a valid email address.',
-        confirmButtonColor: '#2563eb',
-      });
+    if (Object.keys(nextErrors).length > 0) {
+      setErrors(nextErrors);
       setLoading(false);
       return;
     }
 
     try {
-      // Initialize EmailJS with your public key
-      emailjs.init(process.env.NEXT_PUBLIC_EMAILJS_USER_ID!);
-
-      // Send email using EmailJS
-      const result = await emailjs.send(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
-        {
-          from_name: formData.name,
-          from_email: formData.email,
+      const response = await fetch('/api/support-tickets', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          category: formData.category,
           subject: formData.subject,
           message: formData.message,
-          to_email: 'vvbaraiya32@gmail.com',
-        }
-      );
-
-      if (result.status === 200) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Message Sent!',
-          text: 'We\'ll get back to you soon.',
-          confirmButtonColor: '#2563eb',
-        });
-        setFormData({ name: '', email: '', subject: '', message: '' });
-      }
-    } catch (err) {
-      console.error('Failed to send email:', err);
-      Swal.fire({
-        icon: 'error',
-        title: 'Send Failed',
-        text: 'Failed to send message. Please try again later.',
-        confirmButtonColor: '#2563eb',
+        }),
       });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Failed to send message. Please try again later.');
+      }
+
+      setSuccessMessage('Your message has been sent. Our team will respond within 24 hours.');
+      setFormData((prev) => ({
+        ...prev,
+        subject: '',
+        message: '',
+        category: 'MEETING_ISSUE',
+      }));
+    } catch (err) {
+      console.error('Failed to send message:', err);
+      setSubmitError(err instanceof Error ? err.message : 'Failed to send message.');
     } finally {
       setLoading(false);
     }
@@ -94,11 +99,11 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
 
   return (
     <div className={className}>
-      <h3 className="text-2xl font-bold text-gray-900 mb-6">Send us a message</h3>
+      <h3 className="text-2xl font-semibold text-gray-900 mb-6">Send us a message</h3>
       
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="name" className="block text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">
             Full Name
           </label>
           <input
@@ -107,14 +112,18 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            readOnly={!!user}
+            className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+              errors.name ? 'border-red-400' : 'border-gray-300'
+            } ${user ? 'bg-gray-50' : ''}`}
             placeholder="John Doe"
             disabled={loading}
           />
+          {errors.name && <p className="mt-2 text-xs text-red-600">{errors.name}</p>}
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="email" className="block text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">
             Email Address
           </label>
           <input
@@ -123,14 +132,38 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            readOnly={!!user}
+            className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+              errors.email ? 'border-red-400' : 'border-gray-300'
+            } ${user ? 'bg-gray-50' : ''}`}
             placeholder="john@example.com"
             disabled={loading}
           />
+          {errors.email && <p className="mt-2 text-xs text-red-600">{errors.email}</p>}
         </div>
 
         <div>
-          <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="category" className="block text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">
+            Category
+          </label>
+          <select
+            id="category"
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
+            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            disabled={loading}
+          >
+            <option value="MEETING_ISSUE">Meeting issue</option>
+            <option value="ACCESS_LOGIN">Access / Login</option>
+            <option value="DOCUMENTS_MOM">Documents / MOM</option>
+            <option value="REPORTS">Reports</option>
+            <option value="OTHER">Other</option>
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="subject" className="block text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">
             Subject
           </label>
           <input
@@ -139,14 +172,17 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
             name="subject"
             value={formData.subject}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+              errors.subject ? 'border-red-400' : 'border-gray-300'
+            }`}
             placeholder="How can we help?"
             disabled={loading}
           />
+          {errors.subject && <p className="mt-2 text-xs text-red-600">{errors.subject}</p>}
         </div>
 
         <div>
-          <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="message" className="block text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">
             Message
           </label>
           <textarea
@@ -155,16 +191,30 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
             rows={5}
             value={formData.message}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
+            className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none ${
+              errors.message ? 'border-red-400' : 'border-gray-300'
+            }`}
             placeholder="Tell us more about your inquiry..."
             disabled={loading}
           />
+          {errors.message && <p className="mt-2 text-xs text-red-600">{errors.message}</p>}
         </div>
+
+        {submitError && (
+          <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+            {submitError}
+          </p>
+        )}
+        {successMessage && (
+          <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+            {successMessage}
+          </p>
+        )}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+          className="w-full rounded-full bg-blue-600 px-8 py-3 text-sm font-semibold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50 disabled:transform-none"
         >
           {loading ? (
             <span className="flex items-center justify-center">

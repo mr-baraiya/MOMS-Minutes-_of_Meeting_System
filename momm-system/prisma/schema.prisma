@@ -20,6 +20,7 @@ model User {
   resetTokenExpiry DateTime?  @map("reset_token_expiry")
   documents        Document[]
   reports          Report[]
+  supportTickets   SupportTicket[]
   staff            Staff?
 
   @@map("users")
@@ -145,6 +146,20 @@ model Report {
   @@map("reports")
 }
 
+model SupportTicket {
+  id        Int                 @id @default(autoincrement()) @map("ticket_id")
+  userId    Int                 @map("user_id")
+  category  SupportCategory     @map("category")
+  subject   String              @db.VarChar(200)
+  message   String
+  status    SupportTicketStatus @default(OPEN)
+  createdAt DateTime            @default(now()) @map("created_at")
+  updatedAt DateTime            @updatedAt @map("updated_at")
+  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("support_tickets")
+}
+
 enum Role {
   ADMIN
   CONVENER
@@ -159,4 +174,18 @@ enum VenueType {
 enum ReportType {
   SUMMARY
   MEETING_WISE
+}
+
+enum SupportCategory {
+  MEETING_ISSUE
+  ACCESS_LOGIN
+  DOCUMENTS_MOM
+  REPORTS
+  OTHER
+}
+
+enum SupportTicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
 }

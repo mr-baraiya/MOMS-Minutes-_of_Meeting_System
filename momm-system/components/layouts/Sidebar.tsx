@@ -50,7 +50,7 @@ const menuItems: MenuItem[] = [
     label: 'Calendar',
     href: '/calendar',
     icon: CalendarDays,
-    roles: ['admin', 'convener', 'staff'],
+    roles: ['admin'],
   },
   {
     label: 'Documents',
@@ -110,8 +110,11 @@ const menuItems: MenuItem[] = [
 
 export default function Sidebar({ role }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const pathname = usePathname();
+  const displayName = user?.staff?.name || user?.username || 'User';
+  const profileSrc = user?.profilePicture?.trim() || '';
+  const profileHref = `/${role}/profile`;
 
   // Filter menu items based on role
   const filteredMenuItems = menuItems
@@ -121,6 +124,8 @@ export default function Sidebar({ role }: SidebarProps) {
         ? { ...item, href: `/${role}/dashboard` }
         : item.label === 'Settings'
         ? { ...item, href: `/${role}/settings` }
+        : role === 'staff' && item.label === 'Meetings'
+        ? { ...item, label: 'My Meetings' }
         : item
     );
 
@@ -183,13 +188,43 @@ export default function Sidebar({ role }: SidebarProps) {
       </div>
 
       {/* Role Badge */}
-      {!isCollapsed && (
-        <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-          <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-white ${getRoleColor()}`}>
-            {getRoleName()}
+      <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+        {!isCollapsed ? (
+          <div className="flex items-center gap-3">
+            {profileSrc ? (
+              <img
+                src={profileSrc}
+                alt={`${displayName} profile`}
+                className="h-10 w-10 rounded-full object-cover border border-gray-200"
+              />
+            ) : (
+              <div className="h-10 w-10 rounded-full bg-gray-200 text-gray-700 font-semibold flex items-center justify-center">
+                {displayName.slice(0, 1).toUpperCase()}
+              </div>
+            )}
+            <div>
+              <p className="text-sm font-semibold text-gray-900">{displayName}</p>
+              <a href={profileHref} className="text-xs text-gray-500 hover:text-gray-700">
+                View profile
+              </a>
+            </div>
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="flex items-center justify-center">
+            {profileSrc ? (
+              <img
+                src={profileSrc}
+                alt={`${displayName} profile`}
+                className="h-10 w-10 rounded-full object-cover border border-gray-200"
+              />
+            ) : (
+              <div className="h-10 w-10 rounded-full bg-gray-200 text-gray-700 font-semibold flex items-center justify-center">
+                {displayName.slice(0, 1).toUpperCase()}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto p-4">
@@ -202,14 +237,17 @@ export default function Sidebar({ role }: SidebarProps) {
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                  className={`relative flex items-center gap-3 rounded-lg px-4 py-3 transition-colors ${
                     isActive
-                      ? `${getRoleColor()} text-white`
+                      ? 'bg-blue-50 text-blue-700 font-semibold'
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}
                   title={isCollapsed ? item.label : ''}
                 >
-                  <Icon size={20} />
+                  {isActive && (
+                    <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r bg-blue-600" />
+                  )}
+                  <Icon size={20} className={isActive ? 'text-blue-600' : 'text-gray-400'} />
                   {!isCollapsed && <span className="font-medium">{item.label}</span>}
                 </Link>
               </li>

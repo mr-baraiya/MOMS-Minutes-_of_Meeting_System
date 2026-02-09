@@ -22,8 +22,8 @@ function LoginRedirectHandler() {
       // Show a brief message before redirecting
       Swal.fire({
         icon: 'info',
-        title: 'Already Logged In',
-        text: `Welcome back, ${user.staff?.name || user.username}! Redirecting to your dashboard...`,
+        title: 'You are already signed in',
+        text: `Welcome back, ${user.staff?.name || user.username}! Taking you to your dashboard...`,
         timer: 2000,
         timerProgressBar: true,
         showConfirmButton: false,
@@ -130,8 +130,8 @@ export default function LoginPage() {
               <div className="inline-flex items-center justify-center w-16 h-16 bg-green-600 rounded-full mb-4">
                 <LogIn className="w-8 h-8 text-white" />
               </div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">Already Logged In</h1>
-              <p className="text-gray-600 mb-4">Redirecting to your dashboard...</p>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">You are already signed in</h1>
+              <p className="text-gray-600 mb-4">Taking you to your dashboard...</p>
               <button
                 onClick={clearStoredToken}
                 className="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"

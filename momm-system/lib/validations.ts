@@ -106,12 +106,43 @@ export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
  * Update profile validation schema
  */
 export const updateProfileSchema = z.object({
+  username: z
+    .string()
+    .min(3, 'Username must be at least 3 characters')
+    .max(50, 'Username must not exceed 50 characters')
+    .regex(/^[a-zA-Z0-9._-]+$/, 'Username can only contain letters, numbers, dots, underscores, and hyphens')
+    .optional(),
   email: z.string().email('Invalid email address').optional(),
   staffName: z
     .string()
     .min(2, 'Name must be at least 2 characters')
     .max(100, 'Name must not exceed 100 characters')
     .optional(),
+  profilePicture: z
+    .string()
+    .url('Invalid profile picture URL')
+    .nullable()
+    .optional(),
 });
 
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
+
+/**
+ * Support ticket validation schema
+ */
+export const supportTicketSchema = z.object({
+  category: z.enum(
+    ['MEETING_ISSUE', 'ACCESS_LOGIN', 'DOCUMENTS_MOM', 'REPORTS', 'OTHER'],
+    { message: 'Invalid category' }
+  ),
+  subject: z
+    .string()
+    .min(3, 'Subject must be at least 3 characters')
+    .max(200, 'Subject must not exceed 200 characters'),
+  message: z
+    .string()
+    .min(10, 'Message must be at least 10 characters')
+    .max(2000, 'Message must not exceed 2000 characters'),
+});
+
+export type SupportTicketInput = z.infer<typeof supportTicketSchema>;
