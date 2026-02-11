@@ -42,7 +42,7 @@ const menuItems: MenuItem[] = [
   },
   {
     label: 'Meetings',
-    href: '/meetings',
+    href: '/admin/meetings',
     icon: Calendar,
     roles: ['admin', 'convener', 'staff'],
   },

@@ -610,5 +610,99 @@ export class DashboardService {
       .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
       .slice(0, limit);
   }
+
+  /* -----------------------------------------------------------
+      MEETINGS PER MONTH (Last 6 months for admin dashboard)
+  ----------------------------------------------------------- */
+  static async getMeetingsPerMonth(months = 6) {
+    const now = new Date();
+    const monthsData = [];
+
+    for (let i = months - 1; i >= 0; i--) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const nextDate = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
+      
+      const count = await prisma.meeting.count({
+        where: {
+          meetingDate: {
+            gte: date,
+            lt: nextDate,
+          },
+        },
+      });
+
+      monthsData.push({
+        month: date.toLocaleString('default', { month: 'short', year: 'numeric' }),
+        meetings: count,
+      });
+    }
+
+    return monthsData;
+  }
+
+  /* -----------------------------------------------------------
+      ATTENDANCE TREND (Last 6 months)
+  ----------------------------------------------------------- */
+  static async getAttendanceTrend(months = 6) {
+    const now = new Date();
+    const trendData = [];
+
+    for (let i = months - 1; i >= 0; i--) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const nextDate = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
+      
+      // Get all meetings in this month that have passed
+      const meetings = await prisma.meeting.findMany({
+        where: {
+          meetingDate: {
+            gte: date,
+            lt: nextDate,
+          },
+          isCancelled: false,
+        },
+        include: {
+          meetingMembers: true,
+        },
+      });
+
+      // Calculate attendance percentage
+      let totalMembers = 0;
+      let presentMembers = 0;
+
+      meetings.forEach(meeting => {
+        totalMembers += meeting.meetingMembers.length;
+        presentMembers += meeting.meetingMembers.filter(m => m.isPresent).length;
+      });
+
+      const attendanceRate = totalMembers > 0 
+        ? Math.round((presentMembers / totalMembers) * 100) 
+        : 0;
+
+      trendData.push({
+        month: date.toLocaleString('default', { month: 'short', year: 'numeric' }),
+        attendance: attendanceRate,
+      });
+    }
+
+    return trendData;
+  }
+
+  /* -----------------------------------------------------------
+      OVERALL ATTENDANCE PERCENTAGE FOR ADMIN DASHBOARD
+  ----------------------------------------------------------- */
+  static async getOverallAttendance() {
+    const allMembers = await prisma.meetingMember.findMany({
+      where: {
+        meeting: {
+          isCancelled: false,
+        },
+      },
+    });
+
+    if (allMembers.length === 0) return 0;
+
+    const presentCount = allMembers.filter(m => m.isPresent).length;
+    return Math.round((presentCount / allMembers.length) * 100);
+  }
 }
 

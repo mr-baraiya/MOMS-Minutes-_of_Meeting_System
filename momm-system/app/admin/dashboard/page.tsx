@@ -1,13 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { motion } from 'framer-motion';
+import gsap from 'gsap';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
-import StatCard from '@/components/dashboard/StatCard';
-import RecentMeetings from '@/components/dashboard/RecentMeetings';
-import SystemActivity from '@/components/dashboard/SystemActivity';
+import AnimatedKPICard from '@/components/dashboard/AnimatedKPICard';
+import MeetingsPerMonthChart from '@/components/dashboard/MeetingsPerMonthChart';
+import AttendanceTrendChart from '@/components/dashboard/AttendanceTrendChart';
+import RecentActivityList from '@/components/dashboard/RecentActivityList';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
-
-// Using emoji icons instead of Lucide icons
+import { Calendar, Users, Building2, TrendingUp } from 'lucide-react';
 
 interface AdminDashboardData {
 	stats: {
@@ -19,21 +21,38 @@ interface AdminDashboardData {
 		completedMeetings: number;
 		cancelledMeetings: number;
 		totalStaff: number;
+		overallAttendance: number;
 	};
 	recentMeetings: any[];
+	upcomingMeetings: any[];
 	recentActivity: any[];
+	meetingsPerMonth: { month: string; meetings: number }[];
+	attendanceTrend: { month: string; attendance: number }[];
 }
 
 export default function AdminDashboard() {
 	const { user, loading: authLoading } = useAuthGuard({ allowedRoles: ['admin'] });
 	const [data, setData] = useState<AdminDashboardData | null>(null);
 	const [loading, setLoading] = useState(true);
+	const headerRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		if (!authLoading && user) {
 			fetchDashboardData();
 		}
 	}, [authLoading, user]);
+
+	useEffect(() => {
+		if (headerRef.current && data) {
+			// GSAP animation for header
+			gsap.from(headerRef.current, {
+				y: -50,
+				opacity: 0,
+				duration: 0.8,
+				ease: 'power3.out',
+			});
+		}
+	}, [data]);
 
 	const fetchDashboardData = async () => {
 		try {
@@ -61,106 +80,56 @@ export default function AdminDashboard() {
 
 	return (
 		<DashboardLayout role="admin">
-			<div className="space-y-6">
+			<div className="space-y-8 pb-8">
 				{/* Header */}
-				<div>
-					<h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-					<p className="text-gray-600 mt-2">Overview of system-wide statistics and activities</p>
+				<div ref={headerRef} className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 shadow-xl">
+					<h1 className="text-4xl font-bold text-white mb-2">Admin Dashboard</h1>
+					<p className="text-blue-100 text-lg">
+						Welcome back! Here's an overview of your system performance
+					</p>
 				</div>
 
-				{/* Stats Grid */}
+				{/* Row 1: KPI Cards */}
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-					<StatCard
-						title="Total Users"
-						value={data?.stats.totalUsers || 0}
-						icon="◉"
-						iconType="css"
-						trend={{ value: 12, isPositive: true }}
-						color="blue"
-					/>
-					<StatCard
+					<AnimatedKPICard
 						title="Total Meetings"
 						value={data?.stats.totalMeetings || 0}
-						icon="▢"
-						iconType="css"
-						trend={{ value: 8, isPositive: true }}
-						color="green"
-					/>
-					<StatCard
-						title="Departments"
-						value={data?.stats.totalDepartments || 0}
-						icon="▪"
-						iconType="css"
-						color="purple"
-					/>
-					<StatCard
-						title="Venues"
-						value={data?.stats.totalVenues || 0}
-						icon="⌘"
-						iconType="css"
-						color="orange"
-					/>
-				</div>
-
-				{/* Meeting Status */}
-				<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-					<StatCard
-						title="Active Meetings"
-						value={data?.stats.activeMeetings || 0}
-						icon="●"
-						color="green"
-					/>
-					<StatCard
-						title="Completed"
-						value={data?.stats.completedMeetings || 0}
-						icon="✓"
+						icon={Calendar}
 						color="blue"
+						delay={0.1}
 					/>
-					<StatCard
-						title="Cancelled"
-						value={data?.stats.cancelledMeetings || 0}
-						icon="✗"
-						color="red"
+					<AnimatedKPICard
+						title="Upcoming Meetings"
+						value={data?.stats.activeMeetings || 0}
+						icon={TrendingUp}
+						color="green"
+						delay={0.2}
+					/>
+					<AnimatedKPICard
+						title="Total Staff"
+						value={data?.stats.totalStaff || 0}
+						icon={Users}
+						color="purple"
+						delay={0.3}
+					/>
+					<AnimatedKPICard
+						title="Attendance Rate"
+						value={data?.stats.overallAttendance || 0}
+						icon={Building2}
+						color="orange"
+						delay={0.4}
+						suffix="%"
 					/>
 				</div>
 
-				{/* Content Grid */}
+				{/* Row 2: Charts */}
 				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-					{/* Recent Meetings */}
-					<div className="bg-white rounded-lg shadow p-6">
-						<h2 className="text-xl font-semibold mb-4">Recent Meetings</h2>
-						<RecentMeetings meetings={data?.recentMeetings || []} role="admin" />
-					</div>
-
-					{/* System Activity */}
-					<div className="bg-white rounded-lg shadow p-6">
-						<h2 className="text-xl font-semibold mb-4">System Activity</h2>
-						<SystemActivity activities={data?.recentActivity || []} />
-					</div>
+					<MeetingsPerMonthChart data={data?.meetingsPerMonth || []} />
+					<AttendanceTrendChart data={data?.attendanceTrend || []} />
 				</div>
 
-				{/* Quick Actions */}
-				<div className="bg-white rounded-lg shadow p-6">
-					<h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-					<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-						<button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors flex flex-col items-center">
-							<span className="text-2xl text-gray-600 mb-2">◉</span>
-							<div className="font-medium">Add User</div>
-						</button>
-						<button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors flex flex-col items-center">
-							<span className="text-2xl text-gray-600 mb-2">▪</span>
-							<div className="font-medium">Add Department</div>
-						</button>
-						<button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors flex flex-col items-center">
-							<span className="text-2xl text-gray-600 mb-2">⌘</span>
-							<div className="font-medium">Add Venue</div>
-						</button>
-						<button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors flex flex-col items-center">
-							<span className="text-2xl text-gray-600 mb-2">◐</span>
-							<div className="font-medium">View Reports</div>
-						</button>
-					</div>
-				</div>
+				{/* Row 3: Recent Activity */}
+				<RecentActivityList activities={data?.recentActivity || []} />
 			</div>
 		</DashboardLayout>
 	);

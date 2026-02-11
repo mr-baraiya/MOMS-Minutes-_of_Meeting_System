@@ -278,6 +278,35 @@ export class MeetingService {
   }
 
   /**
+   * Update meeting with members
+   */
+  static async updateWithMembers(id: number, data: UpdateMeetingRequest & { memberIds?: number[] }) {
+    // Update the meeting first
+    const meeting = await this.update(id, data);
+
+    // If memberIds are provided, replace all members
+    if (data.memberIds !== undefined) {
+      // Remove all existing members
+      await prisma.meetingMember.deleteMany({
+        where: { meetingId: id },
+      });
+
+      // Add new members
+      if (data.memberIds.length > 0) {
+        await prisma.meetingMember.createMany({
+          data: data.memberIds.map((staffId) => ({
+            meetingId: id,
+            staffId,
+          })),
+        });
+      }
+    }
+
+    // Return the updated meeting with all relations
+    return this.getById(id);
+  }
+
+  /**
    * Cancel meeting
    */
   static async cancel(id: number, data: CancelMeetingRequest) {

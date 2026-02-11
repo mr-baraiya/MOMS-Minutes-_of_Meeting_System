@@ -92,6 +92,13 @@ export interface MeetingWithRelations extends Meeting {
   documents?: Document[];
 }
 
+export interface MeetingWithCount extends MeetingWithRelations {
+  _count: {
+    meetingMembers: number;
+    documents: number;
+  };
+}
+
 // Meeting Member types
 export interface MeetingMember {
   id: number;

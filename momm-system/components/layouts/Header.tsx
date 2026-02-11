@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Search, Bell, User, Settings as SettingsIcon, HelpCircle, LogOut, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -12,6 +13,7 @@ export default function Header({ role }: HeaderProps) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const { user, logout } = useAuth();
+  const router = useRouter();
 
   const displayName = user?.staff?.name || user?.username || 'User';
   const displayEmail = user?.email || 'user@example.com';
@@ -37,6 +39,10 @@ export default function Header({ role }: HeaderProps) {
   ];
 
   const unreadCount = notifications.filter(n => n.unread).length;
+
+  const handleNewMeetingClick = () => {
+    router.push('/admin/meetings?create=1');
+  };
 
   const handleLogout = async () => {
     setShowProfile(false);
@@ -66,7 +72,10 @@ export default function Header({ role }: HeaderProps) {
         <div className="flex items-center gap-4 ml-6">
           {/* Quick Actions */}
           {role !== 'staff' && (
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+            <button
+              onClick={handleNewMeetingClick}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            >
               + New Meeting
             </button>
           )}

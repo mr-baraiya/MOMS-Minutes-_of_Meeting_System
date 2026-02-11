@@ -53,7 +53,11 @@ export async function PUT(request: NextRequest, { params }: Params) {
       }
     }
 
-    const meeting = await MeetingService.update(meetingId, body);
+    // Use updateWithMembers if memberIds are provided, otherwise use regular update
+    const meeting = body.memberIds !== undefined
+      ? await MeetingService.updateWithMembers(meetingId, body)
+      : await MeetingService.update(meetingId, body);
+      
     return successResponse(meeting, "Meeting updated successfully");
   } catch (error) {
     return handleApiError(error);

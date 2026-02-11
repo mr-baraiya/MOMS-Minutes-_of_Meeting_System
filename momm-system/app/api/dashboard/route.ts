@@ -14,11 +14,21 @@ export async function GET(request: NextRequest) {
       const stats = await DashboardService.getAdminStats();
       const recentMeetings = await DashboardService.getRecentMeetings(5);
       const recentActivity = await DashboardService.getSystemActivity(10);
+      const meetingsPerMonth = await DashboardService.getMeetingsPerMonth(6);
+      const attendanceTrend = await DashboardService.getAttendanceTrend(6);
+      const overallAttendance = await DashboardService.getOverallAttendance();
+      const upcomingMeetings = await DashboardService.getUpcomingMeetings(5);
 
       return successResponse({
-        stats,
+        stats: {
+          ...stats,
+          overallAttendance,
+        },
         recentMeetings,
+        upcomingMeetings,
         recentActivity,
+        meetingsPerMonth,
+        attendanceTrend,
       });
     }
 
