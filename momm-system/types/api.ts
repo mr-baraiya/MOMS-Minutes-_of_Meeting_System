@@ -187,6 +187,7 @@ export interface MeetingFilters extends PaginationParams {
   endDate?: string;
   meetingTypeId?: number;
   organizerStaffId?: number;
+  memberStaffId?: number;
   venueId?: number;
   isCancelled?: boolean;
   search?: string;

@@ -33,6 +33,12 @@ export default function proxy(request: NextRequest) {
         throw new Error('Invalid token');
       }
 
+      // Role guard: path must match role segment
+      const roleFromPath = protectedRoutes.find(route => pathname.startsWith(route))?.slice(1);
+      if (roleFromPath && payload.role !== roleFromPath) {
+        return NextResponse.redirect(new URL('/unauthorized', request.url));
+      }
+
       // Add user info to headers for the protected route
       const response = NextResponse.next();
       response.headers.set('X-User-ID', payload.userId.toString());

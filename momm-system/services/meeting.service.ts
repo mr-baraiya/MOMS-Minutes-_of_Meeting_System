@@ -18,6 +18,7 @@ export class MeetingService {
       endDate,
       meetingTypeId,
       organizerStaffId,
+      memberStaffId,
       venueId,
       isCancelled,
       search,
@@ -35,6 +36,7 @@ export class MeetingService {
 
     if (meetingTypeId) where.meetingTypeId = meetingTypeId;
     if (organizerStaffId) where.organizerStaffId = organizerStaffId;
+    if (memberStaffId) where.meetingMembers = { some: { staffId: memberStaffId } };
     if (venueId) where.venueId = venueId;
     if (isCancelled !== undefined) where.isCancelled = isCancelled;
 
@@ -58,6 +60,18 @@ export class MeetingService {
             },
           },
           venue: true,
+          meetingMembers: memberStaffId
+            ? {
+                where: { staffId: memberStaffId },
+                select: {
+                  id: true,
+                  staffId: true,
+                  isPresent: true,
+                  attendanceMarkedAt: true,
+                  remarks: true,
+                },
+              }
+            : false,
           _count: {
             select: {
               meetingMembers: true,

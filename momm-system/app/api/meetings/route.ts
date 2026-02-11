@@ -6,6 +6,8 @@ import {
   handleApiError,
   parsePaginationParams,
 } from "@/lib/api-utils";
+import { getUserFromRequest, createAuthError } from "@/lib/auth";
+import { MeetingFilters } from "@/types";
 
 /**
  * GET /api/meetings
@@ -13,19 +15,21 @@ import {
  */
 export async function GET(request: NextRequest) {
   try {
+    const currentUser = getUserFromRequest(request);
+    if (!currentUser) {
+      return createAuthError("Unauthorized", 401);
+    }
+
     const searchParams = request.nextUrl.searchParams;
     const { page, limit } = parsePaginationParams(searchParams);
 
-    const filters = {
+    const filters: MeetingFilters = {
       page,
       limit,
       startDate: searchParams.get("startDate") || undefined,
       endDate: searchParams.get("endDate") || undefined,
       meetingTypeId: searchParams.get("meetingTypeId")
         ? parseInt(searchParams.get("meetingTypeId")!, 10)
-        : undefined,
-      organizerStaffId: searchParams.get("organizerStaffId")
-        ? parseInt(searchParams.get("organizerStaffId")!, 10)
         : undefined,
       venueId: searchParams.get("venueId")
         ? parseInt(searchParams.get("venueId")!, 10)
@@ -35,6 +39,24 @@ export async function GET(request: NextRequest) {
         : undefined,
       search: searchParams.get("search") || undefined,
     };
+
+    // Role-based scoping
+    if (currentUser.role === "convener") {
+      if (!currentUser.staffId) {
+        return errorResponse("Convener staff id missing", 400);
+      }
+      filters.organizerStaffId = currentUser.staffId;
+    } else if (currentUser.role === "staff") {
+      if (!currentUser.staffId) {
+        return errorResponse("Staff id missing", 400);
+      }
+      filters.memberStaffId = currentUser.staffId;
+    } else if (currentUser.role === "admin") {
+      // allow optional organizer filter if provided explicitly
+      if (searchParams.get("organizerStaffId")) {
+        filters.organizerStaffId = parseInt(searchParams.get("organizerStaffId")!, 10);
+      }
+    }
 
     const result = await MeetingService.getAll(filters);
     return successResponse(result);
