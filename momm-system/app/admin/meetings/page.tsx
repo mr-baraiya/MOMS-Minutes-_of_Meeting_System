@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
@@ -35,7 +35,7 @@ interface FilterState {
 	departmentId: string;
 }
 
-export default function AdminMeetingsPage() {
+function AdminMeetingsContent() {
 	const searchParams = useSearchParams();
 	const { user, loading: authLoading } = useAuthGuard({ allowedRoles: ['admin'] });
 	const [viewMode, setViewMode] = useState<ViewMode>('table');
@@ -545,5 +545,21 @@ export default function AdminMeetingsPage() {
 				/>
 			)}
 		</DashboardLayout>
+	);
+}
+
+export default function AdminMeetingsPage() {
+	return (
+		<Suspense
+			fallback={
+				<DashboardLayout role="admin">
+					<div className="flex items-center justify-center h-full">
+						<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+					</div>
+				</DashboardLayout>
+			}
+		>
+			<AdminMeetingsContent />
+		</Suspense>
 	);
 }
