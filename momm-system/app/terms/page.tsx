@@ -2,8 +2,9 @@ import Link from 'next/link';
 import { FileText } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import type { Metadata } from 'next';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Terms of Service | MOMM System',
   description: 'Terms of Service for the Minutes of Meeting Management System',
 };
