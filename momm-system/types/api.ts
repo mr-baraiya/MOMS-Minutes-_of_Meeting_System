@@ -70,6 +70,7 @@ export interface CreateUserRequest {
   password: string;
   role?: Role;
   profilePicture?: string;
+  isActive?: boolean;
 }
 
 export interface UpdateUserRequest {

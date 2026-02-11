@@ -6,13 +6,20 @@ import {
   handleApiError,
   parsePaginationParams,
 } from "@/lib/api-utils";
+import { getUserFromRequest, hasRole, createAuthError } from "@/lib/auth";
 
 /**
  * GET /api/users
- * Get all users with pagination
+ * Get all users with pagination (Admin only)
  */
 export async function GET(request: NextRequest) {
   try {
+    // Check authentication and authorization
+    const currentUser = getUserFromRequest(request);
+    if (!currentUser || !hasRole(currentUser, ['admin'])) {
+      return createAuthError('Admin access required', 403);
+    }
+
     const searchParams = request.nextUrl.searchParams;
     const { page, limit } = parsePaginationParams(searchParams);
 
@@ -25,10 +32,16 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/users
- * Create a new user
+ * Create a new user (Admin only)
  */
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication and authorization
+    const currentUser = getUserFromRequest(request);
+    if (!currentUser || !hasRole(currentUser, ['admin'])) {
+      return createAuthError('Admin access required', 403);
+    }
+
     const body = await request.json();
 
     if (!body.username || !body.email || !body.password) {

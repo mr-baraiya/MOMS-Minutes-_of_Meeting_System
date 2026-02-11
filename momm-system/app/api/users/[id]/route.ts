@@ -6,16 +6,23 @@ import {
   handleApiError,
   parseId,
 } from "@/lib/api-utils";
+import { getUserFromRequest, hasRole, createAuthError } from "@/lib/auth";
 
 interface Params {
   params: Promise<{ id: string }>;
 }
 
 /**
- * GET /api/users/[id]
+ * GET /api/users/[id] (Admin only)
  */
 export async function GET(request: NextRequest, { params }: Params) {
   try {
+    // Check authentication and authorization
+    const currentUser = getUserFromRequest(request);
+    if (!currentUser || !hasRole(currentUser, ['admin'])) {
+      return createAuthError('Admin access required', 403);
+    }
+
     const { id } = await params;
     const userId = parseId(id);
     if (!userId) {
@@ -34,10 +41,16 @@ export async function GET(request: NextRequest, { params }: Params) {
 }
 
 /**
- * PUT /api/users/[id]
+ * PUT /api/users/[id] (Admin only)
  */
 export async function PUT(request: NextRequest, { params }: Params) {
   try {
+    // Check authentication and authorization
+    const currentUser = getUserFromRequest(request);
+    if (!currentUser || !hasRole(currentUser, ['admin'])) {
+      return createAuthError('Admin access required', 403);
+    }
+
     const { id } = await params;
     const userId = parseId(id);
     if (!userId) {
@@ -70,17 +83,23 @@ export async function PUT(request: NextRequest, { params }: Params) {
 }
 
 /**
- * DELETE /api/users/[id]
+ * DELETE /api/users/[id] (Admin only)
  */
 export async function DELETE(request: NextRequest, { params }: Params) {
   try {
+    // Check authentication and authorization
+    const currentUser = getUserFromRequest(request);
+    if (!currentUser || !hasRole(currentUser, ['admin'])) {
+      return createAuthError('Admin access required', 403);
+    }
+
     const { id } = await params;
     const userId = parseId(id);
     if (!userId) {
       return errorResponse("Invalid user ID");
     }
 
-    await UserService.delete(userId);
+    await UserService.hardDelete(userId);
     return successResponse(null, "User deleted successfully");
   } catch (error) {
     return handleApiError(error);

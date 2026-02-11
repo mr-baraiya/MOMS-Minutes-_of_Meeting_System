@@ -66,7 +66,7 @@ const menuItems: MenuItem[] = [
   },
   {
     label: 'Users',
-    href: '/users',
+    href: '/admin/users',
     icon: Users,
     roles: ['admin'],
   },

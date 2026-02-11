@@ -95,6 +95,7 @@ export class UserService {
         passwordHash,
         role: data.role || "STAFF",
         profilePicture: data.profilePicture,
+        isActive: data.isActive !== undefined ? data.isActive : true,
       },
       include: {
         staff: true,
