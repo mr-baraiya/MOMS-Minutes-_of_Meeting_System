@@ -2,8 +2,9 @@ import Link from 'next/link';
 import { Shield } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import type { Metadata } from 'next';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Privacy Policy | MOMM System',
   description: 'Privacy Policy for the Minutes of Meeting Management System',
 };
