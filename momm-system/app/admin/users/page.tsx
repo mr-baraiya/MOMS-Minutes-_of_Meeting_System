@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { Users, Plus, Edit2, Trash2, Search, X, Eye, EyeOff, AlertTriangle, Info, Calendar, Mail, User as UserIcon, Shield, Activity } from 'lucide-react';
+import Swal from 'sweetalert2';
 
 interface User {
 	id: number;
@@ -208,16 +209,29 @@ export default function UsersManagement() {
 			const result = await response.json();
 
 			if (result.success) {
-				setSuccessMessage(`User "${userToDelete.username}" has been permanently deleted`);
-				setTimeout(() => setSuccessMessage(''), 5000);
-				handleCloseDeleteModal();
-				await fetchUsers();
-			} else {
-				alert(result.error || result.message || 'Failed to delete user');
-			}
-		} catch (error) {
+			await Swal.fire({
+				icon: 'success',
+				title: 'User Deleted',
+				text: `User "${userToDelete.username}" has been permanently deleted`,
+				timer: 2000,
+				showConfirmButton: false,
+			});
+			handleCloseDeleteModal();
+			await fetchUsers();
+		} else {
+			await Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: result.error || result.message || 'Failed to delete user',
+			});
+		}
+	} catch (error) {
 			console.error('Error deleting user:', error);
-			alert('An error occurred while deleting the user');
+			await Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: 'An unexpected error occurred while deleting the user',
+			});
 		}
 	};
 
@@ -236,11 +250,24 @@ export default function UsersManagement() {
 
 	const handleToggleStatus = async (userId: number, currentStatus: boolean, username: string) => {
 		const action = currentStatus ? 'deactivate' : 'activate';
-		const confirmMessage = currentStatus
-			? `Are you sure you want to deactivate user "${username}"?\n\nDeactivated users cannot log in but their data is preserved. You can reactivate them later.`
-			: `Are you sure you want to activate user "${username}"?\n\nActivated users will be able to log in to the system.`;
+		const confirmTitle = currentStatus ? 'Deactivate User?' : 'Activate User?';
+		const confirmText = currentStatus
+			? `Are you sure you want to deactivate "${username}"? Deactivated users cannot log in but their data is preserved. You can reactivate them later.`
+			: `Are you sure you want to activate "${username}"? Activated users will be able to log in to the system.`;
 		
-		if (!confirm(confirmMessage)) {
+		const result = await Swal.fire({
+			title: confirmTitle,
+			text: confirmText,
+			icon: 'question',
+			showCancelButton: true,
+			confirmButtonColor: currentStatus ? '#ef4444' : '#10b981',
+			cancelButtonColor: '#6b7280',
+			confirmButtonText: currentStatus ? 'Yes, deactivate' : 'Yes, activate',
+			cancelButtonText: 'Cancel',
+			reverseButtons: true,
+		});
+
+		if (!result.isConfirmed) {
 			return;
 		}
 
@@ -254,15 +281,28 @@ export default function UsersManagement() {
 			const result = await response.json();
 
 			if (result.success) {
-				setSuccessMessage(`User "${username}" has been ${action}d successfully`);
-				setTimeout(() => setSuccessMessage(''), 5000);
+				await Swal.fire({
+					icon: 'success',
+					title: 'Success',
+					text: `User "${username}" has been ${action}d successfully`,
+					timer: 2000,
+					showConfirmButton: false,
+				});
 				await fetchUsers();
 			} else {
-				alert(result.error || result.message || 'Failed to update user status');
+				await Swal.fire({
+					icon: 'error',
+					title: 'Error',
+					text: result.message || `Failed to ${action} user`,
+				});
 			}
 		} catch (error) {
 			console.error('Error updating user status:', error);
-			alert('An error occurred while updating user status');
+			await Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: 'An unexpected error occurred while updating user status',
+			});
 		}
 	};
 

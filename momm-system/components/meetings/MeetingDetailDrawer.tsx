@@ -20,12 +20,14 @@ interface MeetingDetailDrawerProps {
 	meeting: MeetingWithCount;
 	onClose: () => void;
 	onRefresh: () => void;
+	onEdit?: (meeting: MeetingWithCount) => void;
 }
 
 export default function MeetingDetailDrawer({
 	meeting,
 	onClose,
 	onRefresh,
+	onEdit,
 }: MeetingDetailDrawerProps) {
 	const [detailedMeeting, setDetailedMeeting] = useState<any>(null);
 	const [loading, setLoading] = useState(true);
@@ -300,15 +302,18 @@ export default function MeetingDetailDrawer({
 
 							{/* Action Buttons */}
 							<div className="flex gap-3 pt-4 border-t border-gray-200">
-								<button
-									onClick={() => {
-										// TODO: Edit meeting
-									}}
-									className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-								>
-									<Edit size={18} />
-									Edit Meeting
-								</button>
+								{onEdit && !meeting.isCancelled && (
+									<button
+										onClick={() => {
+											onEdit(meeting);
+											onClose();
+										}}
+										className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+									>
+										<Edit size={18} />
+										Edit Meeting
+									</button>
+								)}
 								<button
 									onClick={onClose}
 									className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"

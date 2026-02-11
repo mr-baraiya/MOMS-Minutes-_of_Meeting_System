@@ -22,6 +22,7 @@ import MeetingDetailDrawer from '@/components/meetings/MeetingDetailDrawer';
 import NewMeetingModal from '@/components/meetings/NewMeetingModal';
 import ConfirmModal from '@/components/common/ConfirmModal';
 import { MeetingWithCount } from '@/types/models';
+import Swal from 'sweetalert2';
 
 type ViewMode = 'table' | 'card' | 'calendar';
 type MeetingStatus = 'all' | 'upcoming' | 'completed' | 'cancelled';
@@ -146,6 +147,7 @@ function AdminMeetingsContent() {
 	const handleEditMeeting = (meeting: MeetingWithCount) => {
 		setSelectedMeeting(meeting);
 		setShowEditMeetingModal(true);
+		setShowDetailDrawer(false);
 	};
 
 	const handleViewAttendance = (meeting: MeetingWithCount) => {
@@ -174,21 +176,40 @@ function AdminMeetingsContent() {
 			});
 
 			if (response.ok) {
+				await Swal.fire({
+					icon: 'success',
+					title: 'Meeting Cancelled',
+					text: 'The meeting has been cancelled successfully.',
+					timer: 2000,
+					showConfirmButton: false,
+				});
 				fetchMeetings(); // Refresh the list
 				setShowConfirmModal(false);
 				setMeetingToCancel(null);
 			} else {
-				alert('Failed to cancel meeting');
+				await Swal.fire({
+					icon: 'error',
+					title: 'Error',
+					text: 'Failed to cancel meeting',
+				});
 			}
 		} catch (error) {
 			console.error('Error cancelling meeting:', error);
-			alert('Error cancelling meeting');
+			await Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: 'An unexpected error occurred while cancelling the meeting',
+			});
 		}
 	};
 
 	const handleExportCSV = () => {
 		if (!meetings.length) {
-			alert('No meetings to export');
+			Swal.fire({
+				icon: 'info',
+				title: 'No Data',
+				text: 'No meetings to export',
+			});
 			return;
 		}
 
@@ -505,26 +526,7 @@ function AdminMeetingsContent() {
 					meeting={selectedMeeting}
 					onClose={() => setShowDetailDrawer(false)}
 					onRefresh={fetchMeetings}
-				/>
-			)}
-
-			{/* New Meeting Modal */}
-			{showNewMeetingModal && (
-				<NewMeetingModal
-					onClose={() => setShowNewMeetingModal(false)}
-					onSuccess={fetchMeetings}
-				/>
-			)}
-
-			{/* Edit Meeting Modal */}
-			{showEditMeetingModal && selectedMeeting && (
-				<NewMeetingModal
-					onClose={() => {
-						setShowEditMeetingModal(false);
-						setSelectedMeeting(null);
-					}}
-					onSuccess={fetchMeetings}
-					editMeeting={selectedMeeting}
+					onEdit={handleEditMeeting}
 				/>
 			)}
 

@@ -1,10 +1,11 @@
 'use client';
 
+import { Suspense } from 'react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import MeetingsContainer from '@/components/meetings/MeetingsContainer';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 
-export default function ConvenerMeetingsPage() {
+function ConvenerMeetingsContent() {
 	const { loading } = useAuthGuard({ allowedRoles: ['convener'] });
 
 	if (loading) {
@@ -21,5 +22,15 @@ export default function ConvenerMeetingsPage() {
 		<DashboardLayout role="convener">
 			<MeetingsContainer role="convener" />
 		</DashboardLayout>
+	);
+}
+
+export default function ConvenerMeetingsPage() {
+	return (
+		<Suspense fallback={
+			<div style={{ padding: '2rem', textAlign: 'center' }}>Loading...</div>
+		}>
+			<ConvenerMeetingsContent />
+		</Suspense>
 	);
 }

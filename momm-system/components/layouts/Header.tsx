@@ -41,7 +41,12 @@ export default function Header({ role }: HeaderProps) {
   const unreadCount = notifications.filter(n => n.unread).length;
 
   const handleNewMeetingClick = () => {
-    router.push('/admin/meetings?create=1');
+    // Route to correct meetings page based on role
+    if (role === 'convener') {
+      router.push('/convener/meetings?create=1');
+    } else {
+      router.push('/admin/meetings?create=1');
+    }
   };
 
   const handleLogout = async () => {

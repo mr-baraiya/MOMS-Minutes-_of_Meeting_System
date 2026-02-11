@@ -1,7 +1,6 @@
 'use client';
 
 // Global error boundary for unhandled errors
-// Must be kept minimal to avoid build issues
 export default function GlobalError({
   error,
   reset,
@@ -10,11 +9,39 @@ export default function GlobalError({
   reset: () => void;
 }) {
   return (
-    <html>
+    <html lang="en">
       <body>
-        <div style={{ padding: '2rem', textAlign: 'center' }}>
-          <h2>Something went wrong!</h2>
-          <button onClick={() => reset()}>Try again</button>
+        <div style={{ 
+          padding: '2rem', 
+          textAlign: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '100vh',
+          fontFamily: 'system-ui, -apple-system, sans-serif'
+        }}>
+          <h2 style={{ marginBottom: '1rem', fontSize: '1.5rem', fontWeight: '600' }}>
+            Something went wrong!
+          </h2>
+          <p style={{ marginBottom: '1.5rem', color: '#666' }}>
+            An unexpected error occurred. Please try again.
+          </p>
+          <button 
+            onClick={() => reset()}
+            style={{
+              padding: '0.75rem 1.5rem',
+              backgroundColor: '#0070f3',
+              color: 'white',
+              border: 'none',
+              borderRadius: '0.5rem',
+              cursor: 'pointer',
+              fontSize: '1rem',
+              fontWeight: '500'
+            }}
+          >
+            Try again
+          </button>
         </div>
       </body>
     </html>

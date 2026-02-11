@@ -48,7 +48,7 @@ const menuItems: MenuItem[] = [
   },
   {
     label: 'Calendar',
-    href: '/calendar',
+    href: '/admin/calendar',
     icon: CalendarDays,
     roles: ['admin'],
   },
@@ -119,15 +119,22 @@ export default function Sidebar({ role }: SidebarProps) {
   // Filter menu items based on role
   const filteredMenuItems = menuItems
     .filter((item) => item.roles.includes(role))
-    .map((item) =>
-      item.label === 'Dashboard'
-        ? { ...item, href: `/${role}/dashboard` }
-        : item.label === 'Settings'
-        ? { ...item, href: `/${role}/settings` }
-        : role === 'staff' && item.label === 'Meetings'
-        ? { ...item, label: 'My Meetings' }
-        : item
-    );
+    .map((item) => {
+      if (item.label === 'Dashboard') {
+        return { ...item, href: `/${role}/dashboard` };
+      } else if (item.label === 'Settings') {
+        return { ...item, href: `/${role}/settings` };
+      } else if (item.label === 'Meetings') {
+        // Update both label and href for staff and convener
+        if (role === 'staff') {
+          return { ...item, label: 'My Meetings', href: '/staff/meetings' };
+        } else if (role === 'convener') {
+          return { ...item, label: 'My Meetings', href: '/convener/meetings' };
+        }
+        return item; // admin keeps /admin/meetings
+      }
+      return item;
+    });
 
   const handleLogout = async () => {
     try {

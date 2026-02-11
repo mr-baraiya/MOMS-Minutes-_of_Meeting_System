@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { Calendar, Clock, MapPin, Users, Eye, FileText } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import { Calendar, Clock, MapPin, Users, Eye, FileText, Edit } from "lucide-react";
 import { MeetingWithCount } from "@/types/models";
 import MeetingDetailDrawer from "./MeetingDetailDrawer";
 import MeetingsCardView from "./MeetingsCardView";
+import NewMeetingModal from "./NewMeetingModal";
 
 interface ConvenerMeetingsViewProps {
   meetings: MeetingWithCount[];
@@ -23,7 +25,24 @@ export default function ConvenerMeetingsView({
   selectedMeeting,
   onCloseDetail,
 }: ConvenerMeetingsViewProps) {
+  const searchParams = useSearchParams();
   const [view, setView] = useState<"card" | "table">("card");
+  const [showNewMeetingModal, setShowNewMeetingModal] = useState(false);
+  const [showEditMeetingModal, setShowEditMeetingModal] = useState(false);
+  const [meetingToEdit, setMeetingToEdit] = useState<MeetingWithCount | null>(null);
+
+  // Check if we should open the create modal from URL
+  useEffect(() => {
+    const create = searchParams.get('create');
+    if (create === '1') {
+      setShowNewMeetingModal(true);
+    }
+  }, [searchParams]);
+
+  const handleEditMeeting = (meeting: MeetingWithCount) => {
+    setMeetingToEdit(meeting);
+    setShowEditMeetingModal(true);
+  };
 
   const renderCards = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
@@ -75,13 +94,22 @@ export default function ConvenerMeetingsView({
               onClick={() => onSelect(meeting)}
               className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
-              <Eye className="w-4 h-4" /> View Details
+              <Eye className="w-4 h-4" /> View
             </button>
+            {!meeting.isCancelled && (
+              <button
+                onClick={() => handleEditMeeting(meeting)}
+                className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-sm bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50"
+              >
+                <Edit className="w-4 h-4" /> Edit
+              </button>
+            )}
             <a
               href={`/api/meetings/${meeting.id}/documents`}
               className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-sm bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50"
+              title="Documents"
             >
-              <FileText className="w-4 h-4" /> Documents
+              <FileText className="w-4 h-4" />
             </a>
           </div>
         </div>
@@ -129,7 +157,7 @@ export default function ConvenerMeetingsView({
           meetings={meetings}
           loading={loading}
           onViewMeeting={onSelect}
-          onEditMeeting={onSelect}
+          onEditMeeting={handleEditMeeting}
         />
       )}
 
@@ -138,6 +166,34 @@ export default function ConvenerMeetingsView({
           meeting={selectedMeeting}
           onClose={onCloseDetail}
           onRefresh={onRefresh}
+          onEdit={handleEditMeeting}
+        />
+      )}
+
+      {/* New Meeting Modal */}
+      {showNewMeetingModal && (
+        <NewMeetingModal
+          onClose={() => setShowNewMeetingModal(false)}
+          onSuccess={() => {
+            setShowNewMeetingModal(false);
+            onRefresh();
+          }}
+        />
+      )}
+
+      {/* Edit Meeting Modal */}
+      {showEditMeetingModal && meetingToEdit && (
+        <NewMeetingModal
+          onClose={() => {
+            setShowEditMeetingModal(false);
+            setMeetingToEdit(null);
+          }}
+          onSuccess={() => {
+            setShowEditMeetingModal(false);
+            setMeetingToEdit(null);
+            onRefresh();
+          }}
+          editMeeting={meetingToEdit}
         />
       )}
     </div>
