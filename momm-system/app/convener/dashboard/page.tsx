@@ -9,6 +9,10 @@ import RecentMeetings from '@/components/dashboard/RecentMeetings';
 import UpcomingMeetings from '@/components/dashboard/UpcomingMeetings';
 import ConvenerMeetingStatsChart from '@/components/dashboard/ConvenerMeetingStatsChart';
 import ConvenerParticipantEngagementChart from '@/components/dashboard/ConvenerParticipantEngagementChart';
+import PendingActionItems from '@/components/dashboard/convener/PendingActionItems';
+import MeetingTypeDistribution from '@/components/dashboard/convener/MeetingTypeDistribution';
+import VenueUtilization from '@/components/dashboard/convener/VenueUtilization';
+import RecentActivityFeed from '@/components/dashboard/convener/RecentActivityFeed';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { 
 	Calendar, 
@@ -279,34 +283,44 @@ export default function ConvenerDashboard() {
 					<ConvenerParticipantEngagementChart data={participantEngagementData} />
 				</div>
 
-				{/* Pending Documents Alert */}
-				{/* {data?.stats.pendingDocuments && data.stats.pendingDocuments > 0 && (
-					<motion.div 
-						initial={{ opacity: 0, y: 20 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ delay: 0.5 }}
-						className="rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 p-6 shadow-sm"
-					>
-						<div className="flex items-center gap-3">
-							<div className="p-3 bg-amber-100 rounded-lg">
-								<AlertCircle className="h-6 w-6 text-amber-600" />
-							</div>
-							<div className="flex-1">
-								<p className="font-semibold text-amber-900">
-									{data.stats.pendingDocuments} meeting{data.stats.pendingDocuments > 1 ? 's' : ''} awaiting document upload
-								</p>
-								<p className="text-sm text-amber-700 mt-1">
-									Upload minutes of meeting to keep records complete
-								</p>
-							</div>
-							<Link href="/convener/documents">
-								<button className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-medium transition-colors">
-									Upload Now
-								</button>
-							</Link>
-						</div>
-					</motion.div>
-				)} */}
+				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+					<PendingActionItems />
+					<RecentActivityFeed />
+				</div>
+
+				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+					<MeetingTypeDistribution />
+					<VenueUtilization />
+				</div>
+
+				{/* Pending Documents Alert
+				// {data?.stats.pendingDocuments && data.stats.pendingDocuments > 0 && (
+				// 	<motion.div 
+				// 		initial={{ opacity: 0, y: 20 }}
+				// 		animate={{ opacity: 1, y: 0 }}
+				// 		transition={{ delay: 0.5 }}
+				// 		className="rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 p-6 shadow-sm"
+				// 	>
+				// 		<div className="flex items-center gap-3">
+				// 			<div className="p-3 bg-amber-100 rounded-lg">
+				// 				<AlertCircle className="h-6 w-6 text-amber-600" />
+				// 			</div>
+				// 			<div className="flex-1">
+				// 				<p className="font-semibold text-amber-900">
+				// 					{data.stats.pendingDocuments} meeting{data.stats.pendingDocuments > 1 ? 's' : ''} awaiting document upload
+				// 				</p>
+				// 				<p className="text-sm text-amber-700 mt-1">
+				// 					Upload minutes of meeting to keep records complete
+				// 				</p>
+				// 			</div>
+				// 			<Link href="/convener/documents">
+				// 				<button className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-medium transition-colors">
+				// 					Upload Now
+				// 				</button>
+				// 			</Link>
+				// 		</div>
+				// 	</motion.div>
+				// )} */}
 
 				{/* Quick Actions */}
 				<motion.div 

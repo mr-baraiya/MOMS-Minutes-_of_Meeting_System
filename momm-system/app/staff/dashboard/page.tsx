@@ -9,6 +9,8 @@ import UpcomingMeetings from '@/components/dashboard/UpcomingMeetings';
 import AttendanceHistory from '@/components/dashboard/AttendanceHistory';
 import StaffAttendanceChart from '@/components/dashboard/StaffAttendanceChart';
 import StaffMeetingTrendChart from '@/components/dashboard/StaffMeetingTrendChart';
+import StaffActionItems from '@/components/dashboard/staff/StaffActionItems';
+import StaffActivityFeed from '@/components/dashboard/staff/StaffActivityFeed';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { 
 	Calendar, 
@@ -296,18 +298,23 @@ export default function StaffDashboard() {
 					/>
 				</motion.div>
 
-				{/* Charts Row */}
+				{/* Content Grid */}
 				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 					<StaffAttendanceChart data={attendanceChartData} />
 					<StaffMeetingTrendChart data={meetingTrendData} />
 				</div>
 
-				{/* Content Grid */}
+				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+					<StaffActionItems />
+					<StaffActivityFeed />
+				</div>
+
+				{/* Meetings Overview */}
 				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 					<motion.div 
 						initial={{ opacity: 0, x: -20 }}
 						animate={{ opacity: 1, x: 0 }}
-						transition={{ delay: 0.5 }}
+						transition={{ delay: 0.6 }}
 						className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow"
 					>
 						<div className="flex justify-between items-center mb-4">
@@ -320,12 +327,12 @@ export default function StaffDashboard() {
 					<motion.div 
 						initial={{ opacity: 0, x: 20 }}
 						animate={{ opacity: 1, x: 0 }}
-						transition={{ delay: 0.6 }}
+						transition={{ delay: 0.7 }}
 						className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow"
 					>
 						<div className="flex justify-between items-center mb-4">
 							<h2 className="text-xl font-bold text-gray-900">Attendance History</h2>
-							<span className="text-sm text-gray-500">Recent activity</span>
+							<span className="text-sm text-gray-500">Last 5 meetings</span>
 						</div>
 						<AttendanceHistory history={data?.attendanceHistory || []} />
 					</motion.div>
@@ -335,34 +342,34 @@ export default function StaffDashboard() {
 				<motion.div 
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
-					transition={{ delay: 0.7 }}
+					transition={{ delay: 0.8 }}
 					className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
 				>
 					<h2 className="text-xl font-bold text-gray-900 mb-6">Quick Actions</h2>
 					<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 						<ActionButton
 							icon={CalendarDays}
-							label="View Calendar"
-							description="See all your scheduled meetings"
+							label="My Calendar"
+							description="View all your meetings"
 							color="blue"
-							delay={0.8}
+							delay={0.9}
 							href="/staff/meetings"
 						/>
 						<ActionButton
-							icon={UserCheck}
-							label="My Attendance"
-							description="Track your attendance history"
-							color="emerald"
-							delay={0.9}
-							href="/staff/attendance"
-						/>
-						<ActionButton
 							icon={Download}
-							label="Download MOMs"
-							description="Access meeting documents"
-							color="purple"
+							label="Get Documents"
+							description="Download meeting files"
+							color="emerald"
 							delay={1.0}
 							href="/staff/documents"
+						/>
+						<ActionButton
+							icon={UserCheck}
+							label="Update Profile"
+							description="Keep your info current"
+							color="purple"
+							delay={1.1}
+							href="/staff/profile"
 						/>
 					</div>
 				</motion.div>
