@@ -89,29 +89,20 @@ export default function ConvenerMeetingsView({
             </div>
           </div>
 
-          <div className="flex gap-2 pt-2">
-            <button
-              onClick={() => onSelect(meeting)}
-              className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-            >
-              <Eye className="w-4 h-4" /> View
-            </button>
-            {!meeting.isCancelled && (
+            <div className="flex gap-2 pt-2">
+			  <a
+			    href={`/convener/meetings/${meeting.id}/attendance`}
+				className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-sm bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+			  >
+			    <Users className="w-4 h-4" /> Attendance
+			  </a>
               <button
-                onClick={() => handleEditMeeting(meeting)}
-                className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-sm bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50"
+                onClick={() => onSelect(meeting)}
+                className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
-                <Edit className="w-4 h-4" /> Edit
+                <Eye className="w-4 h-4" /> View
               </button>
-            )}
-            <a
-              href={`/api/meetings/${meeting.id}/documents`}
-              className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-sm bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50"
-              title="Documents"
-            >
-              <FileText className="w-4 h-4" />
-            </a>
-          </div>
+            </div>
         </div>
       ))}
     </div>

@@ -35,8 +35,16 @@ export default function proxy(request: NextRequest) {
 
       // Role guard: path must match role segment
       const roleFromPath = protectedRoutes.find(route => pathname.startsWith(route))?.slice(1);
-      if (roleFromPath && payload.role !== roleFromPath) {
-        return NextResponse.redirect(new URL('/unauthorized', request.url));
+      
+      if (roleFromPath) {
+        const isAuthorized =
+          payload.role === 'admin' ||
+          payload.role === roleFromPath ||
+          (payload.role === 'convener' && roleFromPath === 'staff');
+
+        if (!isAuthorized) {
+          return NextResponse.redirect(new URL('/unauthorized', request.url));
+        }
       }
 
       // Add user info to headers for the protected route

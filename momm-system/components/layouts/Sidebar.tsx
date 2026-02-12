@@ -96,9 +96,9 @@ const menuItems: MenuItem[] = [
   },
   {
     label: 'My Attendance',
-    href: '/attendance',
+    href: '/staff/attendance',
     icon: CheckSquare,
-    roles: ['staff'],
+    roles: ['admin', 'convener', 'staff'],
   },
   {
     label: 'Settings',

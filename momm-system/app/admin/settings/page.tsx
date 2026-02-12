@@ -3,17 +3,60 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
+import Toast from '@/components/common/Toast';
+import { useState, useEffect } from 'react';
+import { User, Lock, Shield, Mail, Settings as SettingsIcon } from 'lucide-react';
 
 export default function AdminSettingsPage() {
   const { user: authUser } = useAuth();
   const { user, loading } = useAuthGuard({ allowedRoles: ['admin'] });
+  const [activeTab, setActiveTab] = useState('profile');
+  const [settingsData, setSettingsData] = useState<any>(null);
+  const [saving, setSaving] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'warning' } | null>(null);
 
   const profile = authUser || user;
-  const displayName = profile?.staff?.name || profile?.username || 'Administrator';
-  const displayEmail = profile?.email || 'admin@example.com';
-  const displayRole = profile?.role || 'admin';
 
-  if (loading) {
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  const fetchSettings = async () => {
+    try {
+      const response = await fetch('/api/settings');
+      if (response.ok) {
+        const data = await response.json();
+        setSettingsData(data.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch settings:', error);
+    }
+  };
+
+  const saveSettings = async (section: string, data: any) => {
+    setSaving(true);
+    try {
+      const response = await fetch('/api/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ section, data }),
+      });
+      
+      if (response.ok) {
+        setToast({ message: 'Settings saved successfully!', type: 'success' });
+        fetchSettings();
+      } else {
+        setToast({ message: 'Failed to save settings', type: 'error' });
+      }
+    } catch (error) {
+      console.error('Failed to save settings:', error);
+      setToast({ message: 'Error saving settings', type: 'error' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading || !settingsData) {
     return (
       <DashboardLayout role="admin">
         <div className="flex items-center justify-center h-full">
@@ -23,96 +66,354 @@ export default function AdminSettingsPage() {
     );
   }
 
+  const tabs = [
+    { id: 'profile', label: 'Profile Settings', icon: User },
+    { id: 'security', label: 'Security Settings', icon: Shield },
+    { id: 'email', label: 'Email Settings', icon: Mail },
+    { id: 'system', label: 'System Settings', icon: SettingsIcon },
+  ];
+
   return (
     <DashboardLayout role="admin">
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Source+Sans+3:wght@400;500;600&display=swap');
-        .admin-settings {
-          font-family: 'Source Sans 3', sans-serif;
-        }
-        .admin-settings h1,
-        .admin-settings h2,
-        .admin-settings h3 {
-          font-family: 'Cinzel', serif;
-        }
-        .settings-rise {
-          animation: settingsRise 650ms ease forwards;
-        }
-        @keyframes settingsRise {
-          from { opacity: 0; transform: translateY(16px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-slate-900 to-amber-900 text-white rounded-lg p-6">
+          <h1 className="text-3xl font-bold">Settings</h1>
+          <p className="text-slate-200 mt-2">Manage your preferences and system configuration</p>
+        </div>
 
-      <div className="admin-settings space-y-8">
-        <header className="rounded-3xl border border-slate-200 bg-gradient-to-r from-slate-950 via-slate-900 to-amber-950 p-8 text-white settings-rise">
-          <p className="text-xs uppercase tracking-[0.35em] text-amber-200">Administration</p>
-          <h1 className="text-3xl font-semibold">Settings Control Room</h1>
-          <p className="text-amber-100/80 mt-2">Tune system behavior and account access for {displayName}.</p>
-          <div className="mt-5 flex flex-wrap gap-3 text-xs uppercase tracking-[0.2em]">
-            <span className="rounded-full border border-amber-300/40 bg-amber-500/20 px-3 py-2">{displayRole}</span>
-            <span className="rounded-full border border-white/20 bg-white/10 px-3 py-2">{displayEmail}</span>
-          </div>
-        </header>
-
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-semibold text-slate-900">Account Control</h2>
-            <div className="mt-4 space-y-4 text-sm text-slate-600">
-              <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Profile</p>
-                <p className="mt-2 text-sm font-semibold text-slate-900">Update name, avatar, and department</p>
-              </div>
-              <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Access</p>
-                <p className="mt-2 text-sm font-semibold text-slate-900">Manage user roles and permissions</p>
-              </div>
-            </div>
-            <button className="mt-6 w-full rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-900 hover:text-slate-900">
-              Open Account Settings
+        {/* Tab Navigation */}
+        <div className="flex gap-2 border-b border-slate-200 overflow-x-auto">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors whitespace-nowrap ${
+                activeTab === tab.id
+                  ? 'border-amber-600 text-amber-600 font-semibold'
+                  : 'border-transparent text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <tab.icon className="w-4 h-4" />
+              {tab.label}
             </button>
-          </section>
+          ))}
+        </div>
 
-          <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-semibold text-slate-900">Security</h2>
-            <div className="mt-4 space-y-4">
-              {[
-                { label: 'Two-Factor Authentication', value: 'Enabled' },
-                { label: 'Session Timeout', value: '30 minutes' },
-                { label: 'Audit Logs', value: 'Active' },
-              ].map((item) => (
-                <div key={item.label} className="flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.2em] text-slate-400">{item.label}</p>
-                    <p className="mt-2 text-sm font-semibold text-slate-900">{item.value}</p>
-                  </div>
-                  <span className="text-xs uppercase tracking-[0.2em] text-amber-700">Edit</span>
-                </div>
-              ))}
-            </div>
-            <button className="mt-6 w-full rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
-              Update Security
-            </button>
-          </section>
-
-          <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-semibold text-slate-900">System Preferences</h2>
-            <div className="mt-4 space-y-4 text-sm text-slate-600">
-              <div className="rounded-2xl border border-amber-100 bg-amber-50 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-amber-700">Data Retention</p>
-                <p className="mt-2 text-sm font-semibold text-amber-900">Keep archives for 3 years</p>
-              </div>
-              <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Email Digest</p>
-                <p className="mt-2 text-sm font-semibold text-slate-900">Weekly summary enabled</p>
-              </div>
-            </div>
-            <button className="mt-6 w-full rounded-full border border-amber-300 px-4 py-2 text-sm font-semibold text-amber-900 hover:bg-amber-100">
-              Review Preferences
-            </button>
-          </section>
+        {/* Content Panel */}
+        <div className="bg-white rounded-lg shadow p-6">
+          {activeTab === 'profile' && <ProfileSection data={settingsData.profile} onSave={saveSettings} />}
+          {activeTab === 'security' && <SecuritySection data={settingsData.securitySettings} onSave={saveSettings} />}
+          {activeTab === 'email' && <EmailSection data={settingsData.emailSettings} onSave={saveSettings} />}
+          {activeTab === 'system' && <SystemSection data={settingsData.systemSettings} onSave={saveSettings} />}
         </div>
       </div>
     </DashboardLayout>
+  );
+}
+
+function ProfileSection({ data, onSave }: any) {
+  const [formData, setFormData] = useState({ name: '', mobile: '', profilePicture: '' });
+
+  return (
+    <div className="space-y-6">
+      <h2 className="text-2xl font-semibold">Profile Settings</h2>
+      
+      <div className="grid gap-4">
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Username</label>
+          <input type="text" value={data.username} disabled className="w-full px-3 py-2 border border-slate-300 rounded-md bg-slate-100" />
+          <p className="text-xs text-slate-500 mt-1">Username cannot be changed</p>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
+          <input type="email" value={data.email} disabled className="w-full px-3 py-2 border border-slate-300 rounded-md bg-slate-100" />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Name</label>
+          <input
+            type="text"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            placeholder={data.staff?.staffName || 'Enter your name'}
+            className="w-full px-3 py-2 border border-slate-300 rounded-md"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Mobile Number</label>
+          <input
+            type="tel"
+            value={formData.mobile}
+            onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
+            placeholder={data.staff?.mobileNo || 'Enter mobile number'}
+            className="w-full px-3 py-2 border border-slate-300 rounded-md"
+          />
+        </div>
+      </div>
+
+      <button
+        onClick={() => onSave('profile', formData)}
+        className="px-6 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700"
+      >
+        Save Profile
+      </button>
+
+      <hr className="my-6" />
+
+      <PasswordChangeSection onSave={onSave} />
+    </div>
+  );
+}
+
+function PasswordChangeSection({ onSave }: any) {
+  const [passwords, setPasswords] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'warning' } | null>(null);
+
+  const handlePasswordChange = () => {
+    if (passwords.newPassword !== passwords.confirmPassword) {
+      setToast({ message: 'New passwords do not match', type: 'error' });
+      return;
+    }
+    onSave('password', { currentPassword: passwords.currentPassword, newPassword: passwords.newPassword });
+    setPasswords({ currentPassword: '', newPassword: '', confirmPassword: '' });
+  };
+
+  return (
+    <div className="space-y-4">
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+      <h3 className="text-xl font-semibold">Change Password</h3>
+      
+      <div>
+        <label className="block text-sm font-medium text-slate-700 mb-1">Current Password</label>
+        <input
+          type="password"
+          value={passwords.currentPassword}
+          onChange={(e) => setPasswords({ ...passwords, currentPassword: e.target.value })}
+          className="w-full px-3 py-2 border border-slate-300 rounded-md"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-slate-700 mb-1">New Password</label>
+        <input
+          type="password"
+          value={passwords.newPassword}
+          onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })}
+          className="w-full px-3 py-2 border border-slate-300 rounded-md"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-slate-700 mb-1">Confirm New Password</label>
+        <input
+          type="password"
+          value={passwords.confirmPassword}
+          onChange={(e) => setPasswords({ ...passwords, confirmPassword: e.target.value })}
+          className="w-full px-3 py-2 border border-slate-300 rounded-md"
+        />
+      </div>
+
+      <button
+        onClick={handlePasswordChange}
+        className="px-6 py-2 bg-slate-900 text-white rounded-md hover:bg-slate-800"
+      >
+        Change Password
+      </button>
+    </div>
+  );
+}
+
+function SecuritySection({ data, onSave }: any) {
+  const [settings, setSettings] = useState(data);
+
+  return (
+    <div className="space-y-6">
+      <h2 className="text-2xl font-semibold">Security Settings</h2>
+      
+      <div className="space-y-4">
+        <div className="flex items-center justify-between p-4 border border-slate-200 rounded-md">
+          <div>
+            <h3 className="font-medium">Require Strong Passwords</h3>
+            <p className="text-sm text-slate-600">Enforce password complexity requirements for all users</p>
+          </div>
+          <input
+            type="checkbox"
+            checked={settings.requireStrongPasswords}
+            onChange={(e) => setSettings({ ...settings, requireStrongPasswords: e.target.checked })}
+            className="w-5 h-5"
+          />
+        </div>
+
+        <div className="flex items-center justify-between p-4 border border-slate-200 rounded-md">
+          <div>
+            <h3 className="font-medium">Auto Logout on Inactivity</h3>
+            <p className="text-sm text-slate-600">Automatically log out users after period of inactivity</p>
+          </div>
+          <input
+            type="checkbox"
+            checked={settings.autoLogoutInactivity}
+            onChange={(e) => setSettings({ ...settings, autoLogoutInactivity: e.target.checked })}
+            className="w-5 h-5"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Session Timeout (minutes)</label>
+          <input
+            type="number"
+            value={settings.sessionTimeout}
+            onChange={(e) => setSettings({ ...settings, sessionTimeout: parseInt(e.target.value) })}
+            className="w-full px-3 py-2 border border-slate-300 rounded-md"
+          />
+        </div>
+      </div>
+
+      <button
+        onClick={() => onSave('security', settings)}
+        className="px-6 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700"
+      >
+        Save Security Settings
+      </button>
+    </div>
+  );
+}
+
+function EmailSection({ data, onSave }: any) {
+  const [settings, setSettings] = useState(data);
+
+  return (
+    <div className="space-y-6">
+      <h2 className="text-2xl font-semibold">Email / Notification Settings</h2>
+      
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">SMTP Sender Name</label>
+          <input
+            type="text"
+            value={settings.smtpSenderName}
+            onChange={(e) => setSettings({ ...settings, smtpSenderName: e.target.value })}
+            className="w-full px-3 py-2 border border-slate-300 rounded-md"
+          />
+        </div>
+
+        <div className="flex items-center justify-between p-4 border border-slate-200 rounded-md">
+          <div>
+            <h3 className="font-medium">Enable Email Notifications</h3>
+            <p className="text-sm text-slate-600">System-wide email notifications</p>
+          </div>
+          <input
+            type="checkbox"
+            checked={settings.enableEmailNotifications}
+            onChange={(e) => setSettings({ ...settings, enableEmailNotifications: e.target.checked })}
+            className="w-5 h-5"
+          />
+        </div>
+
+        <div className="flex items-center justify-between p-4 border border-slate-200 rounded-md">
+          <div>
+            <h3 className="font-medium">Meeting Reminder Emails</h3>
+            <p className="text-sm text-slate-600">Send reminders before meetings</p>
+          </div>
+          <input
+            type="checkbox"
+            checked={settings.meetingReminderEmails}
+            onChange={(e) => setSettings({ ...settings, meetingReminderEmails: e.target.checked })}
+            className="w-5 h-5"
+          />
+        </div>
+
+        <div className="flex items-center justify-between p-4 border border-slate-200 rounded-md">
+          <div>
+            <h3 className="font-medium">MOM Upload Notifications</h3>
+            <p className="text-sm text-slate-600">Notify when minutes are uploaded</p>
+          </div>
+          <input
+            type="checkbox"
+            checked={settings.momUploadNotifications}
+            onChange={(e) => setSettings({ ...settings, momUploadNotifications: e.target.checked })}
+            className="w-5 h-5"
+          />
+        </div>
+      </div>
+
+      <button
+        onClick={() => onSave('email', settings)}
+        className="px-6 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700"
+      >
+        Save Email Settings
+      </button>
+    </div>
+  );
+}
+
+function SystemSection({ data, onSave }: any) {
+  const [settings, setSettings] = useState(data);
+
+  return (
+    <div className="space-y-6">
+      <h2 className="text-2xl font-semibold">System Settings</h2>
+      
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Default Meeting Duration (minutes)</label>
+          <input
+            type="number"
+            value={settings.defaultMeetingDuration}
+            onChange={(e) => setSettings({ ...settings, defaultMeetingDuration: parseInt(e.target.value) })}
+            className="w-full px-3 py-2 border border-slate-300 rounded-md"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Default Meeting Type</label>
+          <input
+            type="text"
+            value={settings.defaultMeetingType}
+            onChange={(e) => setSettings({ ...settings, defaultMeetingType: e.target.value })}
+            className="w-full px-3 py-2 border border-slate-300 rounded-md"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">File Upload Size Limit (MB)</label>
+          <input
+            type="number"
+            value={settings.fileUploadSizeLimit}
+            onChange={(e) => setSettings({ ...settings, fileUploadSizeLimit: parseInt(e.target.value) })}
+            className="w-full px-3 py-2 border border-slate-300 rounded-md"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Allowed File Formats</label>
+          <div className="text-sm text-slate-600 p-3 bg-slate-50 border border-slate-200 rounded-md">
+            {settings.allowedFileFormats.join(', ')}
+          </div>
+        </div>
+      </div>
+
+      <button
+        onClick={() => onSave('system', settings)}
+        className="px-6 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700"
+      >
+        Save System Settings
+      </button>
+    </div>
   );
 }

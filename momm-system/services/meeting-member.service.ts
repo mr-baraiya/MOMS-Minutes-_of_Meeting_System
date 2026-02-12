@@ -183,4 +183,25 @@ export class MeetingMemberService {
     });
     return !!member;
   }
+
+  /**
+   * Get attendance history for a staff member
+   */
+  static async getAttendanceHistory(staffId: number) {
+    return prisma.meetingMember.findMany({
+      where: { staffId },
+      include: {
+        meeting: {
+          include: {
+            meetingType: true,
+          },
+        },
+      },
+      orderBy: {
+        meeting: {
+          meetingDate: "desc",
+        },
+      },
+    });
+  }
 }

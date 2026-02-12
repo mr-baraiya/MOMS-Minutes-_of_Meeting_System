@@ -27,6 +27,14 @@ export function errorResponse(
   return NextResponse.json(response, { status });
 }
 
+export function unauthorizedResponse(message: string = "Unauthorized"): NextResponse {
+  return errorResponse(message, 401);
+}
+
+export function forbiddenResponse(message: string = "Forbidden"): NextResponse {
+  return errorResponse(message, 403);
+}
+
 /**
  * Create a paginated response
  */

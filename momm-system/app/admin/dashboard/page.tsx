@@ -37,8 +37,13 @@ export default function AdminDashboard() {
 	const headerRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		if (!authLoading && user) {
-			fetchDashboardData();
+		if (!authLoading) {
+			if (user) {
+				fetchDashboardData();
+			} else {
+				// Stop loading if no user is present (will be redirected by AuthGuard)
+				setLoading(false);
+			}
 		}
 	}, [authLoading, user]);
 

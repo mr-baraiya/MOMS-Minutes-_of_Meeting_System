@@ -3,17 +3,60 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
+import Toast from '@/components/common/Toast';
+import { useState, useEffect } from 'react';
+import { User, Bell, Calendar } from 'lucide-react';
 
 export default function ConvenerSettingsPage() {
   const { user: authUser } = useAuth();
   const { user, loading } = useAuthGuard({ allowedRoles: ['convener'] });
+  const [activeTab, setActiveTab] = useState('profile');
+  const [settingsData, setSettingsData] = useState<any>(null);
+  const [saving, setSaving] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'warning' } | null>(null);
 
   const profile = authUser || user;
-  const displayName = profile?.staff?.name || profile?.username || 'Convener';
-  const displayRole = profile?.role || 'convener';
-  const displayEmail = profile?.email || 'convener@example.com';
 
-  if (loading) {
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  const fetchSettings = async () => {
+    try {
+      const response = await fetch('/api/settings');
+      if (response.ok) {
+        const data = await response.json();
+        setSettingsData(data.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch settings:', error);
+    }
+  };
+
+  const saveSettings = async (section: string, data: any) => {
+    setSaving(true);
+    try {
+      const response = await fetch('/api/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ section, data }),
+      });
+      
+      if (response.ok) {
+        setToast({ message: 'Settings saved successfully!', type: 'success' });
+        fetchSettings();
+      } else {
+        setToast({ message: 'Failed to save settings', type: 'error' });
+      }
+    } catch (error) {
+      console.error('Failed to save settings:', error);
+      setToast({ message: 'Error saving settings', type: 'error' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading || !settingsData) {
     return (
       <DashboardLayout role="convener">
         <div className="flex items-center justify-center h-full">
@@ -23,80 +66,316 @@ export default function ConvenerSettingsPage() {
     );
   }
 
+  const tabs = [
+    { id: 'profile', label: 'Profile Settings', icon: User },
+    { id: 'notifications', label: 'Notification Preferences', icon: Bell },
+    { id: 'meeting-preferences', label: 'Meeting Preferences', icon: Calendar },
+  ];
+
   return (
     <DashboardLayout role="convener">
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap');
-        .convener-settings {
-          font-family: 'DM Sans', sans-serif;
-        }
-        .convener-settings h1,
-        .convener-settings h2,
-        .convener-settings h3 {
-          font-family: 'Bebas Neue', sans-serif;
-          letter-spacing: 0.08em;
-        }
-        .convener-wave {
-          animation: convenerWave 700ms ease forwards;
-        }
-        @keyframes convenerWave {
-          from { opacity: 0; transform: translateY(18px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-emerald-900 to-teal-700 text-white rounded-lg p-6">
+          <h1 className="text-3xl font-bold">Settings</h1>
+          <p className="text-emerald-100 mt-2">Manage your preferences</p>
+        </div>
 
-      <div className="convener-settings space-y-8">
-        <header className="rounded-[32px] border border-emerald-200 bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-700 p-8 text-white convener-wave">
-          <p className="text-xs uppercase tracking-[0.35em] text-emerald-100">Convener Settings</p>
-          <h1 className="text-4xl">Your Meeting Command Center</h1>
-          <p className="text-emerald-100/80 mt-2">Keep workflows crisp for {displayName}.</p>
-          <div className="mt-5 flex flex-wrap gap-3 text-xs uppercase tracking-[0.2em]">
-            <span className="rounded-full border border-white/20 bg-white/10 px-3 py-2">{displayRole}</span>
-            <span className="rounded-full border border-white/20 bg-white/10 px-3 py-2">{displayEmail}</span>
-          </div>
-        </header>
-
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-          <section className="rounded-3xl border border-emerald-100 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl text-emerald-900">Meeting Defaults</h2>
-            <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-              {[
-                { label: 'Default Duration', value: '60 minutes' },
-                { label: 'Reminder Window', value: '24 hours before' },
-                { label: 'Document Checklist', value: 'Agenda, MOM, Attachments' },
-                { label: 'Participant Limit', value: '30 attendees' },
-              ].map((item) => (
-                <div key={item.label} className="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-4">
-                  <p className="text-xs uppercase tracking-[0.2em] text-emerald-700">{item.label}</p>
-                  <p className="mt-2 text-sm font-semibold text-emerald-900">{item.value}</p>
-                </div>
-              ))}
-            </div>
-            <button className="mt-6 w-full rounded-full border border-emerald-900 px-4 py-2 text-sm font-semibold text-emerald-900 hover:bg-emerald-900 hover:text-white">
-              Edit Meeting Defaults
+        {/* Tab Navigation */}
+        <div className="flex gap-2 border-b border-slate-200 overflow-x-auto">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors whitespace-nowrap ${
+                activeTab === tab.id
+                  ? 'border-emerald-600 text-emerald-600 font-semibold'
+                  : 'border-transparent text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <tab.icon className="w-4 h-4" />
+              {tab.label}
             </button>
-          </section>
+          ))}
+        </div>
 
-          <aside className="rounded-3xl border border-emerald-100 bg-gradient-to-b from-emerald-50 via-white to-white p-6 shadow-sm">
-            <h2 className="text-2xl text-emerald-900">Workflow</h2>
-            <div className="mt-4 space-y-4">
-              {[
-                { label: 'Auto Assign Notes', value: 'On' },
-                { label: 'MOM Approval', value: 'Required' },
-                { label: 'Calendar Sync', value: 'Connected' },
-              ].map((item) => (
-                <div key={item.label} className="rounded-2xl border border-emerald-100 bg-white p-4">
-                  <p className="text-xs uppercase tracking-[0.2em] text-emerald-600">{item.label}</p>
-                  <p className="mt-2 text-sm font-semibold text-slate-800">{item.value}</p>
-                </div>
-              ))}
-            </div>
-            <button className="mt-6 w-full rounded-full bg-emerald-900 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800">
-              Update Workflow
-            </button>
-          </aside>
+        {/* Content Panel */}
+        <div className="bg-white rounded-lg shadow p-6">
+          {activeTab === 'profile' && <ProfileSection data={settingsData.profile} onSave={saveSettings} />}
+          {activeTab === 'notifications' && <NotificationsSection data={settingsData.notificationPreferences} onSave={saveSettings} />}
+          {activeTab === 'meeting-preferences' && <MeetingPreferencesSection data={settingsData.meetingPreferences} onSave={saveSettings} />}
         </div>
       </div>
     </DashboardLayout>
+  );
+}
+
+function ProfileSection({ data, onSave }: any) {
+  const [formData, setFormData] = useState({ name: '', mobile: '', profilePicture: '' });
+
+  return (
+    <div className="space-y-6">
+      <h2 className="text-2xl font-semibold">Profile Settings</h2>
+      
+      <div className="grid gap-4">
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Username</label>
+          <input type="text" value={data.username} disabled className="w-full px-3 py-2 border border-slate-300 rounded-md bg-slate-100" />
+          <p className="text-xs text-slate-500 mt-1">Username cannot be changed</p>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
+          <input type="email" value={data.email} disabled className="w-full px-3 py-2 border border-slate-300 rounded-md bg-slate-100" />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Name</label>
+          <input
+            type="text"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            placeholder={data.staff?.staffName || 'Enter your name'}
+            className="w-full px-3 py-2 border border-slate-300 rounded-md"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Mobile Number</label>
+          <input
+            type="tel"
+            value={formData.mobile}
+            onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
+            placeholder={data.staff?.mobileNo || 'Enter mobile number'}
+            className="w-full px-3 py-2 border border-slate-300 rounded-md"
+          />
+        </div>
+      </div>
+
+      <button
+        onClick={() => onSave('profile', formData)}
+        className="px-6 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700"
+      >
+        Save Profile
+      </button>
+
+      <hr className="my-6" />
+
+      <PasswordChangeSection onSave={onSave} />
+    </div>
+  );
+}
+
+function PasswordChangeSection({ onSave }: any) {
+  const [passwords, setPasswords] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'warning' } | null>(null);
+
+  const handlePasswordChange = () => {
+    if (passwords.newPassword !== passwords.confirmPassword) {
+      setToast({ message: 'New passwords do not match', type: 'error' });
+      return;
+    }
+    onSave('password', { currentPassword: passwords.currentPassword, newPassword: passwords.newPassword });
+    setPasswords({ currentPassword: '', newPassword: '', confirmPassword: '' });
+  };
+
+  return (
+    <div className="space-y-4">
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+      <h3 className="text-xl font-semibold">Change Password</h3>
+      
+      <div>
+        <label className="block text-sm font-medium text-slate-700 mb-1">Current Password</label>
+        <input
+          type="password"
+          value={passwords.currentPassword}
+          onChange={(e) => setPasswords({ ...passwords, currentPassword: e.target.value })}
+          className="w-full px-3 py-2 border border-slate-300 rounded-md"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-slate-700 mb-1">New Password</label>
+        <input
+          type="password"
+          value={passwords.newPassword}
+          onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })}
+          className="w-full px-3 py-2 border border-slate-300 rounded-md"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-slate-700 mb-1">Confirm New Password</label>
+        <input
+          type="password"
+          value={passwords.confirmPassword}
+          onChange={(e) => setPasswords({ ...passwords, confirmPassword: e.target.value })}
+          className="w-full px-3 py-2 border border-slate-300 rounded-md"
+        />
+      </div>
+
+      <button
+        onClick={handlePasswordChange}
+        className="px-6 py-2 bg-emerald-900 text-white rounded-md hover:bg-emerald-800"
+      >
+        Change Password
+      </button>
+    </div>
+  );
+}
+
+function NotificationsSection({ data, onSave }: any) {
+  const [settings, setSettings] = useState(data);
+
+  return (
+    <div className="space-y-6">
+      <h2 className="text-2xl font-semibold">Notification Preferences</h2>
+      <p className="text-sm text-slate-600">Control how you get notified about meetings and events</p>
+      
+      <div className="space-y-4">
+        <div className="flex items-center justify-between p-4 border border-slate-200 rounded-md">
+          <div>
+            <h3 className="font-medium">Email Reminders</h3>
+            <p className="text-sm text-slate-600">Receive email reminders for upcoming meetings</p>
+          </div>
+          <input
+            type="checkbox"
+            checked={settings.emailReminders}
+            onChange={(e) => setSettings({ ...settings, emailReminders: e.target.checked })}
+            className="w-5 h-5"
+          />
+        </div>
+
+        <div className="flex items-center justify-between p-4 border border-slate-200 rounded-md">
+          <div>
+            <h3 className="font-medium">SMS Notifications</h3>
+            <p className="text-sm text-slate-600">Get SMS alerts for critical updates</p>
+          </div>
+          <input
+            type="checkbox"
+            checked={settings.smsNotifications}
+            onChange={(e) => setSettings({ ...settings, smsNotifications: e.target.checked })}
+            className="w-5 h-5"
+          />
+        </div>
+
+        <div className="flex items-center justify-between p-4 border border-slate-200 rounded-md">
+          <div>
+            <h3 className="font-medium">Participant Confirmation</h3>
+            <p className="text-sm text-slate-600">Notify when participants confirm attendance</p>
+          </div>
+          <input
+            type="checkbox"
+            checked={settings.participantConfirmation}
+            onChange={(e) => setSettings({ ...settings, participantConfirmation: e.target.checked })}
+            className="w-5 h-5"
+          />
+        </div>
+
+        <div className="flex items-center justify-between p-4 border border-slate-200 rounded-md">
+          <div>
+            <h3 className="font-medium">Attendance Submission Reminders</h3>
+            <p className="text-sm text-slate-600">Remind to submit attendance after meetings</p>
+          </div>
+          <input
+            type="checkbox"
+            checked={settings.attendanceSubmissionReminders}
+            onChange={(e) => setSettings({ ...settings, attendanceSubmissionReminders: e.target.checked })}
+            className="w-5 h-5"
+          />
+        </div>
+
+        <div className="flex items-center justify-between p-4 border border-slate-200 rounded-md">
+          <div>
+            <h3 className="font-medium">MOM Upload Confirmation</h3>
+            <p className="text-sm text-slate-600">Confirm when minutes of meeting are uploaded</p>
+          </div>
+          <input
+            type="checkbox"
+            checked={settings.momUploadConfirmation}
+            onChange={(e) => setSettings({ ...settings, momUploadConfirmation: e.target.checked })}
+            className="w-5 h-5"
+          />
+        </div>
+      </div>
+
+      <button
+        onClick={() => onSave('notifications', settings)}
+        className="px-6 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700"
+      >
+        Save Notification Preferences
+      </button>
+    </div>
+  );
+}
+
+function MeetingPreferencesSection({ data, onSave }: any) {
+  const [settings, setSettings] = useState(data);
+
+  return (
+    <div className="space-y-6">
+      <h2 className="text-2xl font-semibold">Meeting Preferences</h2>
+      <p className="text-sm text-slate-600">Set default values for creating new meetings</p>
+      
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Default Meeting Duration (minutes)</label>
+          <input
+            type="number"
+            value={settings.defaultMeetingDuration}
+            onChange={(e) => setSettings({ ...settings, defaultMeetingDuration: parseInt(e.target.value) })}
+            className="w-full px-3 py-2 border border-slate-300 rounded-md"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Preferred Meeting Type</label>
+          <select
+            value={settings.preferredMeetingType}
+            onChange={(e) => setSettings({ ...settings, preferredMeetingType: e.target.value })}
+            className="w-full px-3 py-2 border border-slate-300 rounded-md"
+          >
+            <option value="Team Meeting">Team Meeting</option>
+            <option value="General Meeting">General Meeting</option>
+            <option value="Board Meeting">Board Meeting</option>
+            <option value="Review Meeting">Review Meeting</option>
+            <option value="Planning Meeting">Planning Meeting</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Default Venue Type</label>
+          <select
+            value={settings.defaultVenueType}
+            onChange={(e) => setSettings({ ...settings, defaultVenueType: e.target.value })}
+            className="w-full px-3 py-2 border border-slate-300 rounded-md"
+          >
+            <option value="Physical">Physical</option>
+            <option value="Virtual">Virtual</option>
+            <option value="Hybrid">Hybrid</option>
+          </select>
+        </div>
+      </div>
+
+      <button
+        onClick={() => onSave('meeting-preferences', settings)}
+        className="px-6 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700"
+      >
+        Save Meeting Preferences
+      </button>
+    </div>
   );
 }
