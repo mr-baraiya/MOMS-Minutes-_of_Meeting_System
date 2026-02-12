@@ -9,7 +9,7 @@ import {
   Calendar,
   CalendarDays,
   FileText,
-  TrendingUp,
+  FileBarChart,
   Users,
   UserCog,
   Building2,
@@ -61,7 +61,7 @@ const menuItems: MenuItem[] = [
   {
     label: 'Reports',
     href: '/reports',
-    icon: TrendingUp,
+    icon: FileBarChart,
     roles: ['admin', 'convener'],
   },
   {
@@ -126,6 +126,8 @@ export default function Sidebar({ role }: SidebarProps) {
         return { ...item, href: `/${role}/settings` };
       } else if (item.label === 'Documents') {
         return { ...item, href: `/${role}/documents` };
+      } else if (item.label === 'Reports') {
+        return { ...item, href: `/${role}/reports` };
       } else if (item.label === 'Meetings') {
         // Update both label and href for staff and convener
         if (role === 'staff') {
