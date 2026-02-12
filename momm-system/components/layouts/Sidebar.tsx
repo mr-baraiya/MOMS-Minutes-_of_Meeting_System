@@ -124,6 +124,8 @@ export default function Sidebar({ role }: SidebarProps) {
         return { ...item, href: `/${role}/dashboard` };
       } else if (item.label === 'Settings') {
         return { ...item, href: `/${role}/settings` };
+      } else if (item.label === 'Documents') {
+        return { ...item, href: `/${role}/documents` };
       } else if (item.label === 'Meetings') {
         // Update both label and href for staff and convener
         if (role === 'staff') {

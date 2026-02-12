@@ -91,6 +91,20 @@ SESSION_SECRET=your-secure-random-secret
 BCRYPT_SALT_ROUNDS=10
 ```
 
+### Vercel Blob Storage (Required for Document Uploads)
+```env
+BLOB_READ_WRITE_TOKEN=vercel_blob_rw_token_here
+```
+
+**How to get your Vercel Blob token:**
+1. Go to https://vercel.com/dashboard/stores
+2. Create a new Blob Store or select an existing one
+3. Go to the **.env.local** tab
+4. Copy the `BLOB_READ_WRITE_TOKEN` value
+5. Add it to your `.env.local` file
+
+**Note:** Without this token, document uploads will fail with a 500 error.
+
 ---
 
 ## ⚙️ Optional Variables

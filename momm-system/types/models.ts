@@ -126,8 +126,33 @@ export interface Document {
 }
 
 export interface DocumentWithRelations extends Document {
-  meeting?: Meeting;
-  uploader?: User;
+  meeting?: MeetingWithRelations;
+  uploader?: UserWithStaff;
+}
+
+export interface DocumentWithMeetingInfo extends Document {
+  meeting: {
+    id: number;
+    meetingTitle: string;
+    meetingDate: Date;
+    organizer?: {
+      staffName: string;
+      department?: {
+        departmentName: string;
+      } | null;
+    } | null;
+  };
+  uploader: {
+    id: number;
+    username: string;
+    email: string;
+    staff?: {
+      staffName: string;
+      department?: {
+        departmentName: string;
+      } | null;
+    } | null;
+  };
 }
 
 // Report types
