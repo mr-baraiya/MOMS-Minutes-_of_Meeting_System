@@ -4,10 +4,13 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FileText, Upload, Loader2, AlertCircle, Folders } from "lucide-react";
 import { toast, Toaster } from "react-hot-toast";
+import DashboardLayout from "@/components/layouts/DashboardLayout";
+import { useAuthGuard } from "@/hooks/useAuthGuard";
 import DocumentCard from "@/components/documents/DocumentCard";
 import PreviewDrawer from "@/components/documents/PreviewDrawer";
 import UploadModal from "@/components/documents/UploadModal";
 import DocumentFilters from "@/components/documents/DocumentFilters";
+import ConfirmModal from "@/components/common/ConfirmModal";
 import { DocumentWithMeetingInfo } from "@/types/models";
 
 interface Meeting {
@@ -17,6 +20,7 @@ interface Meeting {
 }
 
 export default function ConvenerDocumentsPage() {
+  const { user, loading: authLoading } = useAuthGuard({ allowedRoles: ['convener'] });
   const [documents, setDocuments] = useState<DocumentWithMeetingInfo[]>([]);
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [loading, setLoading] = useState(true);
@@ -24,6 +28,12 @@ export default function ConvenerDocumentsPage() {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [filters, setFilters] = useState<any>({});
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [confirmConfig, setConfirmConfig] = useState<{
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  } | null>(null);
 
   useEffect(() => {
     fetchDocuments();
@@ -76,10 +86,18 @@ export default function ConvenerDocumentsPage() {
   };
 
   const handleDelete = async (document: DocumentWithMeetingInfo) => {
-    if (!confirm(`Are you sure you want to delete "${document.documentTitle}"?`)) {
-      return;
-    }
+    setConfirmConfig({
+      title: "Delete Document",
+      message: `Are you sure you want to delete "${document.documentTitle}"? This action cannot be undone.`,
+      onConfirm: async () => {
+        setIsConfirmOpen(false);
+        await performDelete(document);
+      },
+    });
+    setIsConfirmOpen(true);
+  };
 
+  const performDelete = async (document: DocumentWithMeetingInfo) => {
     try {
       const response = await fetch(`/api/documents/${document.id}`, {
         method: "DELETE",
@@ -98,11 +116,20 @@ export default function ConvenerDocumentsPage() {
     }
   };
 
+  if (authLoading || !user) {
+    return (
+      <DashboardLayout role="convener">
+        <div className="flex items-center justify-center h-screen">
+          <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <DashboardLayout role="convener">
       <Toaster position="top-right" />
-      
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="space-y-6">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -286,23 +313,35 @@ export default function ConvenerDocumentsPage() {
             </div>
           </motion.div>
         )}
+
+        {/* Preview Drawer */}
+        <PreviewDrawer
+          document={selectedDocument}
+          isOpen={isPreviewOpen}
+          onClose={() => setIsPreviewOpen(false)}
+          onDelete={handleDelete}
+          canDelete={true}
+        />
+
+        {/* Upload Modal */}
+        <UploadModal
+          isOpen={isUploadOpen}
+          onClose={() => setIsUploadOpen(false)}
+          onSuccess={fetchDocuments}
+        />
+
+        {/* Confirm Modal */}
+        <ConfirmModal
+          isOpen={isConfirmOpen}
+          onClose={() => setIsConfirmOpen(false)}
+          onConfirm={confirmConfig?.onConfirm || (() => {})}
+          title={confirmConfig?.title || ""}
+          message={confirmConfig?.message || ""}
+          confirmText="Delete"
+          cancelText="Cancel"
+          type="danger"
+        />
       </div>
-
-      {/* Preview Drawer */}
-      <PreviewDrawer
-        document={selectedDocument}
-        isOpen={isPreviewOpen}
-        onClose={() => setIsPreviewOpen(false)}
-        onDelete={handleDelete}
-        canDelete={true}
-      />
-
-      {/* Upload Modal */}
-      <UploadModal
-        isOpen={isUploadOpen}
-        onClose={() => setIsUploadOpen(false)}
-        onSuccess={fetchDocuments}
-      />
-    </div>
+    </DashboardLayout>
   );
 }

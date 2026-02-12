@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FileText, Loader2, BookOpen, Download, Eye } from "lucide-react";
 import { toast, Toaster } from "react-hot-toast";
+import DashboardLayout from "@/components/layouts/DashboardLayout";
+import { useAuthGuard } from "@/hooks/useAuthGuard";
 import DocumentCard from "@/components/documents/DocumentCard";
 import PreviewDrawer from "@/components/documents/PreviewDrawer";
 import DocumentFilters from "@/components/documents/DocumentFilters";
@@ -16,6 +18,7 @@ interface Meeting {
 }
 
 export default function StaffDocumentsPage() {
+  const { user, loading: authLoading } = useAuthGuard({ allowedRoles: ['staff'] });
   const [documents, setDocuments] = useState<DocumentWithMeetingInfo[]>([]);
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [loading, setLoading] = useState(true);
@@ -98,11 +101,20 @@ export default function StaffDocumentsPage() {
     toast.success(`Downloading ${documents.length} document(s)`);
   };
 
+  if (authLoading || !user) {
+    return (
+      <DashboardLayout role="staff">
+        <div className="flex items-center justify-center h-screen">
+          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6">
+    <DashboardLayout role="staff">
       <Toaster position="top-right" />
-      
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="space-y-6">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -289,15 +301,15 @@ export default function StaffDocumentsPage() {
             </div>
           </motion.div>
         )}
-      </div>
 
-      {/* Preview Drawer */}
-      <PreviewDrawer
-        document={selectedDocument}
-        isOpen={isPreviewOpen}
-        onClose={() => setIsPreviewOpen(false)}
-        canDelete={false}
-      />
-    </div>
+        {/* Preview Drawer */}
+        <PreviewDrawer
+          document={selectedDocument}
+          isOpen={isPreviewOpen}
+          onClose={() => setIsPreviewOpen(false)}
+          canDelete={false}
+        />
+      </div>
+    </DashboardLayout>
   );
 }
