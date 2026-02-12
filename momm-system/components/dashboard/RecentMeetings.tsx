@@ -1,3 +1,5 @@
+import { Calendar, MapPin, Tag, User } from 'lucide-react';
+
 interface Meeting {
   id: number;
   title: string;
@@ -46,12 +48,24 @@ export default function RecentMeetings({ meetings, role }: RecentMeetingsProps) 
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <h3 className="font-semibold text-gray-900">{meeting.title}</h3>
-              <div className="mt-2 space-y-1 text-sm text-gray-600">
-                <p><span className="inline-block w-4 text-center mr-2">▢</span>{meeting.date} • {meeting.time}</p>
-                <p><span className="inline-block w-4 text-center mr-2">⌘</span>{meeting.venue || 'N/A'}</p>
-                <p><span className="inline-block w-4 text-center mr-2">◦</span>{meeting.type}</p>
+              <div className="mt-2 space-y-1.5 text-sm text-gray-600">
+                <p className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-gray-500" />
+                  {meeting.date} • {meeting.time}
+                </p>
+                <p className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-gray-500" />
+                  {meeting.venue || 'N/A'}
+                </p>
+                <p className="flex items-center gap-2">
+                  <Tag className="h-4 w-4 text-gray-500" />
+                  {meeting.type}
+                </p>
                 {role === 'admin' && meeting.convener && (
-                  <p><span className="inline-block w-4 text-center mr-2">◉</span>Convener: {meeting.convener}</p>
+                  <p className="flex items-center gap-2">
+                    <User className="h-4 w-4 text-gray-500" />
+                    Convener: {meeting.convener}
+                  </p>
                 )}
               </div>
             </div>

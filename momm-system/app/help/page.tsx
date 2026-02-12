@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Clock, Headset, Mail, MapPin, Phone } from 'lucide-react';
+import { Clock, Headset, Mail, MapPin, Phone, HelpCircle, MessageSquare } from 'lucide-react';
 import ContactForm from '@/components/ContactForm';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { useAuth } from '@/contexts/AuthContext';
@@ -17,115 +17,112 @@ export default function HelpPage() {
 
   return (
     <DashboardLayout role={role}>
-      <div className="min-h-screen bg-[#f5f2ec] px-6 py-10">
-        <style jsx global>{`
-          @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap');
-          .help-page {
-            font-family: 'Manrope', sans-serif;
-            color: #1b1f2a;
-          }
-          .help-page h1,
-          .help-page h2 {
-            font-family: 'Playfair Display', serif;
-          }
-        `}</style>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg p-6">
+          <div className="flex items-center gap-3 mb-2">
+            <Headset className="h-8 w-8" />
+            <h1 className="text-3xl font-bold">Help & Support</h1>
+          </div>
+          <p className="text-blue-100 mt-2">
+            We are here to help you with any questions or issues. Reach out to our support team.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              href="/help/faqs"
+              className="inline-flex items-center gap-2 bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              <HelpCircle className="h-4 w-4" />
+              View FAQs
+            </Link>
+            <Link
+              href="/help/tickets"
+              className="inline-flex items-center gap-2 bg-blue-700 hover:bg-blue-900 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              <MessageSquare className="h-4 w-4" />
+              My Support Tickets
+            </Link>
+          </div>
+        </div>
 
-        <div className="help-page mx-auto w-full max-w-6xl">
-          <header className="relative overflow-hidden rounded-[32px] border border-[#e8dfd0] bg-gradient-to-r from-[#fdfcf9] via-[#f8f3e8] to-[#f3e7d6] p-12 shadow-[0_28px_80px_rgba(20,25,34,0.14)]">
-            <div className="pointer-events-none absolute right-10 top-6 h-28 w-28 rounded-full bg-[#d7b37a]/30 blur-3xl"></div>
-            <div className="pointer-events-none absolute left-6 bottom-0 h-32 w-32 rounded-full bg-[#b7c7d1]/40 blur-3xl"></div>
-            <Headset className="pointer-events-none absolute -left-4 top-6 h-24 w-24 text-[#d6c1a0] opacity-30" />
-            <p className="text-xs uppercase tracking-[0.4em] text-[#8a6f3f]">Help & Support</p>
-            <h1 className="mt-3 text-4xl font-semibold text-[#1b1f2a]">We are here to help</h1>
-            <p className="mt-3 max-w-xl text-sm text-[#4b5563]">
-              Reach our support desk for account, access, or meeting workflow questions. Send a
-              message and our team will respond quickly.
-            </p>
-            <div className="relative z-10 mt-6 flex flex-wrap gap-3">
-              <Link
-                href="/help/faqs"
-                className="rounded-full border border-[#d4c7b1] bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#2f3137] transition hover:border-[#a18b66]"
-              >
-                View FAQs
-              </Link>
-              <Link
-                href="/help/tickets"
-                className="rounded-full bg-[#1b1f2a] px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-black"
-              >
-                My Support Tickets
-              </Link>
-            </div>
-          </header>
-
-          <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-[1.4fr_0.8fr]">
-            <section className="rounded-[28px] border border-[#e8dfd0] bg-white p-9 shadow-[0_18px_50px_rgba(20,25,34,0.08)]">
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Contact Form - Takes 2 columns */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Send us a message</h2>
               <ContactForm />
-            </section>
+            </div>
+          </div>
 
-            <aside className="space-y-6">
-              <div className="rounded-[24px] border border-[#e8dfd0] bg-white p-6 shadow-[0_16px_40px_rgba(20,25,34,0.08)]">
-                <h2 className="text-xl font-medium text-[#1b1f2a]">Contact details</h2>
-                <div className="mt-5 space-y-4 text-sm text-[#4b5563]">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.3em] text-[#9aa0a6]">Support email</p>
-                    <a
-                      href={`mailto:${CONTACT_INFO.email.support}`}
-                      className="mt-2 flex items-center gap-2 font-semibold text-[#1b1f2a] hover:text-[#8a6f3f]"
-                    >
-                      <Mail className="h-4 w-4" />
-                      {CONTACT_INFO.email.support}
-                    </a>
-                  </div>
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.3em] text-[#9aa0a6]">Primary email</p>
-                    <a
-                      href={`mailto:${CONTACT_INFO.email.primary}`}
-                      className="mt-2 flex items-center gap-2 font-semibold text-[#1b1f2a] hover:text-[#8a6f3f]"
-                    >
-                      <Mail className="h-4 w-4" />
-                      {CONTACT_INFO.email.primary}
-                    </a>
-                  </div>
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.3em] text-[#9aa0a6]">Phone</p>
-                    <a
-                      href={`tel:${phoneLink}`}
-                      className="mt-2 flex items-center gap-2 font-semibold text-[#1b1f2a] hover:text-[#8a6f3f]"
-                    >
-                      <Phone className="h-4 w-4" />
-                      {CONTACT_INFO.phone.display}
-                    </a>
-                    <p className="text-xs text-[#6b7280]">{CONTACT_INFO.phone.hours}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.3em] text-[#9aa0a6]">Location</p>
-                    <a
-                      href={mapLink}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="mt-2 flex items-center gap-2 font-semibold text-[#1b1f2a] hover:text-[#8a6f3f]"
-                    >
-                      <MapPin className="h-4 w-4" />
-                      {CONTACT_INFO.address.full}
-                    </a>
-                  </div>
+          {/* Sidebar - Takes 1 column */}
+          <div className="space-y-6">
+            {/* Contact Details Card */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Contact Information</h2>
+              <div className="space-y-4">
+                <div>
+                  <p className="text-xs font-medium text-gray-500 uppercase mb-2">Support Email</p>
+                  <a
+                    href={`mailto:${CONTACT_INFO.email.support}`}
+                    className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium"
+                  >
+                    <Mail className="h-4 w-4" />
+                    <span className="text-sm">{CONTACT_INFO.email.support}</span>
+                  </a>
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-gray-500 uppercase mb-2">Primary Email</p>
+                  <a
+                    href={`mailto:${CONTACT_INFO.email.primary}`}
+                    className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium"
+                  >
+                    <Mail className="h-4 w-4" />
+                    <span className="text-sm">{CONTACT_INFO.email.primary}</span>
+                  </a>
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-gray-500 uppercase mb-2">Phone</p>
+                  <a
+                    href={`tel:${phoneLink}`}
+                    className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium"
+                  >
+                    <Phone className="h-4 w-4" />
+                    <span className="text-sm">{CONTACT_INFO.phone.display}</span>
+                  </a>
+                  <p className="text-xs text-gray-600 mt-1">{CONTACT_INFO.phone.hours}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-gray-500 uppercase mb-2">Location</p>
+                  <a
+                    href={mapLink}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-start gap-2 text-blue-600 hover:text-blue-700 font-medium"
+                  >
+                    <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <span className="text-sm">{CONTACT_INFO.address.full}</span>
+                  </a>
                 </div>
               </div>
+            </div>
 
-              <div className="rounded-[24px] border border-[#e8dfd0] bg-[#111827] p-6 text-white shadow-[0_18px_50px_rgba(17,24,39,0.4)]">
-                <div className="flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-white/70" />
-                  <h2 className="text-2xl font-semibold">Support hours</h2>
-                </div>
-                <p className="mt-3 max-w-xs text-sm text-white/80">
-                  Monday to Friday, 9:00 AM - 6:00 PM IST. We also monitor critical
-                  incidents outside business hours.
+            {/* Support Hours Card */}
+            <div className="bg-gradient-to-br from-slate-700 to-slate-900 text-white rounded-lg p-6">
+              <div className="flex items-center gap-2 mb-3">
+                <Clock className="h-5 w-5" />
+                <h2 className="text-lg font-semibold">Support Hours</h2>
+              </div>
+              <p className="text-sm text-slate-200 mb-4">
+                Monday to Friday, 9:00 AM - 6:00 PM IST. We also monitor critical
+                incidents outside business hours.
+              </p>
+              <div className="bg-white/10 border border-white/20 rounded-lg p-4">
+                <p className="text-sm text-slate-100">
+                  <strong>Urgent issue?</strong> Mark your request as "High Priority" in the subject line.
                 </p>
-                <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-white/80">
-                  For urgent account access issues, mark your request as "High Priority" in the subject.
-                </div>
               </div>
-            </aside>
+            </div>
           </div>
         </div>
       </div>

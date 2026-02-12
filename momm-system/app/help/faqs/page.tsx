@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Headset, ChevronDown, HelpCircle } from 'lucide-react';
+import { ArrowLeft, ChevronDown, HelpCircle, MessageSquare } from 'lucide-react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -32,78 +32,89 @@ export default function HelpFaqsPage() {
 
   return (
     <DashboardLayout role={role}>
-      <div className="min-h-screen bg-[#f5f2ec] px-6 py-10">
-        <style jsx global>{`
-          @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap');
-          .faq-page {
-            font-family: 'Manrope', sans-serif;
-            color: #1b1f2a;
-          }
-          .faq-page h1,
-          .faq-page h2 {
-            font-family: 'Playfair Display', serif;
-          }
-        `}</style>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg p-6">
+          <div className="flex items-center gap-3 mb-2">
+            <HelpCircle className="h-8 w-8" />
+            <h1 className="text-3xl font-bold">Frequently Asked Questions</h1>
+          </div>
+          <p className="text-blue-100 mt-2">
+            Find answers to common questions about meetings, MOMs, and account access.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              href="/help"
+              className="inline-flex items-center gap-2 bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Help
+            </Link>
+            <Link
+              href="/help/tickets"
+              className="inline-flex items-center gap-2 bg-blue-700 hover:bg-blue-900 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              <MessageSquare className="h-4 w-4" />
+              My Support Tickets
+            </Link>
+          </div>
+        </div>
 
-        <div className="faq-page mx-auto w-full max-w-5xl">
-          <header className="relative overflow-hidden rounded-[32px] border border-[#e8dfd0] bg-gradient-to-r from-[#fdfcf9] via-[#f8f3e8] to-[#f3e7d6] p-12 shadow-[0_28px_80px_rgba(20,25,34,0.14)]">
-            <div className="absolute right-8 top-6 h-28 w-28 rounded-full bg-[#d7b37a]/30 blur-3xl"></div>
-            <div className="absolute left-6 bottom-0 h-32 w-32 rounded-full bg-[#b7c7d1]/40 blur-3xl"></div>
-            <Headset className="absolute -left-4 top-6 h-24 w-24 text-[#d6c1a0] opacity-30" />
-            <p className="text-xs uppercase tracking-[0.4em] text-[#8a6f3f]">Help</p>
-            <h1 className="mt-3 text-4xl font-semibold text-[#1b1f2a]">Frequently asked questions</h1>
-            <p className="mt-3 max-w-xl text-sm text-[#4b5563]">
-              Clear, concise answers to the most common questions across meetings, MOMs, and access.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link
-                href="/help"
-                className="rounded-full border border-[#d4c7b1] bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#2f3137] transition hover:border-[#a18b66]"
+        {/* FAQ List */}
+        <div className="space-y-4">
+          {faqs.map((item, index) => {
+            const isOpen = openIndex === index;
+            return (
+              <div
+                key={item.question}
+                className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
               >
-                Back to Help
-              </Link>
-              <Link
-                href="/help/tickets"
-                className="rounded-full bg-[#1b1f2a] px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-black"
-              >
-                My Support Tickets
-              </Link>
-            </div>
-          </header>
-
-          <section className="mt-10 space-y-4">
-            {faqs.map((item, index) => {
-              const isOpen = openIndex === index;
-              return (
                 <button
-                  key={item.question}
                   type="button"
                   onClick={() => setOpenIndex(isOpen ? null : index)}
-                  className="w-full rounded-[22px] border border-[#e8dfd0] bg-white p-6 text-left shadow-[0_16px_40px_rgba(20,25,34,0.08)] transition hover:-translate-y-0.5"
+                  className="w-full p-6 text-left hover:bg-gray-50 transition-colors"
                 >
                   <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-[#9aa0a6]">
-                        <HelpCircle className="h-4 w-4" />
-                        FAQ
-                      </p>
-                      <h2 className="mt-3 text-xl font-semibold text-[#1b1f2a]">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <HelpCircle className="h-4 w-4 text-blue-600" />
+                        <span className="text-xs font-medium text-gray-500 uppercase">Question</span>
+                      </div>
+                      <h2 className="text-lg font-semibold text-gray-900">
                         {item.question}
                       </h2>
                     </div>
                     <ChevronDown
-                      className={`h-5 w-5 text-[#8a6f3f] transition ${isOpen ? 'rotate-180' : ''}`}
+                      className={`h-5 w-5 text-gray-400 transition-transform flex-shrink-0 mt-1 ${
+                        isOpen ? 'rotate-180' : ''
+                      }`}
                     />
                   </div>
                   {isOpen && (
-                    <p className="mt-4 text-sm text-[#4b5563]">
-                      {item.answer}
-                    </p>
+                    <div className="mt-4 pt-4 border-t border-gray-100">
+                      <p className="text-sm text-gray-600 leading-relaxed">
+                        {item.answer}
+                      </p>
+                    </div>
                   )}
                 </button>
-              );
-            })}
-          </section>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Help Footer */}
+        <div className="bg-gray-50 rounded-lg border border-gray-200 p-6 text-center">
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Still need help?</h3>
+          <p className="text-sm text-gray-600 mb-4">
+            Can't find what you're looking for? Contact our support team.
+          </p>
+          <Link
+            href="/help"
+            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+          >
+            Contact Support
+          </Link>
         </div>
       </div>
     </DashboardLayout>

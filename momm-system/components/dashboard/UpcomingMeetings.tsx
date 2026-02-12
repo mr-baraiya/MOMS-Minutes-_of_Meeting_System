@@ -1,3 +1,5 @@
+import { Calendar, MapPin, Tag, Users } from 'lucide-react';
+
 interface Meeting {
   id: number;
   title: string;
@@ -42,12 +44,24 @@ export default function UpcomingMeetings({ meetings }: UpcomingMeetingsProps) {
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <h3 className="font-semibold text-gray-900">{meeting.title}</h3>
-              <div className="mt-2 space-y-1 text-sm text-gray-600">
-                <p><span className="inline-block w-4 text-center mr-2">▢</span>{meeting.date} • {meeting.time}</p>
-                <p><span className="inline-block w-4 text-center mr-2">⌘</span>{meeting.venue || 'N/A'}</p>
-                <p><span className="inline-block w-4 text-center mr-2">◦</span>{meeting.type}</p>
-                {meeting.participantsCount && (
-                  <p><span className="inline-block w-4 text-center mr-2">∘</span>{meeting.participantsCount} participants</p>
+              <div className="mt-2 space-y-1.5 text-sm text-gray-600">
+                <p className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-blue-500" />
+                  {meeting.date} • {meeting.time}
+                </p>
+                <p className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-blue-500" />
+                  {meeting.venue || 'N/A'}
+                </p>
+                <p className="flex items-center gap-2">
+                  <Tag className="h-4 w-4 text-blue-500" />
+                  {meeting.type}
+                </p>
+                {meeting.participantsCount && meeting.participantsCount > 0 && (
+                  <p className="flex items-center gap-2">
+                    <Users className="h-4 w-4 text-blue-500" />
+                    {meeting.participantsCount} participants
+                  </p>
                 )}
               </div>
             </div>
