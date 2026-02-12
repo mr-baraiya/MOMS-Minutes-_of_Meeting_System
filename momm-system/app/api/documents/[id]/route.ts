@@ -9,16 +9,17 @@ import { del } from "@vercel/blob";
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const user = getUserFromRequest(request);
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const documentId = parseInt(params.id);
+    const documentId = parseInt(id);
     const document = await DocumentService.getById(documentId);
 
     if (!document) {
@@ -74,16 +75,17 @@ export async function GET(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const user = getUserFromRequest(request);
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const documentId = parseInt(params.id);
+    const documentId = parseInt(id);
 
     // Get document first
     const document = await DocumentService.getById(documentId);
@@ -141,16 +143,17 @@ export async function DELETE(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const user = getUserFromRequest(request);
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const documentId = parseInt(params.id);
+    const documentId = parseInt(id);
     const body = await request.json();
     const { documentTitle } = body;
 
