@@ -270,16 +270,3 @@ export interface RecentMeeting {
 // ============================================
 // Venue Types
 // ============================================
-
-export interface CreateVenueRequest {
-  venueName: string;
-  venueType: VenueType;
-  location?: string;
-}
-
-export interface UpdateVenueRequest {
-  venueName?: string;
-  venueType?: VenueType;
-  location?: string;
-  isActive?: boolean;
-}

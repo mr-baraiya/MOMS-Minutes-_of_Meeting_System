@@ -25,7 +25,6 @@ export class StaffService {
     const [staff, total] = await Promise.all([
       prisma.staff.findMany({
         where,
-        where,
         skip,
         take: limit,
         include: {
@@ -106,19 +105,6 @@ export class StaffService {
           },
           orderBy: { createdAt: "desc" },
         },
-      },
-    });
-  }
-
-  /**
-   * Get staff by ID
-   */
-  static async getById(id: number) {
-    return prisma.staff.findUnique({
-      where: { id },
-      include: {
-        user: true,
-        department: true,
       },
     });
   }
