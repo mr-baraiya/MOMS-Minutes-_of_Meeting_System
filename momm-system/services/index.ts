@@ -10,3 +10,4 @@ export * from "./meeting-member.service";
 export * from "./document.service";
 export * from "./report.service";
 export * from "./dashboard.service";
+export * from "./notification.service";

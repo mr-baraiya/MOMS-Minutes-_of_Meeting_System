@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { DocumentService } from "@/services/document.service";
+import { NotificationService } from "@/services/notification.service";
+import { prisma } from "@/lib/prisma";
 import { getUserFromRequest } from "@/lib/auth";
 import { put } from "@vercel/blob";
 
@@ -173,6 +175,39 @@ export async function POST(request: NextRequest) {
       filePath: blob.url,
       uploadedBy: user.userId,
     });
+
+    // Send notifications to meeting participants
+    try {
+      const meeting = await prisma.meeting.findUnique({
+        where: { id: meetingId },
+        include: {
+          meetingMembers: {
+            include: {
+              staff: {
+                select: { userId: true },
+              },
+            },
+          },
+        },
+      });
+
+      if (meeting && meeting.meetingMembers.length > 0) {
+        const participantUserIds = meeting.meetingMembers
+          .map((member) => member.staff.userId)
+          .filter((id): id is number => id !== undefined);
+
+        if (participantUserIds.length > 0) {
+          await NotificationService.notifyDocumentUploaded(
+            meetingId,
+            documentTitle,
+            participantUserIds
+          );
+        }
+      }
+    } catch (notifError) {
+      console.error('Failed to send document upload notifications:', notifError);
+      // Don't fail the upload if notification fails
+    }
 
     return NextResponse.json(
       {

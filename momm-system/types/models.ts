@@ -170,3 +170,30 @@ export interface ReportWithRelations extends Report {
   meeting?: Meeting | null;
   generator?: User;
 }
+
+// Notification types
+export enum NotificationType {
+  MEETING_CREATED = "MEETING_CREATED",
+  MEETING_UPDATED = "MEETING_UPDATED",
+  MEETING_CANCELLED = "MEETING_CANCELLED",
+  ATTENDANCE_MARKED = "ATTENDANCE_MARKED",
+  DOCUMENT_UPLOADED = "DOCUMENT_UPLOADED",
+  REPORT_GENERATED = "REPORT_GENERATED",
+  SUPPORT_TICKET_UPDATED = "SUPPORT_TICKET_UPDATED",
+  GENERAL = "GENERAL",
+}
+
+export interface Notification {
+  id: number;
+  userId: number;
+  title: string;
+  message: string;
+  type: NotificationType;
+  referenceId?: number | null;
+  isRead: boolean;
+  createdAt: Date;
+}
+
+export interface NotificationWithUser extends Notification {
+  user?: User;
+}

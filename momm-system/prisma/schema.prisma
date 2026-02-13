@@ -21,6 +21,7 @@ model User {
   documents        Document[]
   reports          Report[]
   supportTickets   SupportTicket[]
+  notifications    Notification[]
   staff            Staff?
 
   @@map("users")
@@ -160,10 +161,36 @@ model SupportTicket {
   @@map("support_tickets")
 }
 
+model Notification {
+  id          Int              @id @default(autoincrement()) @map("notification_id")
+  userId      Int              @map("user_id")
+  title       String           @db.VarChar(200)
+  message     String
+  type        NotificationType @map("type")
+  referenceId Int?             @map("reference_id")
+  isRead      Boolean          @default(false) @map("is_read")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@map("notifications")
+}
+
 enum Role {
   ADMIN
   CONVENER
   STAFF
+}
+
+enum NotificationType {
+  MEETING_CREATED
+  MEETING_UPDATED
+  MEETING_CANCELLED
+  ATTENDANCE_MARKED
+  DOCUMENT_UPLOADED
+  REPORT_GENERATED
+  SUPPORT_TICKET_UPDATED
+  GENERAL
 }
 
 enum VenueType {

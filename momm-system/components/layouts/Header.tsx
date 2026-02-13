@@ -23,9 +23,12 @@ export default function Header({ role }: HeaderProps) {
   const [searchResults, setSearchResults] = useState<SearchResults | null>(null);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [notificationsLoading, setNotificationsLoading] = useState(false);
   const { user, logout } = useAuth();
   const router = useRouter();
-  const searchTimeoutRef = useRef<NodeJS.Timeout>();
+  const searchTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const searchRef = useRef<HTMLDivElement>(null);
 
   const displayName = user?.staff?.name || user?.username || 'User';
@@ -43,15 +46,71 @@ export default function Header({ role }: HeaderProps) {
     return `${first}${last}`.toUpperCase();
   };
 
-  // Mock data - replace with actual data from context/API
-  const notifications = [
-    { id: 1, type: 'Meeting created', message: 'Quarterly planning meeting was scheduled.', time: '10 min ago', unread: true },
-    { id: 2, type: 'MOM uploaded', message: 'MOM document uploaded for Project Sync.', time: '1 hour ago', unread: true },
-    { id: 3, type: 'Attendance marked', message: 'Attendance marked for Sprint Review.', time: '2 hours ago', unread: false },
-    { id: 4, type: 'Report generated', message: 'Monthly report is ready to download.', time: 'Yesterday', unread: false },
-  ];
+  // Fetch notifications
+  const fetchNotifications = async () => {
+    if (!user?.id) return;
+    
+    try {
+      setNotificationsLoading(true);
+      const response = await fetch('/api/notifications?limit=10');
+      const data = await response.json();
+      
+      if (data.success) {
+        setNotifications(data.data.notifications);
+        setUnreadCount(data.data.unreadCount);
+      }
+    } catch (error) {
+      console.error('Failed to fetch notifications:', error);
+    } finally {
+      setNotificationsLoading(false);
+    }
+  };
 
-  const unreadCount = notifications.filter(n => n.unread).length;
+  // Load notifications on mount and when user changes
+  useEffect(() => {
+    if (user?.id) {
+      fetchNotifications();
+    }
+  }, [user?.id]);
+
+  // Format relative time
+  const formatRelativeTime = (date: string) => {
+    const now = new Date();
+    const then = new Date(date);
+    const diffInSeconds = Math.floor((now.getTime() - then.getTime()) / 1000);
+    
+    if (diffInSeconds < 60) return 'Just now';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} min ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hour${Math.floor(diffInSeconds / 3600) > 1 ? 's' : ''} ago`;
+    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} day${Math.floor(diffInSeconds / 86400) > 1 ? 's' : ''} ago`;
+    return then.toLocaleDateString();
+  };
+
+  // Mark notification as read
+  const markAsRead = async (notificationId: number) => {
+    try {
+      await fetch(`/api/notifications/${notificationId}/read`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      fetchNotifications(); // Refresh
+    } catch (error) {
+      console.error('Failed to mark notification as read:', error);
+    }
+  };
+
+  // Mark all as read
+  const markAllAsRead = async () => {
+    try {
+      await fetch('/api/notifications/mark-all-read', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      fetchNotifications(); // Refresh
+    } catch (error) {
+      console.error('Failed to mark all as read:', error);
+    }
+  };
 
   const handleNewMeetingClick = () => {
     // Route to correct meetings page based on role
@@ -274,30 +333,56 @@ export default function Header({ role }: HeaderProps) {
             {/* Notifications Dropdown */}
             {showNotifications && (
               <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
-                <div className="p-4 border-b border-gray-200">
+                <div className="p-4 border-b border-gray-200 flex items-center justify-between">
                   <h3 className="font-semibold text-gray-900">Notifications</h3>
+                  {unreadCount > 0 && (
+                    <button
+                      onClick={markAllAsRead}
+                      className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                    >
+                      Mark all read
+                    </button>
+                  )}
                 </div>
                 <div className="max-h-96 overflow-y-auto">
-                  {notifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${
-                        notification.unread ? 'bg-blue-50' : ''
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <p className="text-xs font-semibold text-blue-600">{notification.type}</p>
-                        {notification.unread && (
-                          <span className="text-[10px] font-semibold text-blue-600">NEW</span>
-                        )}
-                      </div>
-                      <p className="text-sm text-gray-900 mt-1">{notification.message}</p>
-                      <p className="text-xs text-gray-500 mt-1">{notification.time}</p>
+                  {notificationsLoading ? (
+                    <div className="p-8 text-center">
+                      <Loader2 className="w-6 h-6 text-gray-400 animate-spin mx-auto" />
                     </div>
-                  ))}
+                  ) : notifications.length === 0 ? (
+                    <div className="p-8 text-center">
+                      <Bell className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                      <p className="text-sm text-gray-500">No notifications yet</p>
+                    </div>
+                  ) : (
+                    notifications.map((notification) => (
+                      <div
+                        key={notification.id}
+                        onClick={() => !notification.isRead && markAsRead(notification.id)}
+                        className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${
+                          !notification.isRead ? 'bg-blue-50' : ''
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs font-semibold text-blue-600">{notification.title}</p>
+                          {!notification.isRead && (
+                            <span className="text-[10px] font-semibold text-blue-600">NEW</span>
+                          )}
+                        </div>
+                        <p className="text-sm text-gray-900 mt-1">{notification.message}</p>
+                        <p className="text-xs text-gray-500 mt-1">{formatRelativeTime(notification.createdAt)}</p>
+                      </div>
+                    ))
+                  )}
                 </div>
                 <div className="p-3 border-t border-gray-200 text-center">
-                  <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                  <button
+                    onClick={() => {
+                      setShowNotifications(false);
+                      // Navigate to notifications page if exists
+                    }}
+                    className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                  >
                     View all notifications
                   </button>
                 </div>

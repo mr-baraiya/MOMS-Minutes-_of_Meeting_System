@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
-import { MeetingService } from "@/services";
+import { MeetingService, NotificationService } from "@/services";
+import { prisma } from "@/lib/prisma";
 import {
   successResponse,
   errorResponse,
@@ -96,6 +97,36 @@ export async function POST(request: NextRequest) {
     }
 
     const meeting = await MeetingService.create(body);
+
+    // Send notifications to meeting members
+    if (meeting && body.memberIds && body.memberIds.length > 0) {
+      try {
+        // Get user IDs for all staff members
+        const staffMembers = await Promise.all(
+          body.memberIds.map(async (staffId: number) => {
+            const staff = await prisma?.staff.findUnique({
+              where: { id: staffId },
+              select: { userId: true },
+            });
+            return staff?.userId;
+          })
+        );
+
+        const validUserIds = staffMembers.filter((id): id is number => id !== undefined);
+        
+        if (validUserIds.length > 0) {
+          await NotificationService.notifyMeetingCreated(
+            meeting.id,
+            meeting.meetingTitle,
+            validUserIds
+          );
+        }
+      } catch (notifError) {
+        console.error('Failed to send notifications:', notifError);
+        // Don't fail the meeting creation if notification fails
+      }
+    }
+
     return successResponse(meeting, "Meeting created successfully");
   } catch (error) {
     return handleApiError(error);
