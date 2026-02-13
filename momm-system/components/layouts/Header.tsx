@@ -1,19 +1,32 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, Bell, User, Settings as SettingsIcon, HelpCircle, LogOut, ChevronDown } from 'lucide-react';
+import { Search, Bell, User, Settings as SettingsIcon, HelpCircle, LogOut, ChevronDown, Calendar, FileText, Users, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface HeaderProps {
   role: 'admin' | 'convener' | 'staff';
 }
 
+interface SearchResults {
+  meetings: any[];
+  documents: any[];
+  staff: any[];
+  query: string;
+}
+
 export default function Header({ role }: HeaderProps) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<SearchResults | null>(null);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
   const { user, logout } = useAuth();
   const router = useRouter();
+  const searchTimeoutRef = useRef<NodeJS.Timeout>();
+  const searchRef = useRef<HTMLDivElement>(null);
 
   const displayName = user?.staff?.name || user?.username || 'User';
   const displayEmail = user?.email || 'user@example.com';
@@ -58,18 +71,177 @@ export default function Header({ role }: HeaderProps) {
     }
   };
 
+  // Search handler with debounce
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    if (value.trim().length < 2) {
+      setSearchResults(null);
+      setShowSearchResults(false);
+      return;
+    }
+
+    setSearchLoading(true);
+    searchTimeoutRef.current = setTimeout(async () => {
+      try {
+        const response = await fetch(`/api/search?q=${encodeURIComponent(value)}&limit=5`);
+        const data = await response.json();
+        
+        if (data.success) {
+          setSearchResults(data.data);
+          setShowSearchResults(true);
+        }
+      } catch (error) {
+        console.error('Search error:', error);
+      } finally {
+        setSearchLoading(false);
+      }
+    }, 300);
+  };
+
+  // Close search results when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowSearchResults(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Navigate to result
+  const handleResultClick = (type: 'meeting' | 'document' | 'staff', id: number) => {
+    setShowSearchResults(false);
+    setSearchQuery('');
+    
+    if (type === 'meeting') {
+      router.push(`/${role}/meetings/${id}`);
+    } else if (type === 'document') {
+      router.push(`/${role}/documents`);
+    } else if (type === 'staff') {
+      router.push(`/admin/staff/${id}`);
+    }
+  };
+
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
         {/* Search Bar */}
-        <div className="flex-1 max-w-lg">
+        <div className="flex-1 max-w-lg" ref={searchRef}>
           <div className="relative">
             <input
               type="text"
               placeholder="Search meetings, documents, staff..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              onFocus={() => searchResults && setShowSearchResults(true)}
+              className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             <Search className="absolute left-3 top-2.5 text-gray-400" size={20} />
+            {searchLoading && (
+              <Loader2 className="absolute right-3 top-2.5 text-gray-400 animate-spin" size={20} />
+            )}
+
+            {/* Search Results Dropdown */}
+            {showSearchResults && searchResults && (
+              <div className="absolute top-full mt-2 w-full bg-white rounded-lg shadow-xl border border-gray-200 z-50 max-h-96 overflow-y-auto">
+                {/* Meetings */}
+                {searchResults.meetings.length > 0 && (
+                  <div className="p-2">
+                    <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase flex items-center gap-2">
+                      <Calendar size={14} />
+                      Meetings
+                    </div>
+                    {searchResults.meetings.map((meeting) => (
+                      <button
+                        key={meeting.id}
+                        onClick={() => handleResultClick('meeting', meeting.id)}
+                        className="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors"
+                      >
+                        <p className="text-sm font-medium text-gray-900">{meeting.meetingTitle}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-xs text-gray-500">
+                            {new Date(meeting.meetingDate).toLocaleDateString()}
+                          </span>
+                          {meeting.meetingType && (
+                            <span className="text-xs px-2 py-0.5 bg-blue-50 text-blue-600 rounded">
+                              {meeting.meetingType.meetingTypeName}
+                            </span>
+                          )}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Documents */}
+                {searchResults.documents.length > 0 && (
+                  <div className="p-2 border-t border-gray-100">
+                    <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase flex items-center gap-2">
+                      <FileText size={14} />
+                      Documents
+                    </div>
+                    {searchResults.documents.map((doc) => (
+                      <button
+                        key={doc.id}
+                        onClick={() => handleResultClick('document', doc.id)}
+                        className="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors"
+                      >
+                        <p className="text-sm font-medium text-gray-900">{doc.documentTitle}</p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {doc.meeting?.meetingTitle} • {doc.fileName}
+                        </p>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Staff */}
+                {searchResults.staff.length > 0 && (
+                  <div className="p-2 border-t border-gray-100">
+                    <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase flex items-center gap-2">
+                      <Users size={14} />
+                      Staff
+                    </div>
+                    {searchResults.staff.map((staff) => (
+                      <button
+                        key={staff.id}
+                        onClick={() => handleResultClick('staff', staff.id)}
+                        className="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors"
+                      >
+                        <p className="text-sm font-medium text-gray-900">{staff.staffName}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          {staff.designation && (
+                            <span className="text-xs text-gray-500">{staff.designation}</span>
+                          )}
+                          {staff.department && (
+                            <span className="text-xs px-2 py-0.5 bg-purple-50 text-purple-600 rounded">
+                              {staff.department.departmentName}
+                            </span>
+                          )}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* No Results */}
+                {searchResults.meetings.length === 0 && 
+                 searchResults.documents.length === 0 && 
+                 searchResults.staff.length === 0 && (
+                  <div className="p-8 text-center">
+                    <p className="text-sm text-gray-500">No results found for "{searchResults.query}"</p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 

@@ -74,8 +74,15 @@ export async function DELETE(request: NextRequest, { params }: Params) {
       return errorResponse("Invalid meeting type ID");
     }
 
+    const isHardDelete = request.nextUrl.searchParams.get("hardDelete") === "true";
+
+    if (isHardDelete) {
+      await MeetingTypeService.hardDelete(meetingTypeId);
+      return successResponse(null, "Meeting type permanently deleted");
+    }
+
     await MeetingTypeService.delete(meetingTypeId);
-    return successResponse(null, "Meeting type deleted successfully");
+    return successResponse(null, "Meeting type deactivated successfully");
   } catch (error) {
     return handleApiError(error);
   }

@@ -67,6 +67,15 @@ export class MeetingTypeService {
   }
 
   /**
+   * Delete meeting type (hard delete)
+   */
+  static async hardDelete(id: number) {
+    return prisma.meetingType.delete({
+      where: { id },
+    });
+  }
+
+  /**
    * Check if name exists
    */
   static async existsByName(name: string, excludeId?: number) {

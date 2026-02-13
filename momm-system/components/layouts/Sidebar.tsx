@@ -90,7 +90,7 @@ const menuItems: MenuItem[] = [
   },
   {
     label: 'Meeting Types',
-    href: '/meeting-types',
+    href: '/admin/meeting-types',
     icon: Tags,
     roles: ['admin'],
   },
