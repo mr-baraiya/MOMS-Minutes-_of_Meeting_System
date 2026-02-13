@@ -63,8 +63,15 @@ export async function DELETE(request: NextRequest, { params }: Params) {
       return errorResponse("Invalid venue ID");
     }
 
+    const isHardDelete = request.nextUrl.searchParams.get("hardDelete") === "true";
+
+    if (isHardDelete) {
+      await VenueService.hardDelete(venueId);
+      return successResponse(null, "Venue permanently deleted");
+    }
+
     await VenueService.delete(venueId);
-    return successResponse(null, "Venue deleted successfully");
+    return successResponse(null, "Venue deactivated successfully");
   } catch (error) {
     return handleApiError(error);
   }

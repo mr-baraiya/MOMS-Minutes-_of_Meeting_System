@@ -78,8 +78,17 @@ export async function DELETE(request: NextRequest, { params }: Params) {
       return errorResponse("Invalid department ID");
     }
 
+    // Check data integrity
+    const department = await DepartmentService.getById(departmentId);
+    if (department && department._count.staff > 0) {
+        // If query param 'force' isn't present, block deletion
+        // But prompt requested: "prevent deletion if staff members are still assigned"
+        // So we strictly prevent it.
+        return errorResponse("Cannot delete department that has assigned staff members. Please reassign them first.", 400);
+    }
+
     await DepartmentService.delete(departmentId);
-    return successResponse(null, "Department deleted successfully");
+    return successResponse(null, "Department deactivated successfully");
   } catch (error) {
     return handleApiError(error);
   }

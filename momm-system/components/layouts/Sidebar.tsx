@@ -72,19 +72,19 @@ const menuItems: MenuItem[] = [
   },
   {
     label: 'Staff',
-    href: '/staff',
+    href: '/admin/staff',
     icon: UserCog,
     roles: ['admin'],
   },
   {
     label: 'Departments',
-    href: '/departments',
+    href: '/admin/departments',
     icon: Building2,
     roles: ['admin'],
   },
   {
     label: 'Venues',
-    href: '/venues',
+    href: '/admin/venues',
     icon: MapPin,
     roles: ['admin'],
   },
@@ -95,10 +95,16 @@ const menuItems: MenuItem[] = [
     roles: ['admin'],
   },
   {
+    label: 'Manage Attendance',
+    href: '/admin/attendance',
+    icon: CheckSquare,
+    roles: ['admin'],
+  },
+  {
     label: 'My Attendance',
     href: '/staff/attendance',
     icon: CheckSquare,
-    roles: ['admin', 'convener', 'staff'],
+    roles: ['convener', 'staff'],
   },
   {
     label: 'Settings',

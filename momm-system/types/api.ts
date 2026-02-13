@@ -266,3 +266,20 @@ export interface RecentMeeting {
   organizer?: string;
   status: "upcoming" | "completed" | "cancelled";
 }
+
+// ============================================
+// Venue Types
+// ============================================
+
+export interface CreateVenueRequest {
+  venueName: string;
+  venueType: VenueType;
+  location?: string;
+}
+
+export interface UpdateVenueRequest {
+  venueName?: string;
+  venueType?: VenueType;
+  location?: string;
+  isActive?: boolean;
+}

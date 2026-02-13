@@ -80,4 +80,23 @@ export class VenueService {
       data: { isActive: false },
     });
   }
+
+  /**
+   * Delete venue (hard delete)
+   */
+  static async hardDelete(id: number) {
+    return prisma.venue.delete({
+      where: { id },
+    });
+  }
+
+  /**
+   * Check if venue name exists
+   */
+  static async existsByName(name: string, excludeId?: number) {
+    const venue = await prisma.venue.findFirst({
+      where: { venueName: name },
+    });
+    return venue && venue.id !== excludeId;
+  }
 }

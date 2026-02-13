@@ -71,8 +71,16 @@ export async function DELETE(request: NextRequest, { params }: Params) {
       return errorResponse("Invalid staff ID");
     }
 
-    await StaffService.delete(staffId);
-    return successResponse(null, "Staff deleted successfully");
+    const searchParams = request.nextUrl.searchParams;
+    const permanent = searchParams.get("permanent") === "true";
+
+    if (permanent) {
+      await StaffService.deletePermanently(staffId);
+      return successResponse(null, "Staff permanently deleted");
+    } else {
+      await StaffService.delete(staffId);
+      return successResponse(null, "Staff deactivated successfully");
+    }
   } catch (error) {
     return handleApiError(error);
   }

@@ -8,6 +8,9 @@ import AnimatedKPICard from '@/components/dashboard/AnimatedKPICard';
 import MeetingsPerMonthChart from '@/components/dashboard/MeetingsPerMonthChart';
 import AttendanceTrendChart from '@/components/dashboard/AttendanceTrendChart';
 import RecentActivityList from '@/components/dashboard/RecentActivityList';
+import DepartmentDistributionChart from '@/components/dashboard/DepartmentDistributionChart';
+import MeetingTypePieChart from '@/components/dashboard/MeetingTypePieChart';
+import QuickActions from '@/components/dashboard/QuickActions';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { Calendar, Users, Building2, TrendingUp } from 'lucide-react';
 
@@ -28,6 +31,8 @@ interface AdminDashboardData {
 	recentActivity: any[];
 	meetingsPerMonth: { month: string; meetings: number }[];
 	attendanceTrend: { month: string; attendance: number }[];
+	departmentStats: { name: string; value: number }[];
+	meetingTypeStats: { name: string; value: number }[];
 }
 
 export default function AdminDashboard() {
@@ -133,8 +138,21 @@ export default function AdminDashboard() {
 					<AttendanceTrendChart data={data?.attendanceTrend || []} />
 				</div>
 
-				{/* Row 3: Recent Activity */}
-				<RecentActivityList activities={data?.recentActivity || []} />
+				{/* Row 3: Secondary Charts */}
+				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+					<DepartmentDistributionChart data={data?.departmentStats || []} />
+					<MeetingTypePieChart data={data?.meetingTypeStats || []} />
+				</div>
+
+				{/* Row 4: Recent Activity & Quick Actions */}
+				<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+					<div className="lg:col-span-2">
+						<RecentActivityList activities={data?.recentActivity || []} />
+					</div>
+					<div>
+						<QuickActions />
+					</div>
+				</div>
 			</div>
 		</DashboardLayout>
 	);

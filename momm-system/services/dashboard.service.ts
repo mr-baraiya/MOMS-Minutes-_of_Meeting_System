@@ -315,6 +315,55 @@ export class DashboardService {
   }
 
   /* -----------------------------------------------------------
+      DEPARTMENT STATS
+  ----------------------------------------------------------- */
+  static async getDepartmentStats() {
+    const departments = await prisma.department.findMany({
+      select: {
+        departmentName: true,
+        staff: {
+          select: {
+            _count: {
+              select: { organizedMeetings: true },
+            },
+          },
+        },
+      },
+    });
+
+    return departments
+      .map((d) => ({
+        name: d.departmentName,
+        value: d.staff.reduce((acc, s) => acc + s._count.organizedMeetings, 0),
+      }))
+      .filter((d) => d.value > 0)
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 10);
+  }
+
+  /* -----------------------------------------------------------
+      MEETING TYPE STATS
+  ----------------------------------------------------------- */
+  static async getMeetingTypeStats() {
+    const types = await prisma.meetingType.findMany({
+      select: {
+        meetingTypeName: true,
+        _count: {
+          select: { meetings: true },
+        },
+      },
+    });
+
+    return types
+      .map((t) => ({
+        name: t.meetingTypeName,
+        value: t._count.meetings,
+      }))
+      .filter((t) => t.value > 0)
+      .sort((a, b) => b.value - a.value);
+  }
+
+  /* -----------------------------------------------------------
       ADMIN DASHBOARD STATS
   ----------------------------------------------------------- */
   static async getAdminStats() {

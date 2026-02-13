@@ -1,7 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Calendar, Users, FileText, AlertCircle, CheckCircle } from 'lucide-react';
+import { Calendar, Users, FileText, AlertCircle, CheckCircle, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 interface Activity {
 	action: string;
@@ -50,7 +51,7 @@ export default function RecentActivityList({ activities }: RecentActivityListPro
 						<p>No recent activity</p>
 					</div>
 				) : (
-					activities.map((activity, index) => {
+					activities.slice(0, 10).map((activity, index) => {
 						const { icon: Icon, color, bg } = getActivityIcon(activity.type);
 						return (
 							<motion.div
@@ -96,6 +97,23 @@ export default function RecentActivityList({ activities }: RecentActivityListPro
 					})
 				)}
 			</div>
+
+			{activities.length > 0 && (
+				<motion.div 
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					transition={{ delay: 1.5 }}
+					className="mt-6 pt-4 border-t border-gray-100 text-center"
+				>
+					<Link 
+						href="/admin/reports" 
+						className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+					>
+						View All Activity
+						<ArrowRight className="w-4 h-4" />
+					</Link>
+				</motion.div>
+			)}
 		</motion.div>
 	);
 }

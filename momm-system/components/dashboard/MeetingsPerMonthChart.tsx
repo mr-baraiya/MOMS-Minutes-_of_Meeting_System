@@ -33,8 +33,9 @@ export default function MeetingsPerMonthChart({ data }: MeetingsChartProps) {
 				initial={{ opacity: 0 }}
 				animate={{ opacity: 1 }}
 				transition={{ delay: 0.8 }}
+                className="h-[300px] w-full"
 			>
-				<ResponsiveContainer width="100%" height={300}>
+				<ResponsiveContainer width="100%" height="100%">
 					<BarChart data={data}>
 						<CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
 						<XAxis 

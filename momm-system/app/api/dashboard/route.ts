@@ -18,6 +18,8 @@ export async function GET(request: NextRequest) {
       const attendanceTrend = await DashboardService.getAttendanceTrend(6);
       const overallAttendance = await DashboardService.getOverallAttendance();
       const upcomingMeetings = await DashboardService.getUpcomingMeetings(5);
+      const departmentStats = await DashboardService.getDepartmentStats();
+      const meetingTypeStats = await DashboardService.getMeetingTypeStats();
 
       return successResponse({
         stats: {
@@ -29,6 +31,8 @@ export async function GET(request: NextRequest) {
         recentActivity,
         meetingsPerMonth,
         attendanceTrend,
+        departmentStats,
+        meetingTypeStats,
       });
     }
 
