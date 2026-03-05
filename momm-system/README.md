@@ -1,603 +1,129 @@
 # MOMS - Minutes of Meeting Management System
 
-A comprehensive full-stack web application for managing organizational meetings, attendance tracking, document management, and automated reporting with role-based access control.
+A full-stack web application for managing organizational meetings, attendance tracking, document management, and reporting with role-based access control.
 
-## Table of Contents
+## Features
 
-1. [Overview](#overview)
-2. [Technology Stack](#technology-stack)
-3. [Architecture](#architecture)
-4. [Project Structure](#project-structure)
-5. [Getting Started](#getting-started)
-6. [Environment Configuration](#environment-configuration)
-7. [Database Setup](#database-setup)
-8. [Authentication System](#authentication-system)
-9. [API Documentation](#api-documentation)
-10. [Service Layer](#service-layer)
-11. [Component Library](#component-library)
-12. [User Roles & Permissions](#user-roles--permissions)
-13. [Development Workflow](#development-workflow)
-14. [Testing](#testing)
-15. [Deployment](#deployment)
-16. [Scripts](#scripts)
-
----
-
-## Overview
-
-The Minutes of Meeting Management System (MOMS) is an enterprise-grade application built with Next.js 16 and React 19, leveraging the latest App Router architecture. The system provides a complete solution for managing organizational meetings with features including:
-
-- JWT-based authentication with role-based access control
-- Real-time meeting scheduling and management
-- Digital attendance tracking with timestamps
-- Document management with Vercel Blob storage
+- JWT-based authentication with role-based access (Admin, Convener, Staff)
+- Meeting scheduling and management
+- Digital attendance tracking
+- Document management with file uploads
 - Automated notification system
-- Interactive dashboards with analytics
-- Comprehensive reporting capabilities
+- Interactive dashboards and reporting
 - Global search functionality
-- Support ticket system
 
-### Key Differentiators
+## Tech Stack
 
-- **Layered Architecture**: Service layer separated for mobile app reusability
-- **Type Safety**: Full TypeScript implementation with Prisma ORM
-- **Modern UI**: Tailwind CSS 4 with Framer Motion animations
-- **Security First**: bcrypt password hashing, JWT tokens, input validation
-- **Scalable**: PostgreSQL database with connection pooling
-- **Developer Experience**: Hot reload, Turbopack, Prisma Studio
-
----
-
-## Technology Stack
-
-### Core Framework
-- **Next.js**: 16.1.6 (App Router with React Server Components)
-- **React**: 19.2.3 (with Server Actions support)
-- **TypeScript**: 5.x (strict mode enabled)
-- **Node.js**: 18+ required
-
-### UI Layer
-- **Styling**: Tailwind CSS 4.0
-- **Icons**: Lucide React 0.563.0 (600+ icons)
-- **Animations**: Framer Motion 12.34.0, GSAP 3.14.2
-- **Charts**: Recharts 3.7.0
-- **Notifications**: React Hot Toast 2.6.0, SweetAlert2 11.26.18
-
-### Backend Technologies
-- **Database**: PostgreSQL 14+ (Neon serverless)
-- **ORM**: Prisma 7.2.0 (with client generation)
-- **Authentication**: JSON Web Tokens (jsonwebtoken 9.0.3)
-- **Password Hashing**: bcryptjs 3.0.3 (10 salt rounds)
-- **Validation**: Zod 4.3.6 (runtime type checking)
-
-### File Storage
-- **Vercel Blob**: 2.2.0 (cloud file storage)
-- **File Uploads**: Multipart form data handling
-
-### Email Services
-- **Nodemailer**: 7.0.12 (SMTP email sending)
-- **EmailJS**: 4.4.1 (browser-based email)
-
-### Development Tools
-- **Linting**: ESLint 9 with Next.js config
-- **Build Tool**: Turbopack (Next.js built-in)
-- **Package Manager**: npm
-- **Database GUI**: Prisma Studio
-
----
-
-## Architecture
-
-### System Architecture
-
-```
-┌──────────────────────────────────────────────────────────────┐
-│                      Client Browser                           │
-│              (React Components, Next.js Pages)                │
-└────────────────────────┬─────────────────────────────────────┘
-                         │ HTTPS
-                         │
-┌────────────────────────▼─────────────────────────────────────┐
-│                   Next.js Server (Edge)                       │
-│  ┌────────────────────────────────────────────────────┐      │
-│  │            API Routes Layer (/app/api)             │      │
-│  │  - Request validation (Zod)                        │      │
-│  │  - JWT authentication                              │      │
-│  │  - Role-based authorization                        │      │
-│  │  - Response formatting                             │      │
-│  └────────────────────┬───────────────────────────────┘      │
-│                       │                                        │
-│  ┌────────────────────▼───────────────────────────────┐      │
-│  │          Services Layer (/services)                │      │
-│  │  - Business logic                                  │      │
-│  │  - Data validation                                 │      │
-│  │  - Transaction management                          │      │
-│  │  - External API integration                        │      │
-│  │  *** REUSABLE FOR MOBILE APP ***                   │      │
-│  └────────────────────┬───────────────────────────────┘      │
-│                       │                                        │
-│  ┌────────────────────▼───────────────────────────────┐      │
-│  │           Prisma ORM Client                        │      │
-│  │  - Query building                                  │      │
-│  │  - Type generation                                 │      │
-│  │  - Connection pooling                              │      │
-│  └────────────────────┬───────────────────────────────┘      │
-└────────────────────────┼─────────────────────────────────────┘
-                         │ TCP/SSL
-                         │
-┌────────────────────────▼─────────────────────────────────────┐
-│              PostgreSQL Database (Neon)                       │
-│  - 11 Tables                                                  │
-│  - 5 Enums                                                    │
-│  - Foreign keys with cascading                                │
-│  - Indexes on frequently queried fields                       │
-└───────────────────────────────────────────────────────────────┘
-
-External Services:
-┌──────────────────┐    ┌──────────────────┐
-│  Vercel Blob     │    │   SMTP Server    │
-│  (File Storage)  │    │  (Nodemailer)    │
-└──────────────────┘    └──────────────────┘
-```
-
-### Application Flow
-
-```
-User Request → Middleware (Auth) → API Route Handler → Service Layer
-                                                              │
-                                                              ▼
-                                   ┌─────────────────────────────────┐
-                                   │  Prisma ORM                     │
-                                   │  - Query construction           │
-                                   │  - Type safety                  │
-                                   └─────────────┬───────────────────┘
-                                                 │
-                                                 ▼
-                                   ┌─────────────────────────────────┐
-                                   │  PostgreSQL Database            │
-                                   │  - Data persistence             │
-                                   └─────────────────────────────────┘
-                                                 │
-                                                 ▼
-Response ← JSON Formatting ← Service Response ← Query Results
-```
-
-### Mobile App Reusability
-
-The architecture is designed to support both web and mobile applications:
-
-```typescript
-// Services and types can be shared with mobile apps
-momm-system/
-├── services/          # ✓ Reusable in React Native
-├── types/             # ✓ Reusable in React Native
-└── lib/
-    ├── validations.ts # ✓ Reusable (Zod schemas)
-    └── api-utils.ts   # ✗ Web-specific
-```
-
-**Mobile Integration Example:**
-```typescript
-// In React Native app
-import { MeetingService } from '@moms/shared/services';
-import { Meeting, CreateMeetingRequest } from '@moms/shared/types';
-
-// Use same business logic
-const meeting = await MeetingService.create(meetingData);
-```
-
----
-
-## Project Structure
-
-```
-momm-system/
-├── app/                              # Next.js App Router
-│   ├── api/                          # API Routes (RESTful)
-│   │   ├── auth/                     # Authentication
-│   │   │   ├── login/route.ts
-│   │   │   ├── register/route.ts
-│   │   │   ├── logout/route.ts
-│   │   │   ├── me/route.ts
-│   │   │   ├── forgot-password/route.ts
-│   │   │   ├── reset-password/route.ts
-│   │   │   ├── change-password/route.ts
-│   │   │   └── profile-photo/route.ts
-│   │   ├── meetings/                 # Meeting Management
-│   │   │   ├── route.ts              # GET, POST
-│   │   │   ├── [id]/route.ts         # GET, PATCH, DELETE
-│   │   │   ├── [id]/cancel/route.ts
-│   │   │   ├── [id]/members/route.ts
-│   │   │   ├── [id]/members/[memberId]/route.ts
-│   │   │   ├── [id]/attendance/route.ts
-│   │   │   ├── [id]/documents/route.ts
-│   │   │   ├── calendar/route.ts
-│   │   │   └── upcoming/route.ts
-│   │   ├── documents/                # Document Management
-│   │   │   ├── route.ts
-│   │   │   ├── [id]/route.ts
-│   │   │   ├── upload/route.ts
-│   │   │   ├── bulk-delete/route.ts
-│   │   │   └── meetings/route.ts
-│   │   ├── staff/                    # Staff Management
-│   │   │   ├── route.ts
-│   │   │   ├── [id]/route.ts
-│   │   │   └── attendance/route.ts
-│   │   ├── departments/              # Department Management
-│   │   │   ├── route.ts
-│   │   │   └── [id]/route.ts
-│   │   ├── venues/                   # Venue Management
-│   │   │   ├── route.ts
-│   │   │   └── [id]/route.ts
-│   │   ├── meeting-types/            # Meeting Type Management
-│   │   │   ├── route.ts
-│   │   │   └── [id]/route.ts
-│   │   ├── users/                    # User Management
-│   │   │   ├── route.ts
-│   │   │   └── [id]/route.ts
-│   │   ├── notifications/            # Notification System
-│   │   │   ├── route.ts
-│   │   │   ├── [id]/read/route.ts
-│   │   │   └── mark-all-read/route.ts
-│   │   ├── reports/                  # Report Generation
-│   │   │   ├── route.ts
-│   │   │   ├── [id]/route.ts
-│   │   │   └── generate/route.ts
-│   │   ├── dashboard/route.ts        # Dashboard Statistics
-│   │   ├── search/route.ts           # Global Search
-│   │   ├── settings/route.ts         # System Settings
-│   │   └── support-tickets/route.ts  # Support Tickets
-│   ├── auth/                         # Auth Pages
-│   │   ├── login/page.tsx
-│   │   ├── register/page.tsx
-│   │   ├── forgot-password/page.tsx
-│   │   └── reset-password/page.tsx
-│   ├── admin/                        # Admin Dashboard
-│   │   ├── dashboard/page.tsx
-│   │   ├── users/page.tsx
-│   │   ├── departments/page.tsx
-│   │   ├── staff/page.tsx
-│   │   ├── venues/page.tsx
-│   │   ├── meeting-types/page.tsx
-│   │   ├── meetings/page.tsx
-│   │   ├── meetings/[id]/attendance/page.tsx
-│   │   ├── documents/page.tsx
-│   │   ├── reports/page.tsx
-│   │   ├── calendar/page.tsx
-│   │   ├── attendance/page.tsx
-│   │   ├── settings/page.tsx
-│   │   └── profile/page.tsx
-│   ├── convener/                     # Convener Dashboard
-│   │   ├── dashboard/page.tsx
-│   │   ├── meetings/page.tsx
-│   │   ├── meetings/[id]/attendance/page.tsx
-│   │   ├── documents/page.tsx
-│   │   ├── reports/page.tsx
-│   │   ├── settings/page.tsx
-│   │   └── profile/page.tsx
-│   ├── staff/                        # Staff Dashboard
-│   │   ├── dashboard/page.tsx
-│   │   ├── meetings/page.tsx
-│   │   ├── documents/page.tsx
-│   │   ├── attendance/page.tsx
-│   │   ├── settings/page.tsx
-│   │   └── profile/page.tsx
-│   ├── about/page.tsx
-│   ├── contact/page.tsx
-│   ├── help/
-│   ├── privacy/page.tsx
-│   ├── terms/page.tsx
-│   ├── globals.css                   # Global Tailwind styles
-│   ├── layout.tsx                    # Root layout with providers
-│   └── page.tsx                      # Landing page
-├── components/                       # React Components
-│   ├── layouts/
-│   │   ├── DashboardLayout.tsx       # Main dashboard wrapper
-│   │   ├── Sidebar.tsx               # Role-based navigation
-│   │   ├── Header.tsx                # Search, notifications, profile
-│   │   ├── Footer.tsx
-│   │   └── Navbar.tsx
-│   ├── dashboard/
-│   │   ├── StatsCard.tsx
-│   │   ├── RecentMeetings.tsx
-│   │   ├── UpcomingMeetings.tsx
-│   │   ├── SystemActivity.tsx
-│   │   └── AttendanceChart.tsx
-│   ├── meetings/
-│   │   ├── MeetingModal.tsx
-│   │   ├── MeetingCard.tsx
-│   │   ├── MeetingListTable.tsx
-│   │   ├── MeetingCalendar.tsx
-│   │   └── AttendanceForm.tsx
-│   ├── documents/
-│   │   ├── DocumentUpload.tsx
-│   │   ├── DocumentCard.tsx
-│   │   └── DocumentListTable.tsx
-│   ├── venues/
-│   │   ├── VenueModal.tsx
-│   │   └── VenueListTable.tsx
-│   ├── meeting-types/
-│   │   ├── MeetingTypeModal.tsx
-│   │   └── MeetingTypeListTable.tsx
-│   ├── calendar/
-│   │   └── CalendarView.tsx
-│   ├── reports/
-│   │   ├── ReportGenerator.tsx
-│   │   └── ReportList.tsx
-│   ├── common/
-│   │   ├── Button.tsx
-│   │   ├── Input.tsx
-│   │   ├── Modal.tsx
-│   │   ├── Table.tsx
-│   │   ├── Loading.tsx
-│   │   └── Pagination.tsx
-│   ├── ContactForm.tsx
-│   └── Navbar.tsx
-├── contexts/                         # React Contexts
-│   └── AuthContext.tsx               # Global auth state
-├── hooks/                            # Custom React Hooks
-│   └── useAuthGuard.ts               # Route protection
-├── lib/                              # Utilities
-│   ├── prisma.ts                     # Prisma client singleton
-│   ├── auth.ts                       # JWT & bcrypt utilities
-│   ├── api-utils.ts                  # API response helpers
-│   ├── validations.ts                # Zod schemas
-│   ├── email.ts                      # Email utilities
-│   ├── constants.ts                  # App constants
-│   ├── role-utils.ts                 # Role-based helpers
-│   └── index.ts
-├── services/                         # Business Logic (REUSABLE)
-│   ├── auth.service.ts               # Authentication
-│   ├── user.service.ts               # User management
-│   ├── staff.service.ts              # Staff management
-│   ├── department.service.ts         # Department management
-│   ├── meeting.service.ts            # Meeting operations
-│   ├── meeting-member.service.ts     # Meeting participants
-│   ├── meeting-type.service.ts       # Meeting types
-│   ├── venue.service.ts              # Venue management
-│   ├── document.service.ts           # Document handling
-│   ├── notification.service.ts       # Notifications
-│   ├── report.service.ts             # Report generation
-│   ├── dashboard.service.ts          # Dashboard data
-│   └── index.ts
-├── types/                            # TypeScript Types (REUSABLE)
-│   ├── models.ts                     # Database models
-│   ├── api.ts                        # API types
-│   └── index.ts
-├── prisma/
-│   ├── schema.prisma                 # Database schema
-│   ├── seed.ts                       # Demo data seeder
-│   └── migrations/                   # Migration history
-├── docs/                             # Documentation
-│   ├── API_TESTING_GUIDE.md
-│   ├── AUTHENTICATION_GUIDE.md
-│   ├── BLOB_INTEGRATION_SUMMARY.md
-│   ├── DASHBOARD_ARCHITECTURE.md
-│   ├── DOCUMENTS_FEATURE.md
-│   ├── ENVIRONMENT_SETUP.md
-│   └── README.md
-├── public/                           # Static assets
-│   └── uploads/
-├── .env.local                        # Environment variables
-├── .gitignore
-├── eslint.config.mjs                 # ESLint configuration
-├── next.config.ts                    # Next.js configuration
-├── next-env.d.ts                     # Next.js TypeScript types
-├── package.json                      # Dependencies
-├── postcss.config.mjs                # PostCSS configuration
-├── prisma.config.ts                  # Prisma configuration
-├── proxy.ts                          # Proxy configuration
-├── tailwind.config.ts                # Tailwind configuration
-├── tsconfig.json                     # TypeScript configuration
-└── README.md                         # This file
-```
-
----
+- **Frontend**: Next.js 16, React 19, TypeScript, Tailwind CSS
+- **Backend**: Next.js API Routes, Prisma ORM
+- **Database**: PostgreSQL (Neon)
+- **Authentication**: JWT with bcrypt
+- **File Storage**: Vercel Blob
+- **Email**: Nodemailer
 
 ## Getting Started
 
 ### Prerequisites
 
-Ensure you have the following installed:
+- Node.js 18+
+- PostgreSQL database (or Neon account)
 
-- **Node.js**: 18.x or higher
-- **npm**: 9.x or higher (comes with Node.js)
-- **PostgreSQL**: 14.x or higher (or Neon account)
-- **Git**: For version control
+### Installation
 
-### Installation Steps
-
-#### 1. Clone the Repository
-
+1. **Clone the repository**
 ```bash
 git clone https://github.com/mr-baraiya/MOMS-Minutes-_of_Meeting_System.git
 cd MOMS-Minutes-_of_Meeting_System/momm-system
 ```
 
-#### 2. Install Dependencies
-
+2. **Install dependencies**
 ```bash
 npm install
 ```
 
-This will install all packages defined in `package.json`:
-- Production dependencies (Next.js, React, Prisma, etc.)
-- Development dependencies (ESLint, TypeScript types, etc.)
+3. **Set up environment variables**
+Create `.env.local` file:
+```env
+# Database
+DATABASE_URL="postgresql://user:password@host:5432/database"
 
-#### 3. Set Up Environment Variables
+# JWT
+JWT_SECRET="your-secret-key-min-32-characters"
 
-Create a `.env.local` file in the root directory:
+# Vercel Blob (for file uploads)
+BLOB_READ_WRITE_TOKEN="vercel_blob_rw_token"
 
-```bash
-cp .env.example .env.local
+# Email (optional)
+EMAIL_HOST="smtp.gmail.com"
+EMAIL_PORT=587
+EMAIL_USER="your-email@gmail.com"
+EMAIL_PASSWORD="your-app-password"
 ```
 
-Edit `.env.local` with your configuration (see [Environment Configuration](#environment-configuration))
-
-#### 4. Database Setup
-
-**Option A: Using Neon (Recommended for development)**
-
+4. **Set up database**
 ```bash
-# Run migrations
 npx prisma migrate dev
-
-# Generate Prisma Client
 npx prisma generate
-
-# Seed database with demo data
 npm run db:seed
 ```
 
-**Option B: Local PostgreSQL**
-
-```bash
-# Create database
-createdb moms_db
-
-# Update DATABASE_URL in .env.local
-# postgresql://username:password@localhost:5432/moms_db
-
-# Run migrations
-npx prisma migrate dev
-
-# Seed database
-npm run db:seed
-```
-
-#### 5. Verify Database (Optional)
-
-```bash
-npm run db:studio
-```
-
-This opens Prisma Studio at `http://localhost:5555` for visual database management.
-
-#### 6. Start Development Server
-
+5. **Start development server**
 ```bash
 npm run dev
 ```
 
-Application will be available at:
-- **URL**: http://localhost:3000
-- **API**: http://localhost:3000/api
+Visit `http://localhost:3000`
 
-#### 7. Login with Demo Credentials
+### Demo Credentials
 
-See [Demo Credentials](#demo-credentials) section below.
+After seeding, you can login with:
+- **Admin**: admin@example.com / password123
+- **Convener**: convener@example.com / password123  
+- **Staff**: staff@example.com / password123
 
----
+## Available Scripts
 
-## Environment Configuration
-
-### Required Environment Variables
-
-Create `.env.local` file with the following variables:
-
-```env
-# Database Configuration
-# For Neon with connection pooling:
-DATABASE_URL="postgresql://user:password@host.neon.tech:5432/database?sslmode=require&pgbouncer=true"
-DIRECT_URL="postgresql://user:password@host.neon.tech:5432/database?sslmode=require"
-
-# For local PostgreSQL:
-# DATABASE_URL="postgresql://username:password@localhost:5432/moms_db"
-
-# JWT Configuration
-JWT_SECRET="your-super-secret-key-min-32-characters-long-change-this"
-
-# Vercel Blob Storage (for document uploads)
-BLOB_READ_WRITE_TOKEN="vercel_blob_rw_XXXXXXXXXX"
-
-# Email Configuration (Nodemailer - SMTP)
-EMAIL_HOST="smtp.gmail.com"
-EMAIL_PORT=587
-EMAIL_SECURE=false
-EMAIL_USER="your-email@gmail.com"
-EMAIL_PASSWORD="your-app-specific-password"
-EMAIL_FROM="MOMS System <noreply@moms.com>"
-
-# Application URLs
-NEXT_PUBLIC_APP_URL="http://localhost:3000"
-NEXT_PUBLIC_API_URL="http://localhost:3000/api"
-
-# EmailJS Configuration (Optional - for contact form)
-NEXT_PUBLIC_EMAILJS_SERVICE_ID="service_xxxxxxx"
-NEXT_PUBLIC_EMAILJS_TEMPLATE_ID="template_xxxxxxx"
-NEXT_PUBLIC_EMAILJS_PUBLIC_KEY="xxxxxxxxxxxxxxx"
-
-# Node Environment
-NODE_ENV="development"
-```
-
-### Environment Variables Explained
-
-**DATABASE_URL**
-- Prisma connection string for queries
-- Use pooled connection for Neon (with `pgbouncer=true`)
-- Format: `postgresql://USER:PASSWORD@HOST:PORT/DATABASE?options`
-
-**DIRECT_URL**
-- Direct database connection for migrations
-- Required for Neon (pooled connections don't support migrations)
-- Omit `pgbouncer=true` parameter
-
-**JWT_SECRET**
-- Secret key for signing JWT tokens
-- Must be at least 32 characters
-- Use strong random string: `openssl rand -base64 32`
-- Never commit to version control
-
-**BLOB_READ_WRITE_TOKEN**
-- Vercel Blob storage authentication token
-- Get from Vercel dashboard: Settings → Storage → Create Token
-- Required for document upload functionality
-
-**Email Configuration**
-- Gmail requires App Password (not regular password)
-- Enable 2FA first, then generate App Password
-- Other SMTP providers: adjust host/port accordingly
-
----
-
-## Database Setup
-
-### Schema Overview
-
-The application uses 11 tables with relationships:
-
-**Core Tables:**
-- `users` - User accounts and authentication
-- `staff` - Staff profiles linked to users
-- `department` - Organizational departments
-- `meetings` - Meeting records
-- `meeting_member` - Meeting participants
-- `meeting_type` - Meeting categories
-- `venue` - Meeting locations
-- `documents` - File attachments
-- `reports` - Generated reports
-- `notifications` - User notifications
-- `support_tickets` - Help desk tickets
-
-### Running Migrations
-
-**Development:**
 ```bash
-npx prisma migrate dev --name description_of_changes
+# Development
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run start        # Start production server
+
+# Database
+npm run db:migrate   # Run database migrations
+npm run db:seed      # Seed database with demo data
+npm run db:studio    # Open Prisma Studio
+npm run db:reset     # Reset database (caution)
+
+# Code Quality
+npm run lint         # Run ESLint
+npm run type-check   # Check TypeScript types
 ```
 
-**Production:**
-```bash
-npx prisma migrate deploy
+## Project Structure
+
+```
+momm-system/
+├── app/                    # Next.js App Router
+│   ├── api/               # API Routes
+│   ├── auth/              # Authentication pages
+│   ├── admin/             # Admin dashboard
+│   ├── convener/          # Convener dashboard
+│   └── staff/             # Staff dashboard
+├── components/            # React Components
+├── services/              # Business Logic
+├── types/                 # TypeScript Types
+├── prisma/               # Database schema
+└── public/               # Static assets
 ```
 
-**Reset Database (caution):**
-```bash
-npx prisma migrate reset
-```
+## Contributing
 
-### Seeding Demo Data
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test your changes
+5. Submit a pull request
 
 The seed script creates:
 - 1 Admin user
