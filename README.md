@@ -4,2368 +4,640 @@ A comprehensive web-based system for managing organizational meetings, attendanc
 
 ## Table of Contents
 
-1. [Project Overview](#project-overview)
-2. [Technology Stack](#technology-stack)
-3. [Features](#features)
-4. [Architecture](#architecture)
-5. [Database Schema](#database-schema)
-6. [API Documentation](#api-documentation)
-7. [Service Layer](#service-layer)
-8. [Authentication & Authorization](#authentication--authorization)
-9. [Installation & Setup](#installation--setup)
-10. [Environment Configuration](#environment-configuration)
-11. [Running the Application](#running-the-application)
-12. [Project Structure](#project-structure)
+- [Overview](#overview)
+- [Features](#features)
+- [Technology Stack](#technology-stack)
+- [Architecture](#architecture)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [API Documentation](#api-documentation)
+- [Project Structure](#project-structure)
+- [Database Schema](#database-schema)
+- [Contributing](#contributing)
+- [Troubleshooting](#troubleshooting)
+- [License](#license)
 
----
+## Overview
 
-## Project Overview
+The Minutes of Meeting System (MOMS) is a full-stack enterprise application designed to digitize and streamline organizational meeting management. Built with Next.js and modern web technologies, it provides a comprehensive suite of tools for meeting lifecycle management, from planning to documentation.
 
-The Minutes of Meeting System (MOMS) is a full-stack enterprise application designed to digitize and streamline organizational meeting management. The system provides comprehensive tools for scheduling meetings, tracking attendance, managing documents, generating reports, and sending real-time notifications to stakeholders.
+### Key Benefits
 
-### Key Capabilities
-
-- Multi-role user management (Admin, Convener, Staff)
-- Secure JWT-based authentication with password recovery
-- Meeting lifecycle management (creation, scheduling, cancellation)
-- Real-time attendance tracking with remarks
-- Document upload and management using Vercel Blob storage
-- Automated report generation (meeting summaries, attendance reports)
-- Role-based notification system
-- Global search across meetings, documents, and staff
-- Department and staff management
-- Venue management (physical and virtual)
-- Meeting type categorization
-- Support ticket system
-- Interactive dashboards with analytics
-
----
-
-## Technology Stack
-
-### Frontend
-- **Framework**: Next.js 16.1.6 (App Router)
-- **UI Library**: React 19.2.3
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS 4
-- **Animations**: Framer Motion 12.34.0, GSAP 3.14.2
-- **Icons**: Lucide React 0.563.0
-- **Charts**: Recharts 3.7.0
-- **Notifications**: React Hot Toast 2.6.0, SweetAlert2 11.26.18
-
-### Backend
-- **Runtime**: Node.js
-- **Framework**: Next.js API Routes (RESTful)
-- **Database**: PostgreSQL (Neon)
-- **ORM**: Prisma 7.2.0
-- **Authentication**: JSON Web Tokens (JWT)
-- **Password Hashing**: bcryptjs 3.0.3
-- **File Storage**: Vercel Blob 2.2.0
-- **Email**: Nodemailer 7.0.12, EmailJS 4.4.1
-- **Validation**: Zod 4.3.6
-
-### Development Tools
-- **Package Manager**: npm
-- **Linting**: ESLint 9
-- **Build Tool**: Next.js Turbopack
-- **Database Tools**: Prisma Studio
-
----
+- **Streamlined Meeting Management**: End-to-end meeting lifecycle from creation to reporting
+- **Enhanced Collaboration**: Real-time attendance tracking and document sharing
+- **Comprehensive Reporting**: Automated generation of meeting summaries and analytics
+- **Role-Based Security**: Granular access control for different user types
+- **Cloud Integration**: Secure document storage with Vercel Blob
+- **Modern Architecture**: Built with latest web technologies for scalability
 
 ## Features
 
-### Authentication & User Management
-- User registration with email verification
-- Secure login with JWT tokens
-- Password reset via email tokens
-- Profile management with photo upload
-- Role-based access control (RBAC)
+### Core Functionality
 
-### Meeting Management
-- Create, update, and cancel meetings
-- Schedule meetings with date, time, and venue
-- Assign meeting types and organizers
-- Add multiple participants
-- Virtual and physical meeting support
-- Meeting link integration
-- Cancellation with reason tracking
+#### Authentication & User Management
+- **Secure Authentication**: JWT-based login system with encrypted password storage
+- **Multi-Role Access**: Admin, Convener, and Staff roles with different permissions
+- **Profile Management**: User profile customization with photo upload
+- **Password Recovery**: Email-based password reset with secure tokens
+- **Session Management**: Automatic token refresh and secure logout
 
-### Attendance Tracking
-- Mark attendance for meeting participants
-- Add remarks for each attendee
-- Timestamp attendance marking
-- View attendance history
-- Generate attendance reports
+#### Meeting Management
+- **Meeting Creation**: Create meetings with detailed information (title, description, agenda)
+- **Scheduling System**: Date, time, and duration management with timezone support
+- **Venue Management**: Support for both physical locations and virtual meeting platforms
+- **Meeting Types**: Categorization system for different types of meetings
+- **Participant Management**: Add/remove participants with role assignments
+- **Meeting Lifecycle**: Complete workflow from creation to completion
+- **Cancellation System**: Meeting cancellation with reason tracking
 
-### Document Management
-- Upload documents to meetings (PDF, DOCX, etc.)
-- Vercel Blob integration for secure storage
-- Document metadata tracking
-- Bulk delete operations
-- Download capabilities
-- Access control based on roles
+#### Attendance Tracking
+- **Real-Time Marking**: Mark attendance during meetings with timestamps
+- **Attendance Status**: Present, Absent, Late, and Excused status options
+- **Remarks System**: Add detailed notes for each participant's attendance
+- **Historical Tracking**: Complete attendance history for all participants
+- **Automated Reports**: Generate attendance summaries and analytics
 
-### Notification System
-- Real-time event-based notifications
-- 8 notification types:
-  - Meeting Created
-  - Meeting Updated
-  - Meeting Cancelled
+#### Document Management
+- **File Upload**: Support for multiple file formats (PDF, DOCX, XLSX, PPTX)
+- **Secure Storage**: Integration with Vercel Blob for reliable cloud storage
+- **Version Control**: Track document versions and modification history
+- **Access Control**: Role-based access to sensitive documents
+- **Metadata Management**: Automatic file information extraction and tagging
+- **Bulk Operations**: Upload, download, and delete multiple files
+
+#### Notification System
+- **Event-Driven Notifications**: Automatic notifications for key meeting events
+- **Multiple Notification Types**:
+  - Meeting Created/Updated/Cancelled
   - Attendance Marked
   - Document Uploaded
   - Report Generated
-  - Support Ticket Updated
-  - General Notifications
-- Mark as read functionality
-- Unread count tracking
-- User-specific notification filtering
+  - Support Ticket Updates
+- **Real-Time Delivery**: Instant notification delivery to relevant users
+- **Status Tracking**: Mark notifications as read/unread with counters
 
-### Reporting & Analytics
-- Generate meeting summary reports
-- Attendance reports
-- Department-wise analytics
-- Custom date range filtering
-- Export capabilities
+#### Reporting & Analytics
+- **Meeting Summaries**: Comprehensive meeting reports with all details
+- **Attendance Reports**: Detailed attendance analytics with trends
+- **Department Analytics**: Department-wise meeting and attendance statistics
+- **Custom Date Ranges**: Generate reports for specific time periods
+- **Export Functionality**: Export reports in PDF and Excel formats
+- **Visual Analytics**: Charts and graphs for data visualization
 
-### Administrative Features
-- Department management
-- Staff management with departments
-- Venue management (physical/virtual)
-- Meeting type management
-- User management with role assignment
-- System settings configuration
-- Support ticket management
+#### Administrative Features
+- **Department Management**: Create and manage organizational departments
+- **Staff Management**: Complete employee information and department assignment
+- **Venue Administration**: Manage physical and virtual meeting spaces
+- **Meeting Type Configuration**: Define and manage meeting categories
+- **User Administration**: Create, modify, and deactivate user accounts
+- **System Settings**: Global configuration and customization options
+- **Support System**: Built-in support ticket management
 
-### Search & Discovery
-- Global search across:
-  - Meetings (title, description)
-  - Documents (title, filename)
-  - Staff (name, email, designation)
-- Real-time search suggestions
-- Result categorization
+#### Search & Discovery
+- **Global Search**: Search across meetings, documents, and staff
+- **Advanced Filters**: Filter by date, department, meeting type, status
+- **Quick Search**: Real-time search suggestions and autocomplete
+- **Result Categorization**: Organized search results by content type
 
----
+## Technology Stack
+
+### Frontend Technologies
+- **Framework**: Next.js 16 with App Router for modern React development
+- **UI Library**: React 19 with TypeScript for type-safe component development
+- **Styling**: Tailwind CSS 4 for responsive and modern UI design
+- **State Management**: React Context API for global state management
+- **Form Handling**: React Hook Form with Zod validation
+- **Icons**: Lucide React for consistent iconography
+- **Charts**: Recharts for data visualization and analytics
+- **Notifications**: React Hot Toast and SweetAlert2 for user feedback
+- **Animations**: Framer Motion for smooth UI transitions
+
+### Backend Technologies
+- **Runtime**: Node.js with Next.js API Routes
+- **Database**: PostgreSQL for robust relational data storage
+- **ORM**: Prisma 7.2 for type-safe database operations
+- **Authentication**: JSON Web Tokens (JWT) for secure session management
+- **Password Security**: bcryptjs for secure password hashing
+- **File Storage**: Vercel Blob for scalable file storage
+- **Email Service**: Nodemailer with EmailJS for notification delivery
+- **Data Validation**: Zod for runtime type checking and validation
+
+### Development Tools
+- **Package Manager**: npm for dependency management
+- **Code Quality**: ESLint 9 for code linting and formatting
+- **Build System**: Next.js Turbopack for fast development builds
+- **Database Tools**: Prisma Studio for database administration
+- **Version Control**: Git with GitHub for source code management
 
 ## Architecture
 
-### Application Architecture
+### System Architecture
 
 ```
-MOMS (Next.js App Router)
-│
-├── Frontend Layer
-│   ├── Pages (App Router)
-│   ├── Components (React)
-│   └── Context (AuthContext)
-│
-├── API Layer (REST)
-│   ├── Route Handlers
-│   ├── Middleware
-│   └── Response Utilities
-│
-├── Service Layer
-│   ├── Business Logic
-│   ├── Data Validation
-│   └── External Integrations
-│
-└── Data Layer
-    ├── Prisma ORM
-    ├── PostgreSQL Database
-    └── Vercel Blob Storage
+┌─────────────────────────────────────────────────────────────┐
+│                    Client Layer (Browser)                   │
+├─────────────────────────────────────────────────────────────┤
+│                 Next.js Frontend (React)                    │
+│  ┌─────────────┬─────────────┬─────────────┬─────────────┐  │
+│  │   Pages     │ Components  │   Hooks     │  Context    │  │
+│  │   (App      │  (Reusable  │ (Custom     │ (Global     │  │
+│  │   Router)   │    UI)      │   Logic)    │   State)    │  │
+│  └─────────────┴─────────────┴─────────────┴─────────────┘  │
+├─────────────────────────────────────────────────────────────┤
+│                    API Layer (Next.js)                      │
+│  ┌─────────────┬─────────────┬─────────────┬─────────────┐  │
+│  │   Routes    │ Middleware  │ Validation  │ Response    │  │
+│  │ (Endpoints) │  (Auth &    │   (Zod)     │ Utilities   │  │
+│  │             │   CORS)     │             │             │  │
+│  └─────────────┴─────────────┴─────────────┴─────────────┘  │
+├─────────────────────────────────────────────────────────────┤
+│                   Service Layer                             │
+│  ┌─────────────┬─────────────┬─────────────┬─────────────┐  │
+│  │  Business   │   User      │  Meeting    │ Document    │  │
+│  │   Logic     │  Service    │  Service    │  Service    │  │
+│  │             │             │             │             │  │
+│  └─────────────┴─────────────┴─────────────┴─────────────┘  │
+├─────────────────────────────────────────────────────────────┤
+│                   Data Layer                                │
+│  ┌─────────────┬─────────────┬─────────────┬─────────────┐  │
+│  │   Prisma    │ PostgreSQL  │ Vercel Blob │   Email     │  │
+│  │    ORM      │  Database   │   Storage   │  Service    │  │
+│  └─────────────┴─────────────┴─────────────┴─────────────┘  │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ### Design Patterns
 
-- **Service Layer Pattern**: Business logic separated from API routes
-- **Repository Pattern**: Database operations abstracted via Prisma ORM
-- **Middleware Pattern**: Authentication and authorization handlers
-- **Factory Pattern**: Response utilities for consistent API responses
+- **Service Layer Pattern**: Separation of business logic from API routes
+- **Repository Pattern**: Database abstraction through Prisma ORM
+- **Middleware Pattern**: Request/response processing pipeline
+- **Factory Pattern**: Consistent API response formatting
 - **Observer Pattern**: Event-driven notification system
 
----
-
-## Database Schema
-
-### Core Models
-
-#### User
-```typescript
-- id: Integer (PK)
-- username: String (Unique)
-- email: String (Unique)
-- passwordHash: String
-- role: Enum (ADMIN, CONVENER, STAFF)
-- profilePicture: String (Optional)
-- isActive: Boolean
-- createdAt: DateTime
-- modifiedAt: DateTime
-- resetToken: String (Optional)
-- resetTokenExpiry: DateTime (Optional)
-```
-
-#### Department
-```typescript
-- id: Integer (PK)
-- departmentName: String (Unique)
-- isActive: Boolean
-- createdAt: DateTime
-```
-
-#### Staff
-```typescript
-- id: Integer (PK)
-- userId: Integer (FK -> User, Unique)
-- staffName: String
-- designation: String (Optional)
-- mobileNo: String (Optional)
-- emailAddress: String (Unique)
-- departmentId: Integer (FK -> Department)
-- profilePicture: String (Optional)
-- isActive: Boolean
-- createdAt: DateTime
-```
-
-#### MeetingType
-```typescript
-- id: Integer (PK)
-- meetingTypeName: String (Unique)
-- isActive: Boolean
-- createdAt: DateTime
-```
-
-#### Venue
-```typescript
-- id: Integer (PK)
-- venueName: String
-- venueType: Enum (PHYSICAL, VIRTUAL)
-- location: String (Optional)
-- isActive: Boolean
-- createdAt: DateTime
-```
-
-#### Meeting
-```typescript
-- id: Integer (PK)
-- meetingTitle: String
-- meetingDescription: String (Optional)
-- meetingDate: Date
-- meetingStartTime: DateTime
-- meetingEndTime: DateTime
-- meetingTypeId: Integer (FK -> MeetingType)
-- organizerStaffId: Integer (FK -> Staff)
-- venueId: Integer (FK -> Venue)
-- meetingLink: String (Optional)
-- isCancelled: Boolean
-- cancellationReason: String (Optional)
-- cancelledAt: DateTime (Optional)
-- createdAt: DateTime
-- modifiedAt: DateTime
-```
-
-#### MeetingMember
-```typescript
-- id: Integer (PK)
-- meetingId: Integer (FK -> Meeting)
-- staffId: Integer (FK -> Staff)
-- isPresent: Boolean
-- attendanceMarkedAt: DateTime (Optional)
-- remarks: String (Optional)
-- createdAt: DateTime
-- Unique: [meetingId, staffId]
-```
-
-#### Document
-```typescript
-- id: Integer (PK)
-- meetingId: Integer (FK -> Meeting)
-- documentTitle: String
-- fileName: String
-- filePath: String (Blob URL)
-- uploadedBy: Integer (FK -> User)
-- uploadedAt: DateTime
-```
-
-#### Report
-```typescript
-- id: Integer (PK)
-- reportName: String
-- reportType: Enum (MEETING_SUMMARY, ATTENDANCE, DEPARTMENT)
-- meetingId: Integer (FK -> Meeting, Optional)
-- filePath: String
-- generatedBy: Integer (FK -> User)
-- generatedAt: DateTime
-```
-
-#### Notification
-```typescript
-- id: Integer (PK)
-- userId: Integer (FK -> User)
-- title: String
-- message: String
-- type: NotificationType Enum
-- referenceId: Integer (Optional)
-- isRead: Boolean
-- createdAt: DateTime
-- Index: [userId, isRead]
-```
-
-#### SupportTicket
-```typescript
-- id: Integer (PK)
-- userId: Integer (FK -> User)
-- category: Enum (TECHNICAL, FEATURE, BUG, GENERAL)
-- subject: String
-- message: String
-- status: Enum (OPEN, IN_PROGRESS, RESOLVED, CLOSED)
-- createdAt: DateTime
-- updatedAt: DateTime
-```
-
-### Enumerations
-
-#### Role
-- ADMIN
-- CONVENER
-- STAFF
-
-#### VenueType
-- PHYSICAL
-- VIRTUAL
-
-#### NotificationType
-- MEETING_CREATED
-- MEETING_UPDATED
-- MEETING_CANCELLED
-- ATTENDANCE_MARKED
-- DOCUMENT_UPLOADED
-- REPORT_GENERATED
-- SUPPORT_TICKET_UPDATED
-- GENERAL
-
-#### ReportType
-- MEETING_SUMMARY
-- ATTENDANCE
-- DEPARTMENT
-
-#### SupportCategory
-- TECHNICAL
-- FEATURE
-- BUG
-- GENERAL
-
-#### SupportTicketStatus
-- OPEN
-- IN_PROGRESS
-- RESOLVED
-- CLOSED
-
----
-
-## API Documentation
-
-| User Type | Description |
-|-----------|-------------|
-| **Admin** | Manages system configuration, users, departments, meeting types, venues, and has full access to all meetings |
-| **Staff** | Organization employees who can be invited to meetings, record minutes, and manage assigned meetings |
-| **Meeting Member** | Participants invited to specific meetings with view and contribution access |
-
-## 4. Functional Requirements
-
-### 4.1 Authentication & Authorization
-
-#### 4.1.1 Sign Up
-- Users can register using:
-  - Full Name
-  - Email
-  - Password
-  - Role (Admin / Staff / Member)
-- Password must follow security rules (minimum 8 characters)
-- Email verification required
-- Account activation by admin
-
-#### 4.1.2 Sign In
-- Users log in using email and password
-- Incorrect credentials display error messages
-- Successful login redirects to dashboard
-- Session management with JWT tokens
-
-#### 4.1.3 Password Recovery
-- Forgot password functionality
-- Email-based password reset
-- Secure token generation and validation
-
-### 4.2 Dashboard
-
-#### 4.2.1 Admin Dashboard
----
-
-## API Documentation
-
-All API endpoints follow RESTful conventions and return JSON responses. Authentication is required for most endpoints using JWT Bearer tokens.
-
-### Base URL
-```
-Development: http://localhost:3000/api
-Production: https://your-domain.com/api
-```
-
-### Response Format
-
-#### Success Response
-```json
-{
-  "success": true,
-  "data": { /* Response data */ },
-  "message": "Operation completed successfully"
-}
-```
-
-#### Error Response
-```json
-{
-  "success": false,
-  "error": "Error message",
-  "details": { /* Optional error details */ }
-}
-```
-
----
-
-### Authentication Endpoints
-
-#### POST /api/auth/register
-Register a new user account.
-
-**Request Body:**
-```json
-{
-  "username": "string",
-  "email": "string",
-  "password": "string",
-  "role": "ADMIN|CONVENER|STAFF"
-}
-```
-
-**Response:** User object with JWT token
-
-**Authentication:** Not required
-
----
-
-#### POST /api/auth/login
-Authenticate user and receive JWT token.
-
-**Request Body:**
-```json
-{
-  "username": "string",
-  "password": "string"
-}
-```
-
-**Response:**
-```json
-{
-  "token": "jwt_token_string",
-  "user": {
-    "id": 1,
-    "username": "string",
-    "email": "string",
-    "role": "ADMIN"
-  }
-}
-```
-
-**Authentication:** Not required
-
----
-
-#### POST /api/auth/logout
-Logout current user (clear client-side token).
-
-**Authentication:** Required
-
----
-
-#### POST /api/auth/forgot-password
-Request password reset token via email.
-
-**Request Body:**
-```json
-{
-  "email": "user@example.com"
-}
-```
-
-**Authentication:** Not required
-
----
-
-#### POST /api/auth/reset-password
-Reset password using reset token.
-
-**Request Body:**
-```json
-{
-  "token": "reset_token_from_email",
-  "newPassword": "string"
-}
-```
-
-**Authentication:** Not required
-
----
-
-#### POST /api/auth/change-password
-Change password for authenticated user.
-
-**Request Body:**
-```json
-{
-  "currentPassword": "string",
-  "newPassword": "string"
-}
-```
-
-**Authentication:** Required
-
----
-
-#### GET /api/auth/me
-Get current authenticated user profile.
-
-**Response:** User object with staff details (if applicable)
-
-**Authentication:** Required
-
----
-
-#### PATCH /api/auth/me
-Update current user profile.
-
-**Request Body:**
-```json
-{
-  "username": "string",
-  "email": "string",
-  "profilePicture": "string"
-}
-```
-
-**Authentication:** Required
-
----
-
-#### POST /api/auth/profile-photo
-Upload profile photo for authenticated user.
-
-**Request:** Multipart form data with `photo` field
-
-**Authentication:** Required
-
----
-
-### Meeting Endpoints
-
-#### GET /api/meetings
-Get all meetings with filtering options.
-
-**Query Parameters:**
-- `page`: number (default: 1)
-- `limit`: number (default: 10)
-- `search`: string (search in title/description)
-- `meetingTypeId`: number
-- `organizerStaffId`: number
-- `venueId`: number
-- `startDate`: ISO date string
-- `endDate`: ISO date string
-- `isCancelled`: boolean
-- `status`: "upcoming|past|cancelled"
-
-**Response:** Paginated meetings list
-
-**Authentication:** Required
-
----
-
-#### POST /api/meetings
-Create a new meeting.
-
-**Request Body:**
-```json
-{
-  "meetingTitle": "string",
-  "meetingDescription": "string",
-  "meetingDate": "2026-02-20",
-  "meetingStartTime": "2026-02-20T10:00:00Z",
-  "meetingEndTime": "2026-02-20T11:00:00Z",
-  "meetingTypeId": 1,
-  "organizerStaffId": 1,
-  "venueId": 1,
-  "meetingLink": "https://meet.example.com",
-  "memberIds": [1, 2, 3]
-}
-```
-
-**Response:** Created meeting object
-
-**Authentication:** Required (Admin/Convener)
-
-**Side Effects:** Sends notifications to all meeting members
-
----
-
-#### GET /api/meetings/[id]
-Get meeting details by ID.
-
-**Response:** Meeting object with related data (members, documents, venue, organizer)
-
-**Authentication:** Required
-
----
-
-#### PATCH /api/meetings/[id]
-Update meeting details.
-
-**Request Body:** Partial meeting object
-
-**Authentication:** Required (Admin/Convener/Organizer)
-
----
-
-#### DELETE /api/meetings/[id]
-Delete a meeting permanently.
-
-**Authentication:** Required (Admin only)
-
----
-
-#### POST /api/meetings/[id]/cancel
-Cancel a meeting with reason.
-
-**Request Body:**
-```json
-{
-  "cancellationReason": "string"
-}
-```
-
-**Response:** Updated meeting with cancellation details
-
-**Authentication:** Required (Admin/Convener/Organizer)
-
----
-
-#### GET /api/meetings/[id]/members
-Get all members of a specific meeting.
-
-**Response:** List of meeting members with staff details and attendance
-
-**Authentication:** Required
-
----
-
-#### POST /api/meetings/[id]/members
-Add member to a meeting.
-
-**Request Body:**
-```json
-{
-  "staffId": 1
-}
-```
-
-**Authentication:** Required (Admin/Convener/Organizer)
-
----
-
-#### DELETE /api/meetings/[id]/members/[memberId]
-Remove member from a meeting.
-
-**Authentication:** Required (Admin/Convener/Organizer)
-
----
-
-#### GET /api/meetings/[id]/attendance
-Get attendance records for a meeting.
-
-**Response:** List of attendance records with staff details
-
-**Authentication:** Required
-
----
-
-#### POST /api/meetings/[id]/attendance
-Mark attendance for meeting members.
-
-**Request Body:**
-```json
-{
-  "attendance": [
-    {
-      "staffId": 1,
-      "isPresent": true,
-      "remarks": "On time"
-    }
-  ]
-}
-```
-
-**Authentication:** Required (Admin/Convener/Organizer)
-
----
-
-#### GET /api/meetings/[id]/documents
-Get all documents for a specific meeting.
-
-**Response:** List of documents with uploader details
-
-**Authentication:** Required
-
----
-
-#### GET /api/meetings/calendar
-Get meetings in calendar format.
-
-**Query Parameters:**
-- `month`: number (1-12)
-- `year`: number
-- `view`: "month|week|day"
-
-**Response:** Meetings grouped by date
-
-**Authentication:** Required
-
----
-
-#### GET /api/meetings/upcoming
-Get upcoming meetings for authenticated user.
-
-**Query Parameters:**
-- `limit`: number (default: 5)
-- `days`: number (default: 7, next N days)
-
-**Authentication:** Required
-
----
-
-### Document Endpoints
-
-#### GET /api/documents
-Get all documents with filtering.
-
-**Query Parameters:**
-- `page`: number
-- `limit`: number
-- `meetingId`: number
-- `search`: string
-- `uploadedBy`: number
-- `startDate`: ISO date
-- `endDate`: ISO date
-
-**Authentication:** Required
-
----
-
-#### POST /api/documents/upload
-Upload a document to a meeting.
-
-**Request:** Multipart form data
-- `file`: File
-- `meetingId`: number
-- `documentTitle`: string
-
-**Response:** Created document object with Vercel Blob URL
-
-**Authentication:** Required (Admin/Convener)
-
-**Side Effects:** Sends notifications to meeting participants
-
-**Storage:** Vercel Blob Storage
-
----
-
-#### GET /api/documents/[id]
-Get document details by ID.
-
-**Response:** Document object with meeting and uploader details
-
-**Authentication:** Required
-
----
-
-#### DELETE /api/documents/[id]
-Delete a document permanently.
-
-**Authentication:** Required (Admin/Convener/Uploader)
-
-**Side Effects:** Deletes file from Vercel Blob
-
----
-
-#### POST /api/documents/bulk-delete
-Delete multiple documents at once.
-
-**Request Body:**
-```json
-{
-  "documentIds": [1, 2, 3]
-}
-```
-
-**Authentication:** Required (Admin only)
-
----
-
-#### GET /api/documents/meetings
-Get documents grouped by meetings.
-
-**Query Parameters:**
-- `limit`: number (meetings limit)
-
-**Authentication:** Required
-
----
-
-### Staff Endpoints
-
-#### GET /api/staff
-Get all staff members with filtering.
-
-**Query Parameters:**
-- `page`: number
-- `limit`: number
-- `search`: string (name, email, designation)
-- `departmentId`: number
-- `isActive`: boolean
-
-**Response:** Paginated staff list with department details
-
-**Authentication:** Required
-
----
-
-#### POST /api/staff
-Create a new staff member.
-
-**Request Body:**
-```json
-{
-  "userId": 1,
-  "staffName": "string",
-  "designation": "string",
-  "mobileNo": "string",
-  "emailAddress": "string",
-  "departmentId": 1,
-  "profilePicture": "string"
-}
-```
-
-**Authentication:** Required (Admin only)
-
----
-
-#### GET /api/staff/[id]
-Get staff member details by ID.
-
-**Response:** Staff object with user, department, meeting statistics
-
-**Authentication:** Required
-
----
-
-#### PATCH /api/staff/[id]
-Update staff member details.
-
-**Request Body:** Partial staff object
-
-**Authentication:** Required (Admin/Self)
-
----
-
-#### DELETE /api/staff/[id]
-Delete/deactivate staff member.
-
-**Query Parameters:**
-- `hardDelete`: boolean (true = permanent delete, false = deactivate)
-
-**Authentication:** Required (Admin only)
-
----
-
-#### GET /api/staff/attendance
-Get attendance records for staff members.
-
-**Query Parameters:**
-- `staffId`: number
-- `startDate`: ISO date
-- `endDate`: ISO date
-
-**Authentication:** Required
-
----
-
-### Department Endpoints
-
-#### GET /api/departments
-Get all departments with filtering.
-
-**Query Parameters:**
-- `search`: string
-- `isActive`: boolean
-
-**Response:** List of departments with staff count
-
-**Authentication:** Required
-
----
-
-#### POST /api/departments
-Create a new department.
-
-**Request Body:**
-```json
-{
-  "departmentName": "string"
-}
-```
-
-**Authentication:** Required (Admin only)
-
----
-
-#### GET /api/departments/[id]
-Get department details by ID.
-
-**Response:** Department object with staff list
-
-**Authentication:** Required
-
----
-
-#### PATCH /api/departments/[id]
-Update department details.
-
-**Request Body:**
-```json
-{
-  "departmentName": "string",
-  "isActive": boolean
-}
-```
-
-**Authentication:** Required (Admin only)
-
----
-
-#### DELETE /api/departments/[id]
-Delete/deactivate department.
-
-**Query Parameters:**
-- `hardDelete`: boolean
-
-**Authentication:** Required (Admin only)
-
----
-
-### Venue Endpoints
-
-#### GET /api/venues
-Get all venues with filtering.
-
-**Query Parameters:**
-- `search`: string
-- `venueType`: "PHYSICAL|VIRTUAL"
-- `isActive`: boolean
-
-**Response:** List of venues with meeting count
-
-**Authentication:** Required
-
----
-
-#### POST /api/venues
-Create a new venue.
-
-**Request Body:**
-```json
-{
-  "venueName": "string",
-  "venueType": "PHYSICAL|VIRTUAL",
-  "location": "string"
-}
-```
-
-**Authentication:** Required (Admin only)
-
----
-
-#### GET /api/venues/[id]
-Get venue details by ID.
-
-**Response:** Venue object with upcoming meetings
-
-**Authentication:** Required
-
----
-
-#### PATCH /api/venues/[id]
-Update venue details.
-
-**Request Body:** Partial venue object
-
-**Authentication:** Required (Admin only)
-
----
-
-#### DELETE /api/venues/[id]
-Delete/deactivate venue.
-
-**Query Parameters:**
-- `hardDelete`: boolean (only works for inactive venues)
-
-**Authentication:** Required (Admin only)
-
----
-
-### Meeting Type Endpoints
-
-#### GET /api/meeting-types
-Get all meeting types with filtering.
-
-**Query Parameters:**
-- `search`: string
-- `isActive`: boolean
-
-**Response:** List of meeting types with usage count
-
-**Authentication:** Required
-
----
-
-#### POST /api/meeting-types
-Create a new meeting type.
-
-**Request Body:**
-```json
-{
-  "meetingTypeName": "string"
-}
-```
-
-**Authentication:** Required (Admin only)
-
----
-
-#### GET /api/meeting-types/[id]
-Get meeting type details by ID.
-
-**Authentication:** Required
-
----
-
-#### PATCH /api/meeting-types/[id]
-Update meeting type details.
-
-**Request Body:** Partial meeting type object
-
-**Authentication:** Required (Admin only)
-
----
-
-#### DELETE /api/meeting-types/[id]
-Delete/deactivate meeting type.
-
-**Query Parameters:**
-- `hardDelete`: boolean (only works for inactive types)
-
-**Authentication:** Required (Admin only)
-
----
-
-### User Endpoints
-
-#### GET /api/users
-Get all users with filtering.
-
-**Query Parameters:**
-- `role`: "ADMIN|CONVENER|STAFF"
-- `isActive`: boolean
-- `search`: string
-
-**Authentication:** Required (Admin only)
-
----
-
-#### POST /api/users
-Create a new user.
-
-**Request Body:**
-```json
-{
-  "username": "string",
-  "email": "string",
-  "password": "string",
-  "role": "ADMIN|CONVENER|STAFF"
-}
-```
-
-**Authentication:** Required (Admin only)
-
----
-
-#### GET /api/users/[id]
-Get user details by ID.
-
-**Authentication:** Required (Admin/Self)
-
----
-
-#### PATCH /api/users/[id]
-Update user details.
-
-**Request Body:** Partial user object
-
-**Authentication:** Required (Admin/Self)
-
----
-
-#### DELETE /api/users/[id]
-Delete/deactivate user.
-
-**Authentication:** Required (Admin only)
-
----
-
-### Notification Endpoints
-
-#### GET /api/notifications
-Get notifications for authenticated user.
-
-**Query Parameters:**
-- `limit`: number (default: 20)
-- `unreadOnly`: boolean
-
-**Response:**
-```json
-{
-  "notifications": [ /* Notification array */ ],
-  "unreadCount": 5
-}
-```
-
-**Authentication:** Required
-
----
-
-#### PATCH /api/notifications/[id]/read
-Mark a notification as read.
-
-**Authentication:** Required
-
----
-
-#### PATCH /api/notifications/mark-all-read
-Mark all notifications as read for authenticated user.
-
-**Authentication:** Required
-
----
-
-### Report Endpoints
-
-#### GET /api/reports
-Get all reports with filtering.
-
-**Query Parameters:**
-- `reportType`: "MEETING_SUMMARY|ATTENDANCE|DEPARTMENT"
-- `meetingId`: number
-- `startDate`: ISO date
-- `endDate`: ISO date
-
-**Authentication:** Required
-
----
-
-#### POST /api/reports/generate
-Generate a new report.
-
-**Request Body:**
-```json
-{
-  "reportType": "MEETING_SUMMARY|ATTENDANCE|DEPARTMENT",
-  "reportName": "string",
-  "meetingId": 1,
-  "startDate": "2026-01-01",
-  "endDate": "2026-12-31",
-  "filters": { /* Optional filters */ }
-}
-```
-
-**Authentication:** Required (Admin/Convener)
-
----
-
-#### GET /api/reports/[id]
-Get report details and download link.
-
-**Authentication:** Required
-
----
-
-#### DELETE /api/reports/[id]
-Delete a report.
-
-**Authentication:** Required (Admin/Generator)
-
----
-
-### Dashboard Endpoints
-
-#### GET /api/dashboard
-Get dashboard statistics for authenticated user.
-
-**Response:**
-```json
-{
-  "totalMeetings": 50,
-  "upcomingMeetings": 5,
-  "totalStaff": 25,
-  "totalDepartments": 8,
-  "recentMeetings": [ /* Array */ ],
-  "attendanceRate": 92.5,
-  "documentCount": 120
-}
-```
-
-**Role-specific data returned based on user role**
-
-**Authentication:** Required
-
----
-
-### Search Endpoint
-
-#### GET /api/search
-Global search across meetings, documents, and staff.
-
-**Query Parameters:**
-- `q`: string (search query, required)
-- `limit`: number (default: 10 per category)
-
-**Response:**
-```json
-{
-  "meetings": [ /* Matching meetings */ ],
-  "documents": [ /* Matching documents */ ],
-  "staff": [ /* Matching staff */ ]
-}
-```
-
-**Search Fields:**
-- Meetings: title, description
-- Documents: title, filename
-- Staff: name, email, designation
-
-**Authentication:** Required
-
----
-
-### Settings Endpoint
-
-#### GET /api/settings
-Get system settings.
-
-**Authentication:** Required (Admin only)
-
----
-
-#### PATCH /api/settings
-Update system settings.
-
-**Request Body:**
-```json
-{
-  "settingKey": "value"
-}
-```
-
-**Authentication:** Required (Admin only)
-
----
-
-### Support Ticket Endpoints
-
-#### GET /api/support-tickets
-Get all support tickets.
-
-**Query Parameters:**
-- `status`: "OPEN|IN_PROGRESS|RESOLVED|CLOSED"
-- `category`: "TECHNICAL|FEATURE|BUG|GENERAL"
-- `userId`: number
-
-**Authentication:** Required
-
----
-
-#### POST /api/support-tickets
-Create a new support ticket.
-
-**Request Body:**
-```json
-{
-  "category": "TECHNICAL|FEATURE|BUG|GENERAL",
-  "subject": "string",
-  "message": "string"
-}
-```
-
-**Authentication:** Required
-
----
-
-## Service Layer
-
-The application uses a service layer to separate business logic from API routes. All services are located in `/services` directory.
-
-### AuthService (auth.service.ts)
-Handles user authentication and authorization logic.
-
-**Methods:**
-- `register(userData)`: Register new user
-- `login(credentials)`: Authenticate user
-- `validateToken(token)`: Validate JWT token
-- `resetPassword(email)`: Generate password reset token
-- `changePassword(userId, passwords)`: Update user password
-
----
-
-### MeetingService (meeting.service.ts)
-Manages meeting operations and business logic.
-
-**Methods:**
-- `create(meetingData)`: Create new meeting with validations
-- `update(id, meetingData)`: Update meeting details
-- `delete(id)`: Delete meeting
-- `getById(id)`: Fetch meeting with relations
-- `findMany(filters)`: Get meetings with filtering and pagination
-- `cancelMeeting(id, reason)`: Cancel meeting and notify members
-- `getUpcoming(userId, days)`: Get upcoming meetings for user
-- `getCalendarView(month, year)`: Get meetings for calendar display
-
----
-
-### MeetingMemberService (meeting-member.service.ts)
-Handles meeting member management and attendance.
-
-**Methods:**
-- `addMember(meetingId, staffId)`: Add member to meeting
-- `removeMember(meetingId, staffId)`: Remove member from meeting
-- `markAttendance(meetingId, attendanceData)`: Mark attendance for members
-- `getAttendance(meetingId)`: Get attendance records
-- `getMemberMeetings(staffId)`: Get all meetings for a staff member
-
----
-
-### DocumentService (document.service.ts)
-Manages document uploads and storage.
-
-**Methods:**
-- `upload(file, meetingId, metadata)`: Upload document to Vercel Blob
-- `getById(id)`: Fetch document with relations
-- `findMany(filters)`: Get documents with filtering
-- `delete(id)`: Delete document and remove from blob storage
-- `bulkDelete(documentIds)`: Delete multiple documents
-- `getByMeeting(meetingId)`: Get all documents for a meeting
-
----
-
-### StaffService (staff.service.ts)
-Handles staff member operations.
-
-**Methods:**
-- `create(staffData)`: Create new staff member
-- `update(id, staffData)`: Update staff details
-- `delete(id, hardDelete)`: Delete or deactivate staff
-- `getById(id)`: Fetch staff with relations
-- `findMany(filters)`: Get staff with filtering and pagination
-- `getAttendance(staffId, dateRange)`: Get attendance history
-- `getByDepartment(departmentId)`: Get all staff in department
-
----
-
-### DepartmentService (department.service.ts)
-Manages department operations.
-
-**Methods:**
-- `create(departmentData)`: Create new department
-- `update(id, departmentData)`: Update department
-- `delete(id, hardDelete)`: Delete or deactivate department
-- `getById(id)`: Fetch department with staff
-- `findMany(filters)`: Get departments with filtering
-- `getStaffCount(id)`: Get staff count for department
-
----
-
-### VenueService (venue.service.ts)
-Handles venue management.
-
-**Methods:**
-- `create(venueData)`: Create new venue
-- `update(id, venueData)`: Update venue details
-- `delete(id, hardDelete)`: Delete or deactivate venue
-- `getById(id)`: Fetch venue with meetings
-- `findMany(filters)`: Get venues with filtering
-- `checkAvailability(venueId, dateTime)`: Check venue availability
-
----
-
-### MeetingTypeService (meeting-type.service.ts)
-Manages meeting types.
-
-**Methods:**
-- `create(typeData)`: Create new meeting type
-- `update(id, typeData)`: Update meeting type
-- `delete(id, hardDelete)`: Delete or deactivate meeting type
-- `getById(id)`: Fetch meeting type
-- `findMany(filters)`: Get meeting types with filtering
-- `getUsageCount(id)`: Get meeting count for type
-- `existsByName(name)`: Check if meeting type exists
-
----
-
-### NotificationService (notification.service.ts)
-Handles notification creation and management.
-
-**Methods:**
-- `create(notificationData)`: Create single notification
-- `createMany(notifications)`: Bulk create notifications
-- `getByUserId(userId, limit, unreadOnly)`: Get user notifications
-- `getUnreadCount(userId)`: Count unread notifications
-- `markAsRead(notificationId, userId)`: Mark notification as read
-- `markAllAsRead(userId)`: Mark all notifications as read
-- `deleteOld(days)`: Delete old notifications
-
-**Helper Methods:**
-- `notifyMeetingCreated(meetingId, meetingTitle, userIds)`: Send meeting creation notifications
-- `notifyDocumentUploaded(documentTitle, meetingTitle, userIds)`: Send document upload notifications
-- `notifyAttendanceMarked(meetingTitle, userIds)`: Send attendance notifications
-- `notifyReportGenerated(reportName, userId)`: Send report generation notification
-
----
-
-### ReportService (report.service.ts)
-Manages report generation.
-
-**Methods:**
-- `generate(reportData)`: Generate report based on type
-- `getById(id)`: Fetch report with relations
-- `findMany(filters)`: Get reports with filtering
-- `delete(id)`: Delete report file
-- `generateMeetingSummary(meetingId)`: Generate meeting summary report
-- `generateAttendanceReport(filters)`: Generate attendance report
-- `generateDepartmentReport(filters)`: Generate department-wise report
-
----
-
-### UserService (user.service.ts)
-Handles user management operations.
-
-**Methods:**
-- `create(userData)`: Create new user
-- `update(id, userData)`: Update user details
-- `delete(id)`: Delete or deactivate user
-- `getById(id)`: Fetch user with relations
-- `findMany(filters)`: Get users with filtering
-- `updateProfilePicture(userId, pictureUrl)`: Update profile picture
-
----
-
-### DashboardService (dashboard.service.ts)
-Provides dashboard statistics and analytics.
-
-**Methods:**
-- `getAdminDashboard()`: Get admin dashboard statistics
-- `getConvenerDashboard(userId)`: Get convener dashboard data
-- `getStaffDashboard(userId)`: Get staff dashboard data
-- `getMeetingStats(dateRange)`: Get meeting statistics
-- `getAttendanceStats(dateRange)`: Get attendance statistics
-- `getDepartmentStats()`: Get department-wise statistics
-
----
-
-## Authentication & Authorization
-
-### JWT Authentication
-
-The application uses JSON Web Tokens (JWT) for stateless authentication.
-
-**Token Structure:**
-```json
-{
-  "userId": 1,
-  "username": "string",
-  "role": "ADMIN",
-  "staffId": 1,
-  "iat": 1234567890,
-  "exp": 1234567890
-}
-```
-
-**Token Storage:**
-- Cookie: `token` (httpOnly, secure in production)
-- Header: `Authorization: Bearer <token>`
-
-**Token Expiration:** 7 days (configurable)
-
----
-
-### Role-Based Access Control (RBAC)
-
-#### ADMIN Role
-- Full system access
-- User management (create, update, delete users)
-- Department management
-- Staff management
-- Venue management
-- Meeting type management
-- System settings
-- All meeting operations
-- Report generation
-- Support ticket management
-
-#### CONVENER Role
-- Create and manage own meetings
-- Upload documents
-- Mark attendance
-- Generate reports for own meetings
-- View staff and departments
-- View venues and meeting types
-- Update own profile
-
-#### STAFF Role
-- View assigned meetings
-- View meeting documents
-- View own attendance
-- Update own profile
-- Create support tickets
-- View notifications
-
----
-
-### Protected Routes
-
-**Public Routes:**
-- `/auth/login`
-- `/auth/register`
-- `/auth/forgot-password`
-- `/auth/reset-password`
-
-**Authenticated Routes:**
-- `/admin/*` - Admin only
-- `/convener/*` - Convener and Admin
-- `/staff/*` - Staff, Convener, and Admin
-- `/api/*` - Most API routes require authentication
-
----
-
-### Authentication Utilities (lib/auth.ts)
-
-**Functions:**
-- `hashPassword(password)`: Hash password with bcrypt
-- `comparePassword(password, hash)`: Verify password
-- `generateToken(payload)`: Create JWT token
-- `verifyToken(token)`: Validate and decode JWT
-- `getUserFromRequest(request)`: Extract user from request
-- `hasRole(user, roles)`: Check if user has required role
-
----
-
-## Installation & Setup
+## Installation
 
 ### Prerequisites
 
-- Node.js 18+ 
-- PostgreSQL 14+
-- npm or yarn
-- Git
+Before installing MOMS, ensure you have the following:
 
-### Clone Repository
+- **Node.js**: Version 18.0 or higher
+- **PostgreSQL**: Version 14.0 or higher
+- **npm**: Version 9.0 or higher (comes with Node.js)
+- **Git**: For cloning the repository
 
-```bash
-git clone https://github.com/mr-baraiya/MOMS-Minutes-_of_Meeting_System.git
-cd MOMS-Minutes-_of_Meeting_System/momm-system
-```
+### Step-by-Step Installation
 
-### Install Dependencies
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/your-username/MOMS-Minutes_of_Meeting_System.git
+   cd MOMS-Minutes_of_Meeting_System/momm-system
+   ```
 
-```bash
-npm install
-```
+2. **Install Dependencies**
+   ```bash
+   npm install
+   ```
 
-### Database Setup
+3. **Environment Setup**
+   Create a `.env` file in the `momm-system` directory:
+   ```env
+   # Database Configuration
+   DATABASE_URL="postgresql://username:password@localhost:5432/moms_db"
+   
+   # JWT Configuration
+   JWT_SECRET="your-super-secret-jwt-key-here"
+   JWT_EXPIRES_IN="7d"
+   
+   # Vercel Blob Storage
+   BLOB_READ_WRITE_TOKEN="vercel_blob_token_here"
+   
+   # Email Configuration
+   EMAIL_HOST="smtp.gmail.com"
+   EMAIL_PORT=587
+   EMAIL_SECURE=false
+   EMAIL_USER="your-email@gmail.com"
+   EMAIL_PASSWORD="your-email-app-password"
+   EMAIL_FROM="MOMS System <your-email@gmail.com>"
+   
+   # Application Configuration
+   NEXTAUTH_URL="http://localhost:3000"
+   NEXTAUTH_SECRET="your-nextauth-secret"
+   
+   # Development Configuration
+   NODE_ENV="development"
+   ```
 
-1. Create a PostgreSQL database:
-```sql
-CREATE DATABASE moms_db;
-```
+4. **Database Setup**
+   ```bash
+   # Generate Prisma client
+   npx prisma generate
+   
+   # Run database migrations
+   npx prisma migrate dev --name init
+   
+   # Seed the database with initial data
+   npx prisma db seed
+   ```
 
-2. Run Prisma migrations:
-```bash
-npx prisma migrate dev
-```
+5. **Start Development Server**
+   ```bash
+   npm run dev
+   ```
 
-3. Seed database (optional):
-```bash
-npm run db:seed
-```
+6. **Access the Application**
+   Open your browser and navigate to [http://localhost:3000](http://localhost:3000)
 
-4. Open Prisma Studio (optional):
-```bash
-npm run db:studio
-```
+### Production Deployment
 
----
-
-## Environment Configuration
-
-Create a `.env.local` file in the `momm-system` directory:
-
-```env
-# Database
-DATABASE_URL="postgresql://username:password@localhost:5432/moms_db"
-
-# JWT Secret
-JWT_SECRET="your-super-secret-jwt-key-change-this"
-
-# Vercel Blob Storage
-BLOB_READ_WRITE_TOKEN="vercel_blob_token_here"
-
-# Email Configuration (Nodemailer)
-EMAIL_HOST="smtp.gmail.com"
-EMAIL_PORT=587
-EMAIL_USER="your-email@gmail.com"
-EMAIL_PASSWORD="your-app-password"
-EMAIL_FROM="MOMS System <noreply@moms.com>"
-
-# Application URL
-NEXT_PUBLIC_APP_URL="http://localhost:3000"
-
-# EmailJS (Optional - for contact form)
-NEXT_PUBLIC_EMAILJS_SERVICE_ID="your_service_id"
-NEXT_PUBLIC_EMAILJS_TEMPLATE_ID="your_template_id"
-NEXT_PUBLIC_EMAILJS_PUBLIC_KEY="your_public_key"
-```
-
-### Environment Variables Explained
-
-**DATABASE_URL**: PostgreSQL connection string
-- Format: `postgresql://USER:PASSWORD@HOST:PORT/DATABASE`
-- Required for Prisma to connect to database
-
-**JWT_SECRET**: Secret key for signing JWT tokens
-- Should be a long random string
-- Keep this secure and never commit to version control
-
-**BLOB_READ_WRITE_TOKEN**: Vercel Blob storage token
-- Get from Vercel dashboard
-- Required for document uploads
-
-**Email Configuration**: SMTP settings for sending emails
-- Used for password resets and notifications
-- Gmail requires App Password (not regular password)
-
----
-
-## Running the Application
-
-### Development Mode
+For production deployment, additional configuration is required:
 
 ```bash
-npm run dev
-```
-
-Application will be available at `http://localhost:3000`
-
-**Features in Dev Mode:**
-- Hot reload
-- Detailed error messages
-- Turbopack bundler
-- Source maps
-
----
-
-### Production Build
-
-```bash
-npm run build
-npm start
-```
-
-**Build Process:**
-1. Generates Prisma Client
-2. Compiles TypeScript
-3. Optimizes assets
-4. Creates production bundle
-
----
-
-### Available Scripts
-
-```bash
-# Start development server
-npm run dev
-
-# Build for production
+# Build the application
 npm run build
 
 # Start production server
 npm start
-
-# Run ESLint
-npm run lint
-
-# Seed database with sample data
-npm run db:seed
-
-# Open Prisma Studio
-npm run db:studio
 ```
 
----
+## Configuration
+
+### Environment Variables
+
+| Variable | Required | Description | Default |
+|----------|----------|-------------|---------|
+| `DATABASE_URL` | Yes | PostgreSQL connection string | - |
+| `JWT_SECRET` | Yes | Secret key for JWT token signing | - |
+| `JWT_EXPIRES_IN` | No | JWT token expiration time | "7d" |
+| `BLOB_READ_WRITE_TOKEN` | Yes | Vercel Blob storage token | - |
+| `EMAIL_HOST` | Yes | SMTP server hostname | - |
+| `EMAIL_PORT` | No | SMTP server port | 587 |
+| `EMAIL_USER` | Yes | SMTP authentication username | - |
+| `EMAIL_PASSWORD` | Yes | SMTP authentication password | - |
+| `NODE_ENV` | No | Application environment | "development" |
+
+### Database Configuration
+
+MOMS uses PostgreSQL as the primary database. Ensure your PostgreSQL instance is configured with:
+
+- **Character Encoding**: UTF-8
+- **Timezone**: UTC
+- **Connection Limits**: At least 20 concurrent connections
+- **Backup Strategy**: Regular automated backups
+
+### Email Configuration
+
+For email notifications to work properly:
+
+1. **Gmail Setup** (recommended for development):
+   - Enable 2-factor authentication
+   - Generate an app-specific password
+   - Use the app password in `EMAIL_PASSWORD`
+
+2. **Custom SMTP Setup**:
+   - Verify SMTP server supports TLS/SSL
+   - Test connection before deployment
+   - Configure appropriate port (587 for TLS, 465 for SSL)
+
+## Usage
+
+### Default Login Credentials
+
+After running the database seed, use these test accounts:
+
+- **Administrator Account**
+  - Email: `admin@moms.com`
+  - Password: `admin123`
+  - Role: ADMIN
+
+- **Staff Account**
+  - Email: `staff@moms.com`
+  - Password: `staff123`
+  - Role: STAFF
+
+### User Roles and Permissions
+
+#### Administrator (ADMIN)
+- **System Management**: Configure departments, meeting types, and venues
+- **User Management**: Create, modify, and deactivate user accounts
+- **Global Access**: View and manage all meetings across all departments
+- **Advanced Reporting**: Access to comprehensive analytics and reports
+- **System Settings**: Configure global application settings
+
+#### Staff (STAFF)
+- **Meeting Management**: Create and manage meetings for their department
+- **Attendance Tracking**: Mark and track attendance for meetings they organize
+- **Document Management**: Upload and manage meeting-related documents
+- **Basic Reporting**: Generate reports for their meetings and department
+- **Profile Management**: Manage their own profile and settings
+
+### Common Workflows
+
+#### Creating a Meeting
+1. **Login** with appropriate credentials
+2. **Navigate** to "Meetings" → "Create New Meeting"
+3. **Fill in Details**: Title, description, date, time
+4. **Select Venue**: Choose physical location or virtual platform
+5. **Add Participants**: Search and add meeting participants
+6. **Save Meeting**: Confirm details and create the meeting
+7. **Send Invitations**: Notifications are automatically sent to participants
+
+#### Managing Attendance
+1. **Open Meeting**: Navigate to the specific meeting
+2. **Access Attendance**: Click "Manage Attendance" tab
+3. **Mark Attendance**: Update status for each participant
+4. **Add Remarks**: Include relevant notes or comments
+5. **Save Changes**: Confirm attendance updates
+
+#### Generating Reports
+1. **Access Reports**: Navigate to "Reports" section
+2. **Select Type**: Choose meeting summary or attendance report
+3. **Set Parameters**: Define date range and filters
+4. **Generate Report**: Process and download the report
+5. **Export Options**: Choose PDF or Excel format
+
+## API Documentation
+
+### Base URLs
+- **Development**: `http://localhost:3000/api`
+- **Production**: `https://your-domain.com/api`
+
+### Authentication
+
+All API requests (except login) require authentication via JWT Bearer token:
+
+```bash
+Authorization: Bearer <your-jwt-token>
+```
+
+### Core Endpoints
+
+#### Authentication Endpoints
+```bash
+POST /api/auth/login          # User authentication
+POST /api/auth/register       # User registration  
+POST /api/auth/logout         # User logout
+POST /api/auth/forgot-password # Password reset request
+POST /api/auth/reset-password  # Password reset confirmation
+GET  /api/auth/me             # Current user profile
+```
+
+#### Meeting Endpoints
+```bash
+GET    /api/meetings          # List all meetings
+POST   /api/meetings          # Create new meeting
+GET    /api/meetings/:id      # Get specific meeting
+PUT    /api/meetings/:id      # Update meeting
+DELETE /api/meetings/:id      # Delete meeting
+POST   /api/meetings/:id/attendance # Mark attendance
+```
+
+#### User Management Endpoints
+```bash
+GET    /api/users             # List all users
+POST   /api/users             # Create new user
+GET    /api/users/:id         # Get specific user
+PUT    /api/users/:id         # Update user
+DELETE /api/users/:id         # Delete user
+```
+
+#### Document Endpoints
+```bash
+GET    /api/documents         # List documents
+POST   /api/documents         # Upload document
+GET    /api/documents/:id     # Download document
+DELETE /api/documents/:id     # Delete document
+```
+
+### Response Format
+
+All API responses follow a consistent format:
+
+```json
+{
+  "success": true,
+  "data": {
+    // Response data
+  },
+  "message": "Operation completed successfully",
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 100,
+    "pages": 10
+  }
+}
+```
 
 ## Project Structure
 
 ```
 momm-system/
 ├── app/                          # Next.js App Router
-│   ├── (auth)/                   # Auth route group
-│   │   ├── login/
-│   │   ├── register/
-│   │   ├── forgot-password/
-│   │   └── reset-password/
-│   ├── admin/                    # Admin dashboard pages
-│   │   ├── dashboard/
-│   │   ├── users/
-│   │   ├── departments/
-│   │   ├── staff/
-│   │   ├── venues/
-│   │   ├── meeting-types/
-│   │   ├── meetings/
-│   │   ├── documents/
-│   │   ├── reports/
-│   │   └── settings/
-│   ├── convener/                 # Convener dashboard pages
-│   │   ├── dashboard/
-│   │   ├── meetings/
-│   │   ├── documents/
-│   │   └── reports/
-│   ├── staff/                    # Staff dashboard pages
-│   │   ├── dashboard/
-│   │   ├── meetings/
-│   │   └── documents/
-│   ├── api/                      # API Routes
-│   │   ├── auth/                 # Authentication endpoints
-│   │   ├── meetings/             # Meeting CRUD & operations
-│   │   ├── documents/            # Document management
-│   │   ├── staff/                # Staff management
-│   │   ├── departments/          # Department management
-│   │   ├── venues/               # Venue management
-│   │   ├── meeting-types/        # Meeting type management
-│   │   ├── users/                # User management
-│   │   ├── reports/              # Report generation
-│   │   ├── notifications/        # Notification system
-│   │   ├── dashboard/            # Dashboard statistics
-│   │   ├── search/               # Global search
-│   │   ├── settings/             # System settings
-│   │   └── support-tickets/      # Support tickets
-│   ├── globals.css               # Global styles
-│   ├── layout.tsx                # Root layout
-│   └── page.tsx                  # Home page
-├── components/                   # React components
-│   ├── layouts/                  # Layout components
-│   │   ├── DashboardLayout.tsx
-│   │   ├── Header.tsx
-│   │   ├── Sidebar.tsx
-│   │   └── Footer.tsx
-│   ├── meetings/                 # Meeting components
-│   │   ├── MeetingModal.tsx
-│   │   ├── MeetingCard.tsx
-│   │   ├── MeetingListTable.tsx
-│   │   └── AttendanceForm.tsx
-│   ├── documents/                # Document components
-│   │   ├── DocumentUpload.tsx
-│   │   ├── DocumentCard.tsx
-│   │   └── DocumentListTable.tsx
-│   ├── dashboard/                # Dashboard components
-│   │   ├── StatsCard.tsx
-│   │   ├── RecentMeetings.tsx
-│   │   └── Chart.tsx
-│   ├── venues/                   # Venue components
-│   │   ├── VenueModal.tsx
-│   │   └── VenueListTable.tsx
-│   ├── meeting-types/            # Meeting type components
-│   │   ├── MeetingTypeModal.tsx
-│   │   └── MeetingTypeListTable.tsx
-│   └── common/                   # Shared components
-│       ├── Button.tsx
-│       ├── Input.tsx
-│       ├── Modal.tsx
-│       ├── Table.tsx
-│       └── Loading.tsx
-├── contexts/                     # React contexts
-│   └── AuthContext.tsx           # Authentication context
-├── hooks/                        # Custom React hooks
-│   └── useAuthGuard.ts           # Auth guard hook
-├── lib/                          # Utility libraries
-│   ├── prisma.ts                 # Prisma client instance
-│   ├── auth.ts                   # Auth utilities
-│   ├── api-utils.ts              # API response utilities
-│   ├── validations.ts            # Input validations
-│   ├── constants.ts              # Application constants
-│   ├── email.ts                  # Email utilities
-│   └── role-utils.ts             # Role-based utilities
-├── services/                     # Business logic layer
-│   ├── auth.service.ts
-│   ├── meeting.service.ts
-│   ├── meeting-member.service.ts
-│   ├── document.service.ts
-│   ├── staff.service.ts
-│   ├── department.service.ts
-│   ├── venue.service.ts
-│   ├── meeting-type.service.ts
-│   ├── user.service.ts
-│   ├── notification.service.ts
-│   ├── report.service.ts
-│   ├── dashboard.service.ts
-│   └── index.ts
-├── types/                        # TypeScript type definitions
-│   ├── models.ts                 # Database model types
-│   ├── api.ts                    # API request/response types
-│   └── index.ts
-├── prisma/                       # Prisma ORM
-│   ├── schema.prisma             # Database schema
-│   ├── seed.ts                   # Database seeding
-│   └── migrations/               # Database migrations
-├── public/                       # Static assets
-│   └── uploads/                  # Local file uploads
-├── docs/                         # Documentation
-│   ├── API_TESTING_GUIDE.md
-│   ├── AUTHENTICATION_GUIDE.md
-│   ├── BLOB_INTEGRATION_SUMMARY.md
-│   ├── DASHBOARD_ARCHITECTURE.md
-│   ├── DOCUMENTS_FEATURE.md
-│   └── ...
-├── .env.local                    # Environment variables
-├── .gitignore
-├── next.config.ts                # Next.js configuration
-├── tailwind.config.ts            # Tailwind CSS configuration
-├── tsconfig.json                 # TypeScript configuration
-├── package.json                  # Dependencies
-└── README.md                     # This file
+│   ├── (auth)/                   # Authentication routes group
+│   │   ├── login/               # Login page
+│   │   ├── register/            # Registration page
+│   │   └── forgot-password/     # Password recovery
+│   ├── admin/                   # Admin dashboard routes
+│   │   ├── dashboard/           # Admin dashboard
+│   │   ├── users/              # User management
+│   │   ├── departments/        # Department management
+│   │   ├── meetings/           # Meeting management
+│   │   └── settings/           # System settings
+│   ├── staff/                  # Staff dashboard routes
+│   │   ├── dashboard/          # Staff dashboard
+│   │   ├── meetings/           # Meeting management
+│   │   └── profile/            # Profile management
+│   ├── api/                    # API routes
+│   │   ├── auth/              # Authentication endpoints
+│   │   ├── meetings/          # Meeting endpoints
+│   │   ├── users/             # User endpoints
+│   │   ├── documents/         # Document endpoints
+│   │   └── reports/           # Report endpoints
+│   ├── globals.css            # Global styles
+│   ├── layout.tsx             # Root layout component
+│   └── page.tsx               # Home page
+├── components/                 # Reusable React components
+│   ├── ui/                    # Base UI components
+│   ├── forms/                 # Form components
+│   ├── layouts/               # Layout components
+│   ├── modals/                # Modal components
+│   └── charts/                # Chart components
+├── lib/                       # Utility libraries
+│   ├── auth.ts               # Authentication utilities
+│   ├── database.ts           # Database connection
+│   ├── validation.ts         # Input validation schemas
+│   └── utils.ts              # General utilities
+├── services/                  # Business logic services
+│   ├── auth.service.ts       # Authentication service
+│   ├── meeting.service.ts    # Meeting service
+│   ├── user.service.ts       # User service
+│   └── document.service.ts   # Document service
+├── types/                     # TypeScript type definitions
+│   ├── auth.ts              # Authentication types
+│   ├── meeting.ts           # Meeting types
+│   └── user.ts              # User types
+├── prisma/                   # Database configuration
+│   ├── schema.prisma        # Database schema
+│   ├── seed.ts              # Database seeding
+│   └── migrations/          # Database migrations
+├── public/                   # Static assets
+│   ├── images/              # Image files
+│   └── icons/               # Icon files
+├── docs/                     # Documentation
+│   ├── api.md               # API documentation
+│   ├── deployment.md        # Deployment guide
+│   └── contributing.md      # Contributing guidelines
+├── package.json             # Project dependencies
+├── tsconfig.json            # TypeScript configuration
+├── tailwind.config.js       # Tailwind CSS configuration
+└── next.config.js           # Next.js configuration
 ```
 
----
+## Database Schema
 
-## Key Features Implementation
+### Core Models Overview
 
-### File Upload System
-- Uses Vercel Blob for cloud storage
-- Supports multiple file formats (PDF, DOCX, XLSX, etc.)
-- Automatic file validation and size limits
-- Secure access with authentication
-- Automatic cleanup on deletion
+The database schema consists of interconnected models representing the complete meeting management system:
 
-### Notification System
-- Event-driven architecture
-- Real-time notifications via polling
-- Push notifications for meeting changes
-- Email notifications for important events
-- Notification preferences per user
-- Mark as read/unread functionality
+#### User Management
+- **User**: Core user authentication and profile information
+- **Staff**: Extended user information with department association
+- **Department**: Organizational departments for user grouping
 
-### Search System
-- Full-text search across multiple entities
-- Debounced search for performance
-- Category-based result grouping
-- Real-time search suggestions
-- Relevance-based sorting
+#### Meeting Management  
+- **Meeting**: Core meeting information and scheduling
+- **MeetingType**: Categorization of different meeting types
+- **Venue**: Physical and virtual meeting locations
+- **MeetingMember**: Participant associations for meetings
 
-### Dashboard Analytics
-- Role-specific dashboard views
-- Real-time statistics
-- Interactive charts (Recharts)
-- Date range filtering
-- Export capabilities
-- Cached data for performance
+#### Attendance & Documents
+- **Attendance**: Meeting attendance tracking with status and remarks
+- **Document**: File attachments associated with meetings
+- **Report**: Generated reports for meetings and attendance
 
-### Calendar Integration
-- Month/Week/Day views
-- Meeting scheduling with time slots
-- Conflict detection
-- Drag-and-drop rescheduling (planned)
-- iCal export (planned)
+#### System Features
+- **Notification**: User notification system for events
+- **SupportTicket**: User support and feedback system
 
----
+### Key Relationships
 
-## Security Features
-
-### Authentication Security
-- JWT token-based authentication
-- Secure password hashing (bcrypt)
-- Token expiration and refresh
-- Password reset with time-limited tokens
-- Email verification (planned)
-
-### Authorization Security
-- Role-based access control (RBAC)
-- Route-level protection
-- API endpoint authorization
-- Resource-level permissions
-- Ownership validation
-
-### Data Security
-- SQL injection prevention (Prisma ORM)
-- XSS protection (React escaping)
-- CSRF protection
-- Secure HTTP headers
-- Input validation (Zod)
-- File upload validation
-
-### Infrastructure Security
-- Environment variable protection
-- Secure cookie settings
-- HTTPS enforcement (production)
-- Rate limiting (planned)
-- Audit logging (planned)
-
----
-
-## Performance Optimizations
-
-- Server-side rendering (SSR)
-- Static generation where applicable
-- Image optimization (Next.js Image)
-- Code splitting and lazy loading
-- Database query optimization (Prisma)
-- Response caching
-- Debounced search
-- Pagination for large datasets
-- Connection pooling
-
----
-
-## Browser Support
-
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-- Mobile browsers (iOS Safari, Chrome Mobile)
-
----
+```
+User ←→ Staff ←→ Department
+User ←→ MeetingMember ←→ Meeting
+Meeting ←→ MeetingType
+Meeting ←→ Venue  
+Meeting ←→ Document
+Meeting ←→ Attendance
+User ←→ Notification
+User ←→ SupportTicket
+```
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+### Development Workflow
 
----
+1. **Fork the Repository**
+   ```bash
+   git clone https://github.com/your-username/MOMS-Minutes_of_Meeting_System.git
+   ```
+
+2. **Create Feature Branch**
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+3. **Make Changes**
+   - Follow the existing code style
+   - Add tests for new functionality
+   - Update documentation as needed
+
+4. **Test Changes**
+   ```bash
+   npm run test
+   npm run lint
+   npm run type-check
+   ```
+
+5. **Commit Changes**
+   ```bash
+   git commit -m "feat: add new feature description"
+   ```
+
+6. **Push and Create PR**
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+
+### Code Standards
+
+- **TypeScript**: All new code must be written in TypeScript
+- **ESLint**: Follow the established linting rules
+- **Prettier**: Use consistent code formatting
+- **Testing**: Add unit tests for new features
+- **Documentation**: Update relevant documentation
+
+### Commit Message Format
+
+Follow conventional commit format:
+```
+type(scope): description
+
+- feat: New features
+- fix: Bug fixes  
+- docs: Documentation changes
+- style: Code style changes
+- refactor: Code refactoring
+- test: Test additions/modifications
+```
+
+## Troubleshooting
+
+### Common Issues
+
+#### Database Connection Issues
+```bash
+Error: Can't reach database server
+```
+**Solution**: Check PostgreSQL service and connection string
+
+#### Authentication Issues
+```bash
+Error: Invalid JWT token
+```
+**Solution**: Verify JWT_SECRET environment variable
+
+#### File Upload Issues
+```bash
+Error: Blob storage not configured
+```
+**Solution**: Check BLOB_READ_WRITE_TOKEN configuration
+
+#### Email Notification Issues
+```bash
+Error: Failed to send email
+```
+**Solution**: Verify SMTP configuration and credentials
+
+### Development Tips
+
+1. **Database Reset**: Use `npx prisma migrate reset` to reset database
+2. **Clear Cache**: Delete `.next` folder if experiencing build issues
+3. **Environment Variables**: Restart development server after changing `.env`
+4. **Prisma Studio**: Use `npx prisma studio` for database visualization
+
+### Support
+
+For additional help:
+- **Documentation**: Check the `/docs` folder for detailed guides
+- **Issues**: Create GitHub issues for bugs or feature requests
+- **Discussions**: Use GitHub Discussions for questions
+- **Email**: Contact support@moms-system.com
 
 ## License
 
-This project is private and proprietary. All rights reserved.
+MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## Support
-
-For support, email support@moms-system.com or create a support ticket in the application.
-
----
-
-## Changelog
-
-### Version 0.1.0 (Current)
-- Initial release
-- Complete authentication system
-- Meeting management
-- Document management
-- Staff and department management
-- Venue and meeting type management
-- Notification system
-- Global search
-- Dashboard analytics
-- Report generation
-- Support ticket system
-
----
-
-## Roadmap
-
-### Planned Features
-- Real-time collaboration on minutes
-- AI-powered meeting summaries
-- Calendar integration (Google Calendar, Outlook)
-- Mobile application (React Native)
-- Video conferencing integration
-- Advanced analytics dashboard
-- Custom report builder
-- Email notifications
-- SMS notifications
-- Two-factor authentication
-- API rate limiting
-- Webhook support
-- Public API documentation
-- Multi-language support
-- Dark mode
-- Accessibility improvements (WCAG 2.1)
-
----
-
-## Technical Debt & Known Issues
-
-- Email service needs production SMTP configuration
-- File upload size limits need tuning
-- Search performance needs optimization for large datasets
-- Calendar view needs conflict detection improvements
-- Mobile responsiveness needs enhancement
-- Unit tests need to be added
-- Integration tests need to be added
-- CI/CD pipeline needs to be set up
-
----
-
-## Credits
-
-Developed by the MOMS Development Team
-
-**Technologies:**
-- Next.js by Vercel
-- React by Meta
-- Prisma by Prisma
-- PostgreSQL by PostgreSQL Global Development Group
-- Tailwind CSS by Tailwind Labs
-
----
-
-**Last Updated:** February 13, 2026
-**Version:** 0.1.0
-**Status:** Active Development
-
-#### 4.7.3 Meeting Attendance
-- Check-in/check-out system
-- Real-time attendance tracking
-- Attendance status:
-  - Present
-  - Absent
-  - Late
-  - Excused
-- Generate attendance reports
-
-#### 4.7.4 Meeting Members
-- Add/remove participants
-- Assign roles (Chair, Secretary, Member)
-- Send invitations
-- Track RSVP status
-
-### 4.8 Minutes Recording
-
-#### 4.8.1 Record Minutes
-- Real-time minute recording during meetings
-- Rich text editor for formatting
-- Capture:
-  - Discussions
-  - Decisions
-  - Action items
-  - Next steps
-- Auto-save functionality
-
-#### 4.8.2 Action Items
-- Create action items with:
-  - Description
-  - Assigned to
-  - Due date
-  - Priority level
-  - Status tracking
-- Link to parent meeting
-- Send notifications
-
-#### 4.8.3 Minutes Approval
-- Submit minutes for review
-- Approval workflow
-- Version control
-- Finalize and lock minutes
-
-### 4.9 Document Management
-
-#### 4.9.1 Upload Documents
-- Attach documents to meetings:
-  - Agendas
-  - Presentations
-  - Supporting documents
-  - Minutes (PDF export)
-- Supported formats: PDF, DOCX, XLSX, PPTX
-
-#### 4.9.2 Document Access
-- Role-based document access
-- Download documents
-- View document history
-- Share documents with members
-
-### 4.10 Calendar Integration
-
-#### 4.10.1 Meeting Calendar
-- Monthly/Weekly/Daily calendar views
-- Display upcoming meetings
-- Filter by:
-  - Meeting type
-  - Department
-  - Venue
-- Export to external calendars (iCal)
-
-#### 4.10.2 Personal Schedule
-- Individual meeting schedule
-- Meeting reminders
-- Conflict detection
-- Time zone support
-
-### 4.11 Reporting & Analytics
-
-#### 4.11.1 Meeting Reports
-- Generate reports:
-  - Meeting attendance summary
-  - Department-wise meetings
-  - Meeting frequency analysis
-  - Action item completion rates
-- Export formats: PDF, Excel, CSV
-
-#### 4.11.2 Analytics Dashboard
-- Visual charts and graphs
-- Meeting trends
-- Attendance patterns
-- Performance metrics
-
-## 5. API Endpoints
-
-### Authentication
-- `POST /api/auth/login` - User login
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/forgot-password` - Password reset request
-- `POST /api/auth/reset-password` - Reset password
-
-### Dashboard
-- `GET /api/dashboard` - Dashboard statistics
-
-### Departments
-- `GET /api/departments` - List all departments
-- `POST /api/departments` - Create department
-- `GET /api/departments/[id]` - Get department details
-- `PUT /api/departments/[id]` - Update department
-- `DELETE /api/departments/[id]` - Delete department
-
-### Staff
-- `GET /api/staff` - List all staff
-- `POST /api/staff` - Create staff
-- `GET /api/staff/[id]` - Get staff details
-- `PUT /api/staff/[id]` - Update staff
-- `DELETE /api/staff/[id]` - Delete staff
-
-### Meeting Types
-- `GET /api/meeting-types` - List all meeting types
-- `POST /api/meeting-types` - Create meeting type
-- `GET /api/meeting-types/[id]` - Get meeting type
-- `PUT /api/meeting-types/[id]` - Update meeting type
-- `DELETE /api/meeting-types/[id]` - Delete meeting type
-
-### Venues
-- `GET /api/venues` - List all venues
-- `POST /api/venues` - Create venue
-- `GET /api/venues/[id]` - Get venue details
-- `PUT /api/venues/[id]` - Update venue
-- `DELETE /api/venues/[id]` - Delete venue
-
-### Meetings
-- `GET /api/meetings` - List all meetings
-- `POST /api/meetings` - Create meeting
-- `GET /api/meetings/[id]` - Get meeting details
-- `PUT /api/meetings/[id]` - Update meeting
-- `DELETE /api/meetings/[id]` - Delete meeting
-- `GET /api/meetings/calendar` - Calendar view
-- `GET /api/meetings/upcoming` - Upcoming meetings
-- `POST /api/meetings/[id]/attendance` - Mark attendance
-- `POST /api/meetings/[id]/members` - Add members
-- `POST /api/meetings/[id]/documents` - Upload documents
-- `POST /api/meetings/[id]/cancel` - Cancel meeting
-
-### Users
-- `GET /api/users` - List all users
-- `POST /api/users` - Create user
-- `GET /api/users/[id]` - Get user details
-- `PUT /api/users/[id]` - Update user
-- `DELETE /api/users/[id]` - Delete user
-
-## 6. Installation & Setup
-
-### Prerequisites
-- Node.js 18+ 
-- PostgreSQL 14+
-- npm or yarn
-
-### Environment Variables
-Create a `.env` file in the `momm-system` directory:
-
-```env
-DATABASE_URL="postgresql://user:password@localhost:5432/moms_db"
-JWT_SECRET="your-secret-key"
-EMAIL_HOST="smtp.example.com"
-EMAIL_PORT=587
-EMAIL_USER="your-email@example.com"
-EMAIL_PASSWORD="your-email-password"
-NEXT_PUBLIC_API_URL="http://localhost:3000"
-```
-
-### Installation Steps
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/mr-baraiya/MOMS-Minutes-_of_Meeting_System.git
-   cd MOMS-Minutes_of_Meeting_System/momm-system
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Setup database**
-   ```bash
-   npx prisma generate
-   npx prisma migrate dev
-   npx prisma db seed
-   ```
-
-4. **Run development server**
-   ```bash
-   npm run dev
-   ```
-
-5. **Access the application**
-   ```
-   http://localhost:3000
-   ```
-
-### Database Schema
-The system uses Prisma ORM with the following main models:
-- User
-- Department
-- Staff
-- MeetingType
-- Venue
-- Meeting
-- MeetingMember
-- Attendance
-- Document
-- ActionItem
-
-See `prisma/schema.prisma` for complete schema definition.
-
-## 7. Usage Guide
-
-### For Admins
-1. Login with admin credentials
-2. Configure system settings (departments, meeting types, venues)
-3. Register staff members
-4. Oversee all meetings and reports
-5. Generate analytics and reports
-
-### For Staff
-1. Login with staff credentials
-2. View assigned meetings
-3. Record meeting minutes
-4. Manage action items
-5. Upload meeting documents
-
-### For Members
-1. Login with member credentials
-2. View invited meetings
-3. Access meeting documents
-4. View personal meeting history
-
-## 8. Project Structure
-
-```
-momm-system/
-├── app/                    # Next.js app directory
-│   ├── api/               # API routes
-│   ├── auth/              # Authentication pages
-│   ├── about/             # About page
-│   └── contact/           # Contact page
-├── components/            # React components
-├── lib/                   # Utility functions
-├── prisma/                # Database schema and migrations
-├── services/              # Business logic services
-├── types/                 # TypeScript type definitions
-├── public/                # Static assets
-└── docs/                  # Documentation
-
-```
-
-## 9. Testing
-
-### API Testing
-Refer to `momm-system/docs/API_TESTING_GUIDE.md` for detailed API testing instructions.
-
-### Testing Tools
-- Postman collection available
-- Thunder Client (VS Code extension)
-- Unit tests with Jest (planned)
-
-## 10. Future Enhancements
-
-- [ ] Real-time notifications (WebSocket/Push notifications)
-- [ ] Email notifications for meeting invitations and reminders
-- [ ] Advanced analytics dashboard with charts
-- [ ] Mobile application (React Native)
-- [ ] Integration with Microsoft Teams/Zoom
-- [ ] AI-powered minute summarization
-- [ ] Voice-to-text for minute recording
-- [ ] Multi-language support
-- [ ] Automated meeting minutes generation
-- [ ] Digital signature for minutes approval
-- [ ] Advanced search and filtering
-- [ ] Workflow automation
-- [ ] Custom report builder
-
-## 11. Documentation
-
-For detailed documentation, refer to:
-- [API Testing Guide](momm-system/docs/API_TESTING_GUIDE.md)
-- [API Base URL Guide](momm-system/docs/API_BASE_URL_GUIDE.md)
-- [Environment Setup](momm-system/docs/ENVIRONMENT_SETUP.md)
-
-## 12. Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 13. License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 14. Contact & Support
-
-For questions or support:
-- Email: support@moms-system.com
-- Documentation: See `/docs` folder
-- Issues: GitHub Issues page
-
----
-
-**MOMS - Minutes of Meeting System** | Making meeting management effortless and efficient.
+**MOMS** - Making meeting management effortless and efficient.
