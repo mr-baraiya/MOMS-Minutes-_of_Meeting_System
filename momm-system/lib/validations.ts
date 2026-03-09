@@ -133,7 +133,7 @@ export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 export const supportTicketSchema = z.object({
   category: z.enum(
     ['MEETING_ISSUE', 'ACCESS_LOGIN', 'DOCUMENTS_MOM', 'REPORTS', 'OTHER'],
-    { message: 'Invalid category' }
+    { message: 'Invalid category. Please select from the available options.' }
   ),
   subject: z
     .string()

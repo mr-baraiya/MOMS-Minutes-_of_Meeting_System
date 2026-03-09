@@ -58,8 +58,9 @@ export default function StaffMeetingTrendChart({ data }: StaffMeetingTrendChartP
 				initial={{ opacity: 0 }}
 				animate={{ opacity: 1 }}
 				transition={{ delay: 0.8 }}
+				className="w-full h-[280px] min-h-[280px]"
 			>
-				<ResponsiveContainer width="100%" height={280}>
+				<ResponsiveContainer width="100%" height="100%" minHeight={280}>
 					<AreaChart data={data}>
 						<defs>
 							<linearGradient id="colorMeetings" x1="0" y1="0" x2="0" y2="1">

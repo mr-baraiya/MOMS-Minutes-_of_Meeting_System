@@ -47,7 +47,7 @@ export default function RegisterPage() {
         icon: 'warning',
         title: 'Missing Information',
         text: 'Please fill in username, email, password, and confirm password.',
-        confirmButtonColor: '#16a34a',
+        confirmButtonColor: '#1d4ed8',
       });
       return;
     }
@@ -57,7 +57,7 @@ export default function RegisterPage() {
         icon: 'warning',
         title: 'Weak Password',
         text: 'Password must be at least 6 characters long.',
-        confirmButtonColor: '#16a34a',
+        confirmButtonColor: '#1d4ed8',
       });
       return;
     }
@@ -67,7 +67,7 @@ export default function RegisterPage() {
         icon: 'error',
         title: 'Passwords Do Not Match',
         text: 'Please ensure both password fields match.',
-        confirmButtonColor: '#16a34a',
+        confirmButtonColor: '#1d4ed8',
       });
       return;
     }
@@ -77,7 +77,7 @@ export default function RegisterPage() {
         icon: 'warning',
         title: 'Terms Required',
         text: 'Please agree to the Terms of Service and Privacy Policy to continue.',
-        confirmButtonColor: '#16a34a',
+        confirmButtonColor: '#1d4ed8',
         confirmButtonText: 'OK',
       });
       return;
@@ -99,14 +99,14 @@ export default function RegisterPage() {
         icon: 'success',
         title: 'Account Created',
         text: 'Your account has been created successfully. Please login to continue.',
-        confirmButtonColor: '#16a34a',
+        confirmButtonColor: '#1d4ed8',
       });
     } catch (err: any) {
       Swal.fire({
         icon: 'error',
         title: 'Registration Failed',
         text: err?.message || 'Registration failed. Please try again.',
-        confirmButtonColor: '#16a34a',
+        confirmButtonColor: '#1d4ed8',
       });
     } finally {
       setLoading(false);
@@ -121,15 +121,15 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center p-4 py-12">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 py-12">
       <div className="max-w-2xl w-full">
         {/* Card */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-white border-2 border-gray-300 p-8">
           {/* Back to Home */}
-          <div className="mb-4">
+          <div className="mb-6">
             <Link
               href="/"
-              className="inline-flex items-center text-green-600 hover:text-green-700 font-medium transition-colors"
+              className="inline-flex items-center text-blue-700 hover:text-blue-800 font-medium transition-colors"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Home
@@ -137,12 +137,12 @@ export default function RegisterPage() {
           </div>
           
           {/* Header */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-green-600 rounded-full mb-4">
-              <UserPlus className="w-8 h-8 text-white" />
+          <div className="text-center mb-8 border-b-2 border-gray-200 pb-6">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-700 text-white mb-4">
+              <UserPlus className="w-8 h-8" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Account</h1>
-            <p className="text-gray-600">Join the MOMM System</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">ACCOUNT REGISTRATION</h1>
+            <p className="text-gray-600">Minutes of Meeting Management System</p>
           </div>
 
           {/* Form */}
@@ -151,7 +151,7 @@ export default function RegisterPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Username */}
               <div>
-                <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
                   Username *
                 </label>
                 <div className="relative">
@@ -165,7 +165,7 @@ export default function RegisterPage() {
                     autoComplete="username"
                     value={formData.username}
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
+                    className="block w-full pl-10 pr-3 py-3 border-2 border-gray-300 focus:ring-2 focus:ring-blue-700 focus:border-blue-700 transition-colors"
                     placeholder="Choose username"
                   />
                 </div>
@@ -173,8 +173,8 @@ export default function RegisterPage() {
 
               {/* Email */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                  Email *
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
+                  EMAIL ADDRESS
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -187,7 +187,7 @@ export default function RegisterPage() {
                     autoComplete="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
+                    className="block w-full pl-10 pr-3 py-3 border-2 border-gray-300 focus:ring-2 focus:ring-blue-700 focus:border-blue-700 transition-colors"
                     placeholder="you@example.com"
                   />
                 </div>
@@ -198,8 +198,8 @@ export default function RegisterPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Password */}
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                  Password *
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
+                  Password
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -208,11 +208,11 @@ export default function RegisterPage() {
                   <input
                     id="password"
                     name="password"
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     autoComplete="new-password"
                     value={formData.password}
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
+                    className="block w-full pl-10 pr-12 py-3 border-2 border-gray-300 focus:ring-2 focus:ring-blue-700 focus:border-blue-700 transition-colors"
                     placeholder="Min. 6 characters"
                   />
                   <button
@@ -231,7 +231,7 @@ export default function RegisterPage() {
 
               {/* Confirm Password */}
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
                   Confirm Password *
                 </label>
                 <div className="relative">
@@ -245,7 +245,7 @@ export default function RegisterPage() {
                     autoComplete="new-password"
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
+                    className="block w-full pl-10 pr-12 py-3 border-2 border-gray-300 focus:ring-2 focus:ring-blue-700 focus:border-blue-700 transition-colors"
                     placeholder="Repeat password"
                   />
                   <button
@@ -270,7 +270,7 @@ export default function RegisterPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Staff Name */}
               <div>
-                <label htmlFor="staffName" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="staffName" className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
                   Full Name
                 </label>
                 <div className="relative">
@@ -284,7 +284,7 @@ export default function RegisterPage() {
                     autoComplete="name"
                     value={formData.staffName}
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
+                    className="block w-full pl-10 pr-3 py-3 border-2 border-gray-300 focus:ring-2 focus:ring-blue-700 focus:border-blue-700 transition-colors"
                     placeholder="Your full name"
                   />
                 </div>
@@ -292,7 +292,7 @@ export default function RegisterPage() {
 
               {/* Department */}
               <div>
-                <label htmlFor="departmentId" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="departmentId" className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
                   Department
                 </label>
                 <div className="relative">
@@ -304,7 +304,7 @@ export default function RegisterPage() {
                     name="departmentId"
                     value={formData.departmentId}
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors appearance-none"
+                    className="block w-full pl-10 pr-3 py-3 border-2 border-gray-300 focus:ring-2 focus:ring-blue-700 focus:border-blue-700 transition-colors appearance-none"
                   >
                     <option value="">Select Department</option>
                     {departments.map((dept) => (
@@ -318,21 +318,21 @@ export default function RegisterPage() {
             </div>
 
             {/* Terms */}
-            <div className="flex items-start p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <div className="flex items-start p-4 bg-blue-50 border-2 border-blue-200">
               <input
                 id="terms"
                 name="terms"
                 type="checkbox"
                 checked={termsAccepted}
                 onChange={(e) => setTermsAccepted(e.target.checked)}
-                className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded mt-0.5 cursor-pointer"
+                className="h-4 w-4 text-blue-700 focus:ring-blue-700 border-gray-300 mt-0.5 cursor-pointer"
               />
               <label htmlFor="terms" className="ml-3 block text-sm text-gray-700 cursor-pointer select-none">
                 I agree to the{' '}
                 <Link 
                   href="/terms" 
                   target="_blank"
-                  className="text-green-600 hover:text-green-700 font-medium underline"
+                  className="text-blue-700 hover:text-blue-800 font-medium underline"
                 >
                   Terms of Service
                 </Link>{' '}
@@ -340,7 +340,7 @@ export default function RegisterPage() {
                 <Link 
                   href="/privacy" 
                   target="_blank"
-                  className="text-green-600 hover:text-green-700 font-medium underline"
+                  className="text-blue-700 hover:text-blue-800 font-medium underline"
                 >
                   Privacy Policy
                 </Link>
@@ -351,7 +351,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center py-3 px-4 border-2 border-blue-700 text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wide"
             >
               {loading ? (
                 <>
@@ -381,7 +381,7 @@ export default function RegisterPage() {
           <div className="mt-6">
             <Link
               href="/auth/login"
-              className="w-full flex items-center justify-center py-3 px-4 border-2 border-green-600 rounded-lg text-green-600 hover:bg-green-50 font-medium transition-colors"
+              className="w-full flex items-center justify-center py-3 px-4 border-2 border-blue-700 text-blue-700 hover:bg-blue-50 font-medium transition-colors uppercase tracking-wide"
             >
               Sign In
             </Link>

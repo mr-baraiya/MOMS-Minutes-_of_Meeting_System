@@ -60,7 +60,10 @@ export default function ConvenerSettingsPage() {
     return (
       <DashboardLayout role="convener">
         <div className="flex items-center justify-center h-full">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-900"></div>
+          <div
+            style={{ animation: 'spin 1s linear infinite' }}
+            className="h-12 w-12 border-4 border-slate-200 border-t-blue-700"
+          />
         </div>
       </DashboardLayout>
     );
@@ -83,9 +86,9 @@ export default function ConvenerSettingsPage() {
       )}
       <div className="space-y-6">
         {/* Header */}
-        <div className="bg-gradient-to-r from-emerald-900 to-teal-700 text-white rounded-lg p-6">
-          <h1 className="text-3xl font-bold">Settings</h1>
-          <p className="text-emerald-100 mt-2">Manage your preferences</p>
+        <div className="bg-blue-700 text-white p-6 border-2 border-blue-800">
+          <h1 className="text-3xl font-bold uppercase tracking-wide">Settings</h1>
+          <p className="text-blue-100 mt-2">Manage your preferences</p>
         </div>
 
         {/* Tab Navigation */}
@@ -96,7 +99,7 @@ export default function ConvenerSettingsPage() {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors whitespace-nowrap ${
                 activeTab === tab.id
-                  ? 'border-emerald-600 text-emerald-600 font-semibold'
+                  ? 'border-blue-700 text-blue-700 bg-blue-50 font-semibold uppercase tracking-wide'
                   : 'border-transparent text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -107,7 +110,7 @@ export default function ConvenerSettingsPage() {
         </div>
 
         {/* Content Panel */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white p-6 border-2 border-gray-300">
           {activeTab === 'profile' && <ProfileSection data={settingsData.profile} onSave={saveSettings} />}
           {activeTab === 'notifications' && <NotificationsSection data={settingsData.notificationPreferences} onSave={saveSettings} />}
           {activeTab === 'meeting-preferences' && <MeetingPreferencesSection data={settingsData.meetingPreferences} onSave={saveSettings} />}

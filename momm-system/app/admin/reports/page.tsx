@@ -120,7 +120,10 @@ export default function AdminReportsPage() {
     return (
       <DashboardLayout role="admin">
         <div className="flex items-center justify-center h-screen">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+          <div
+            style={{ animation: 'spin 1s linear infinite' }}
+            className="h-12 w-12 border-4 border-slate-200 border-t-blue-700"
+          />
         </div>
       </DashboardLayout>
     );
@@ -205,7 +208,10 @@ export default function AdminReportsPage() {
 
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+            <div
+              style={{ animation: 'spin 1s linear infinite' }}
+              className="h-12 w-12 border-4 border-slate-200 border-t-blue-700"
+            />
           </div>
         ) : (
           <>

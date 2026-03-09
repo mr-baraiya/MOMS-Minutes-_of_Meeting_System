@@ -132,17 +132,17 @@ function ResetPasswordForm() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 px-4 py-12">
-        <div className="max-w-md w-full space-y-8">
-          <div className="text-center">
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 py-12">
+        <div className="max-w-md w-full">
+          <div className="text-center mb-8">
             <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-16 h-16 bg-blue-700 border-2 border-blue-800 flex items-center justify-center">
+                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2 uppercase tracking-wide">
               Password Reset Successful!
             </h2>
             <p className="text-gray-600 mb-6">
@@ -150,10 +150,10 @@ function ResetPasswordForm() {
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6 border border-gray-100">
+          <div className="bg-white border-2 border-gray-300 p-8 space-y-6">
             <Link
               href="/auth/login"
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 transform hover:scale-[1.02]"
+              className="w-full flex justify-center py-3 px-4 border-2 border-blue-700 text-white bg-blue-700 hover:bg-blue-800 font-medium transition-colors uppercase tracking-wide"
             >
               Continue to Login
             </Link>
@@ -164,18 +164,18 @@ function ResetPasswordForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 px-4 py-12">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 py-12">
+      <div className="max-w-md w-full">
         {/* Logo and Header */}
-        <div className="text-center">
+        <div className="text-center mb-8">
           <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform duration-300">
+            <div className="w-16 h-16 bg-blue-700 border-2 border-blue-800 flex items-center justify-center">
               <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             </div>
           </div>
-          <h2 className="text-4xl font-bold text-gray-900 mb-2">
+          <h2 className="text-4xl font-bold text-gray-900 mb-2 uppercase tracking-wide">
             Reset Password
           </h2>
           <p className="text-gray-600">
@@ -184,11 +184,11 @@ function ResetPasswordForm() {
         </div>
 
         {/* Form */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6 border border-gray-100">
+        <div className="bg-white border-2 border-gray-300 p-8 space-y-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* New Password Field */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
                 New Password
               </label>
               <div className="relative">
@@ -204,7 +204,7 @@ function ResetPasswordForm() {
                   autoComplete="new-password"
                   value={formData.password}
                   onChange={handleChange}
-                  className="block w-full pl-10 pr-10 py-3 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 rounded-lg focus:outline-none focus:ring-2 transition-colors duration-200"
+                  className="block w-full pl-10 pr-10 py-3 border-2 border-gray-300 focus:ring-2 focus:ring-blue-700 focus:border-blue-700 transition-colors"
                   placeholder="Enter new password"
                 />
                 <button
@@ -231,7 +231,7 @@ function ResetPasswordForm() {
 
             {/* Confirm Password Field */}
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
                 Confirm New Password
               </label>
               <div className="relative">
@@ -247,7 +247,7 @@ function ResetPasswordForm() {
                   autoComplete="new-password"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className="block w-full pl-10 pr-10 py-3 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 rounded-lg focus:outline-none focus:ring-2 transition-colors duration-200"
+                  className="block w-full pl-10 pr-10 py-3 border-2 border-gray-300 focus:ring-2 focus:ring-blue-700 focus:border-blue-700 transition-colors"
                   placeholder="Confirm new password"
                 />
                 <button
@@ -273,7 +273,7 @@ function ResetPasswordForm() {
             <button
               type="submit"
               disabled={loading || !token}
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full flex justify-center py-3 px-4 border-2 border-blue-700 text-white bg-blue-700 hover:bg-blue-800 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wide"
             >
               {loading ? (
                 <span className="flex items-center">
@@ -293,7 +293,7 @@ function ResetPasswordForm() {
           <div className="text-center pt-4 border-t border-gray-200">
             <Link
               href="/auth/login"
-              className="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-500 transition-colors"
+              className="inline-flex items-center text-sm font-medium text-blue-700 hover:text-blue-800 transition-colors"
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -310,9 +310,9 @@ function ResetPasswordForm() {
 export default function ResetPasswordPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-700 mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>

@@ -5,18 +5,18 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <footer className="bg-blue-900 text-white">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">M</span>
+              <div className="w-8 h-8 bg-white text-blue-900 flex items-center justify-center font-bold">
+                <span className="text-xl">M</span>
               </div>
               <span className="text-xl font-bold">{APP_NAME}</span>
             </div>
-            <p className="text-gray-400 mb-4">
+            <p className="text-blue-100 mb-4">
               {APP_TAGLINE}
             </p>
           </div>
@@ -28,7 +28,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/#features"
-                  className="text-gray-400 hover:text-white transition-colors"
+                  className="text-blue-200 hover:text-white transition-colors"
                 >
                   Features
                 </Link>
@@ -36,7 +36,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/about"
-                  className="text-gray-400 hover:text-white transition-colors"
+                  className="text-blue-200 hover:text-white transition-colors"
                 >
                   About Us
                 </Link>
@@ -44,7 +44,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/contact"
-                  className="text-gray-400 hover:text-white transition-colors"
+                  className="text-blue-200 hover:text-white transition-colors"
                 >
                   Contact
                 </Link>

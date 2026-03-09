@@ -74,12 +74,12 @@ export async function sendPasswordResetEmail(
     }
     .email-wrapper {
       background-color: #ffffff;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border: 2px solid #374151;
       overflow: hidden;
     }
     .header {
-      background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+      background-color: #1d4ed8;
+      border-bottom: 2px solid #1e40af;
       padding: 30px 20px;
       text-align: center;
     }
@@ -87,6 +87,9 @@ export async function sendPasswordResetEmail(
       color: #ffffff;
       margin: 0;
       font-size: 24px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
     }
     .content {
       padding: 40px 30px;
@@ -95,6 +98,7 @@ export async function sendPasswordResetEmail(
       color: #1f2937;
       font-size: 20px;
       margin-top: 0;
+      font-weight: bold;
     }
     .content p {
       color: #4b5563;
@@ -103,31 +107,30 @@ export async function sendPasswordResetEmail(
     .button {
       display: inline-block;
       padding: 14px 32px;
-      background-color: #2563eb !important;
-      background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%) !important;
+      background-color: #1d4ed8 !important;
       color: #ffffff !important;
       text-decoration: none !important;
-      border-radius: 6px;
+      border: 2px solid #1e40af !important;
       font-weight: 600;
       margin: 20px 0;
       text-align: center;
       font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
       mso-padding-alt: 0;
       mso-text-raise: 0;
     }
     .button:hover {
-      background-color: #1d4ed8 !important;
-      background: linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%) !important;
+      background-color: #1e40af !important;
     }
     /* Fallback styles for Outlook */
     .button-td {
-      border-radius: 6px;
-      background-color: #2563eb;
+      background-color: #1d4ed8;
+      border: 2px solid #1e40af;
     }
     .button-a {
-      background-color: #2563eb;
-      border: 1px solid #2563eb;
-      border-radius: 6px;
+      background-color: #1d4ed8;
+      border: 2px solid #1e40af;
       color: #ffffff;
       display: inline-block;
       font-family: sans-serif;
@@ -137,26 +140,31 @@ export async function sendPasswordResetEmail(
       text-align: center;
       text-decoration: none;
       width: 200px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
       -webkit-text-size-adjust: none;
       mso-hide: all;
     }
     .info-box {
-      background-color: #eff6ff;
-      border-left: 4px solid #2563eb;
+      background-color: #dbeafe;
+      border: 2px solid #1d4ed8;
+      border-left: 4px solid #1d4ed8;
       padding: 16px;
       margin: 20px 0;
-      border-radius: 4px;
     }
     .info-box p {
       margin: 0;
-      color: #1e40af;
+      color: #1d4ed8;
       font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
     .footer {
       background-color: #f9fafb;
       padding: 20px 30px;
       text-align: center;
-      border-top: 1px solid #e5e7eb;
+      border-top: 2px solid #e5e7eb;
     }
     .footer p {
       color: #6b7280;
@@ -164,8 +172,9 @@ export async function sendPasswordResetEmail(
       margin: 5px 0;
     }
     .link {
-      color: #2563eb;
+      color: #1d4ed8;
       word-break: break-all;
+      font-weight: 600;
     }
   </style>
 </head>
@@ -185,18 +194,18 @@ export async function sendPasswordResetEmail(
         
         <div style="text-align: center; margin: 30px 0;">
           <!--[if mso]>
-          <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${resetUrl}" style="height:44px;v-text-anchor:middle;width:200px;" arcsize="14%" stroke="f" fillcolor="#2563eb">
+          <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${resetUrl}" style="height:44px;v-text-anchor:middle;width:200px;" stroke="t" strokecolor="#1e40af" strokeweight="2pt" fillcolor="#1d4ed8">
           <w:anchorlock/>
-          <center style="color:#ffffff;font-family:sans-serif;font-size:16px;font-weight:600;">Reset Your Password</center>
+          <center style="color:#ffffff;font-family:sans-serif;font-size:16px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Reset Your Password</center>
           </v:roundrect>
           <![endif]-->
           <!--[if !mso]><!-->
-          <a href="${resetUrl}" class="button" style="background-color: #2563eb !important; color: #ffffff !important; text-decoration: none !important; padding: 14px 32px; border-radius: 6px; font-weight: 600; display: inline-block;">Reset Your Password</a>
+          <a href="${resetUrl}" class="button" style="background-color: #1d4ed8 !important; color: #ffffff !important; text-decoration: none !important; padding: 14px 32px; border: 2px solid #1e40af !important; font-weight: 600; display: inline-block; text-transform: uppercase; letter-spacing: 0.05em;">Reset Your Password</a>
           <!--<![endif]-->
         </div>
         
         <div class="info-box">
-          <p><strong>This link will expire in 1 hour</strong></p>
+          <p>This link will expire in 1 hour</p>
         </div>
         
         <p>If the button doesn't work, copy and paste this link into your browser:</p>

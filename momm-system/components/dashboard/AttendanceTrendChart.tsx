@@ -27,9 +27,9 @@ export default function AttendanceTrendChart({ data }: AttendanceChartProps) {
 				initial={{ opacity: 0 }}
 				animate={{ opacity: 1 }}
 				transition={{ delay: 0.9 }}
-                className="h-[300px] w-full"
+                className="h-[300px] w-full min-h-[300px]"
 			>
-				<ResponsiveContainer width="100%" height="100%">
+				<ResponsiveContainer width="100%" height="100%" minHeight={300}>
 					<AreaChart data={data}>
 						<defs>
 							<linearGradient id="colorAttendance" x1="0" y1="0" x2="0" y2="1">

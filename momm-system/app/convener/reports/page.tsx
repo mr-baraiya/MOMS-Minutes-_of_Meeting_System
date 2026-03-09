@@ -100,7 +100,10 @@ export default function ConvenerReportsPage() {
     return (
       <DashboardLayout role="convener">
         <div className="flex items-center justify-center h-screen">
-          <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+          <div
+            style={{ animation: 'spin 1s linear infinite' }}
+            className="h-12 w-12 border-4 border-slate-200 border-t-blue-700"
+          />
         </div>
       </DashboardLayout>
     );
@@ -114,15 +117,15 @@ export default function ConvenerReportsPage() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-lg shadow-sm p-6 border border-gray-200"
+          className="bg-white p-6 border-2 border-gray-300"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <FileBarChart className="w-6 h-6 text-purple-600" />
+              <div className="w-12 h-12 bg-blue-700 text-white flex items-center justify-center border-2 border-blue-800">
+                <FileBarChart className="w-6 h-6" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">My Reports</h1>
+                <h1 className="text-2xl font-bold text-gray-900 uppercase tracking-wide">My Reports</h1>
                 <p className="text-gray-600 mt-1">
                   Reports from meetings you organized
                 </p>
@@ -185,7 +188,10 @@ export default function ConvenerReportsPage() {
 
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+            <div
+              style={{ animation: 'spin 1s linear infinite' }}
+              className="h-12 w-12 border-4 border-slate-200 border-t-blue-700"
+            />
           </div>
         ) : (
           <>

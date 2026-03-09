@@ -5,6 +5,45 @@ import { verifyToken } from '@/lib/auth';
 const protectedRoutes = ['/admin', '/convener', '/staff'];
 const authRoutes = ['/auth/login', '/auth/register', '/auth/forgot-password'];
 
+// Add security headers to response
+function addSecurityHeaders(response: NextResponse): NextResponse {
+  // Content Security Policy to prevent extension script injection
+  response.headers.set('Content-Security-Policy', [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.emailjs.com https://fonts.googleapis.com",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "img-src 'self' data: blob: https:",
+    "font-src 'self' https://fonts.gstatic.com",
+    "connect-src 'self' https://api.emailjs.com",
+    "frame-src 'self' https:",
+    "object-src 'none'",
+    "base-uri 'self'"
+  ].join('; '));
+
+  // Permissions policy to prevent unload event violations (updated format)
+  response.headers.set('Permissions-Policy', [
+    'unload=()',
+    'accelerometer=(self)',
+    'camera=(self)',
+    'geolocation=(self)',
+    'gyroscope=(self)',
+    'magnetometer=(self)',
+    'microphone=(self)',
+    'payment=(self)',
+    'usb=()'
+  ].join(', '));
+
+  // Additional security headers
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set('X-XSS-Protection', '1; mode=block');
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  response.headers.set('Cross-Origin-Embedder-Policy', 'unsafe-none');
+  response.headers.set('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+
+  return response;
+}
+
 export default function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get('token')?.value || 
@@ -51,7 +90,7 @@ export default function proxy(request: NextRequest) {
       const response = NextResponse.next();
       response.headers.set('X-User-ID', payload.userId.toString());
       response.headers.set('X-User-Role', payload.role);
-      return response;
+      return addSecurityHeaders(response);
     } catch (error) {
       // Token is invalid, redirect to login
       return NextResponse.redirect(new URL('/auth/login?redirect=' + encodeURIComponent(pathname), request.url));
@@ -70,7 +109,7 @@ export default function proxy(request: NextRequest) {
     }
   }
 
-  return NextResponse.next();
+  return addSecurityHeaders(NextResponse.next());
 }
 
 export const config = {

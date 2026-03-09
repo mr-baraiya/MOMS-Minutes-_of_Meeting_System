@@ -175,7 +175,10 @@ export default function AdminDocumentsPage() {
     return (
       <DashboardLayout role="admin">
         <div className="flex items-center justify-center h-screen">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+          <div
+            style={{ animation: 'spin 1s linear infinite' }}
+            className="h-12 w-12 border-4 border-slate-200 border-t-blue-700"
+          />
         </div>
       </DashboardLayout>
     );
@@ -258,7 +261,10 @@ export default function AdminDocumentsPage() {
         >
           {loading ? (
             <div className="bg-white rounded-lg shadow-sm p-12 border border-gray-200 flex items-center justify-center">
-              <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+              <div
+                style={{ animation: 'spin 1s linear infinite' }}
+                className="h-12 w-12 border-4 border-slate-200 border-t-blue-700"
+              />
             </div>
           ) : documents.length === 0 ? (
             <div className="bg-white rounded-lg shadow-sm p-12 border border-gray-200 text-center">

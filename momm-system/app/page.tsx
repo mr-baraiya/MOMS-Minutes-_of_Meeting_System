@@ -5,206 +5,139 @@ import ContactForm from "@/components/ContactForm";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="pt-24 pb-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-white to-purple-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center">
-            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+      {/* Header Section */}
+      <section className="pt-20 pb-16 px-4 bg-gradient-to-br from-blue-700 to-blue-900">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center bg-white rounded-lg shadow-xl p-10">
+            <h1 className="text-4xl md:text-5xl font-bold text-blue-900 mb-4">
               Minutes of Meeting
-              <span className="block text-blue-600">Management System</span>
+              <span className="block text-blue-700">Management System</span>
             </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              Streamline your meeting documentation, attendance tracking, and
-              reporting in one comprehensive platform. Organize, track, and
-              manage all your meetings efficiently.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="border-t-2 border-blue-200 mt-6 pt-6">
+              <h2 className="text-xl text-gray-600 mb-6">
+                Academic Project - Information Technology Department
+              </h2>
+              <p className="text-lg text-gray-600 mb-8 leading-relaxed max-w-4xl mx-auto">
+                A comprehensive digital solution for organizing, documenting, and managing 
+                institutional meetings with automated attendance tracking and report generation capabilities.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
               <Link
-                href="/dashboard"
-                className="px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-lg font-semibold"
+                href="/auth/register"
+                className="px-8 py-3 bg-blue-700 text-white rounded-md hover:bg-blue-800 transition-colors font-semibold shadow-lg"
               >
-                Get Started
+                Access System
               </Link>
               <Link
-                href="#features"
-                className="px-8 py-4 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors text-lg font-semibold"
+                href="/about"
+                className="px-8 py-3 border-2 border-blue-700 text-blue-700 rounded-md hover:bg-blue-700 hover:text-white transition-colors font-semibold"
               >
-                Learn More
+                Project Details
               </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Powerful Features
+      {/* System Features Section */}
+      <section className="py-16 px-4 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">
+              System Features & Capabilities
             </h2>
-            <p className="text-xl text-gray-600">
-              Everything you need to manage meetings effectively
+            <div className="w-24 h-1 bg-blue-700 mx-auto mb-4"></div>
+            <p className="text-lg text-gray-600">
+              Core functionalities implemented in this management system
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Feature 1 */}
-            <div className="p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                <svg
-                  className="w-6 h-6 text-blue-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
+            <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+              <div className="w-12 h-12 bg-blue-100 text-blue-700 flex items-center justify-center rounded-lg mb-4 font-bold text-xl">
+                1
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="text-xl font-semibold text-gray-800 mb-3">
                 Meeting Scheduling
               </h3>
-              <p className="text-gray-600">
-                Schedule and manage meetings with ease. Support for physical
-                and virtual venues with comprehensive details.
+              <p className="text-gray-600 leading-relaxed">
+                Digital scheduling interface for planning meetings with venue management, 
+                participant selection, and automated notifications.
               </p>
             </div>
 
             {/* Feature 2 */}
-            <div className="p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                <svg
-                  className="w-6 h-6 text-green-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
+            <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+              <div className="w-12 h-12 bg-green-100 text-green-700 flex items-center justify-center rounded-lg mb-4 font-bold text-xl">
+                2
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="text-xl font-semibold text-gray-800 mb-3">
                 Attendance Tracking
               </h3>
-              <p className="text-gray-600">
-                Track attendance in real-time with present, absent, and late
-                status. Generate attendance reports instantly.
+              <p className="text-gray-600 leading-relaxed">
+                Real-time attendance management with present/absent status tracking 
+                and automated record generation for reporting.
               </p>
             </div>
 
             {/* Feature 3 */}
-            <div className="p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-                <svg
-                  className="w-6 h-6 text-purple-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  />
-                </svg>
+            <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+              <div className="w-12 h-12 bg-purple-100 text-purple-700 flex items-center justify-center rounded-lg mb-4 font-bold text-xl">
+                3
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="text-xl font-semibold text-gray-800 mb-3">
                 Document Management
               </h3>
-              <p className="text-gray-600">
-                Store and manage meeting documents, agendas, and minutes
-                securely in one centralized location.
+              <p className="text-gray-600 leading-relaxed">
+                Centralized repository for meeting agendas, minutes, and documentation 
+                with secure access control and version management.
               </p>
             </div>
 
             {/* Feature 4 */}
-            <div className="p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
-              <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mb-4">
-                <svg
-                  className="w-6 h-6 text-yellow-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-                  />
-                </svg>
+            <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+              <div className="w-12 h-12 bg-yellow-100 text-yellow-700 flex items-center justify-center rounded-lg mb-4 font-bold text-xl">
+                4
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                Role Management
+              <h3 className="text-xl font-semibold text-gray-800 mb-3">
+                User Role Management
               </h3>
-              <p className="text-gray-600">
-                Define roles with specific permissions - Admin, Convener, and
-                Staff with appropriate access levels.
+              <p className="text-gray-600 leading-relaxed">
+                Hierarchical access control with Administrator, Convener, 
+                and Staff roles with appropriate permission levels.
               </p>
             </div>
 
             {/* Feature 5 */}
-            <div className="p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
-              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
-                <svg
-                  className="w-6 h-6 text-red-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                  />
-                </svg>
+            <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+              <div className="w-12 h-12 bg-red-100 text-red-700 flex items-center justify-center rounded-lg mb-4 font-bold text-xl">
+                5
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                Analytics & Reports
+              <h3 className="text-xl font-semibold text-gray-800 mb-3">
+                Reports & Analytics
               </h3>
-              <p className="text-gray-600">
-                Generate comprehensive reports and analytics. Track meeting
-                trends and attendance patterns.
+              <p className="text-gray-600 leading-relaxed">
+                Automated generation of meeting summaries, attendance reports, 
+                and statistical analysis for administration.
               </p>
             </div>
 
             {/* Feature 6 */}
-            <div className="p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
-              <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
-                <svg
-                  className="w-6 h-6 text-indigo-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
-                  />
-                </svg>
+            <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+              <div className="w-12 h-12 bg-indigo-100 text-indigo-700 flex items-center justify-center rounded-lg mb-4 font-bold text-xl">
+                6
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                Multi-Location Support
+              <h3 className="text-xl font-semibold text-gray-800 mb-3">
+                Multi-Department Support
               </h3>
-              <p className="text-gray-600">
-                Support for multiple departments, venues, and meeting types
-                across your organization.
+              <p className="text-gray-600 leading-relaxed">
+                Cross-departmental coordination with venue allocation 
+                and resource management across organizational units.
               </p>
             </div>
           </div>
@@ -212,27 +145,30 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-purple-600">
+      <section className="py-16 px-4 bg-white">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-white mb-6">
-            Ready to Get Started?
-          </h2>
-          <p className="text-xl text-blue-100 mb-8">
-            Start managing your meetings more efficiently today. Try our demo or contact us for more information.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/dashboard"
-              className="px-8 py-4 bg-white text-blue-600 rounded-lg hover:bg-gray-100 transition-colors text-lg font-semibold shadow-lg"
-            >
-              Try Demo
-            </Link>
-            <Link
-              href="/contact"
-              className="px-8 py-4 border-2 border-white text-white rounded-lg hover:bg-white hover:text-blue-600 transition-colors text-lg font-semibold"
-            >
-              Contact Us
-            </Link>
+          <div className="bg-blue-50 rounded-lg p-10 border-l-4 border-blue-700">
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">
+              System Access & Demonstration
+            </h2>
+            <p className="text-lg text-gray-600 mb-8 leading-relaxed">
+              This application demonstrates modern web development practices and database management concepts.
+              Access the demo to explore the complete functionality.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <Link
+                href="/auth/register"
+                className="px-8 py-3 bg-blue-700 text-white rounded-md hover:bg-blue-800 transition-colors font-semibold shadow-lg"
+              >
+                Demo Access
+              </Link>
+              <Link
+                href="/contact"
+                className="px-8 py-3 border-2 border-blue-700 text-blue-700 rounded-md hover:bg-blue-700 hover:text-white transition-colors font-semibold"
+              >
+                Contact Information
+              </Link>
+            </div>
           </div>
         </div>
       </section>

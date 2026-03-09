@@ -47,26 +47,36 @@ export class NotificationService {
    * Get notifications for a user
    */
   static async getByUserId(userId: number, limit = 20, unreadOnly = false) {
-    return prisma.notification.findMany({
-      where: {
-        userId,
-        ...(unreadOnly && { isRead: false }),
-      },
-      orderBy: { createdAt: "desc" },
-      take: limit,
-    });
+    try {
+      return await prisma.notification.findMany({
+        where: {
+          userId,
+          ...(unreadOnly && { isRead: false }),
+        },
+        orderBy: { createdAt: "desc" },
+        take: limit,
+      });
+    } catch (error) {
+      console.error('NotificationService - getByUserId error:', error);
+      throw error;
+    }
   }
 
   /**
    * Get unread count for a user
    */
   static async getUnreadCount(userId: number) {
-    return prisma.notification.count({
-      where: {
-        userId,
-        isRead: false,
-      },
-    });
+    try {
+      return await prisma.notification.count({
+        where: {
+          userId,
+          isRead: false,
+        },
+      });
+    } catch (error) {
+      console.error('NotificationService - getUnreadCount error:', error);
+      throw error;
+    }
   }
 
   /**

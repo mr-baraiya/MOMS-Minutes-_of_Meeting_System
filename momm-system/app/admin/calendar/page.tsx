@@ -89,7 +89,11 @@ export default function AdminCalendarPage() {
 		return (
 			<DashboardLayout role="admin">
 				<div className="flex items-center justify-center h-full">
-					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+					<motion.div
+						animate={{ rotate: 360 }}
+						transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+						className="h-12 w-12 border-4 border-slate-200 border-t-blue-700"
+					/>
 				</div>
 			</DashboardLayout>
 		);

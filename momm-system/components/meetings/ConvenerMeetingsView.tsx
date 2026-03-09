@@ -117,6 +117,12 @@ export default function ConvenerMeetingsView({
         </div>
         <div className="flex gap-2">
           <button
+            onClick={() => setShowNewMeetingModal(true)}
+            className="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+          >
+            Create Meeting
+          </button>
+          <button
             onClick={onRefresh}
             className="px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50"
           >
@@ -139,7 +145,13 @@ export default function ConvenerMeetingsView({
         <div className="bg-white rounded-xl shadow-md border border-gray-100 p-10 text-center">
           <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-3" />
           <h3 className="text-lg font-semibold text-gray-900 mb-1">No meetings found</h3>
-          <p className="text-gray-600">Create a meeting to get started.</p>
+          <p className="text-gray-600 mb-4">Create a meeting to get started.</p>
+          <button
+            onClick={() => setShowNewMeetingModal(true)}
+            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+          >
+            Create Your First Meeting
+          </button>
         </div>
       ) : view === "card" ? (
         renderCards()

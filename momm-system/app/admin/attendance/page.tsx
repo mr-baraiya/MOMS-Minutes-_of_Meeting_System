@@ -126,7 +126,11 @@ export default function ManageAttendancePage() {
         {/* Content */}
         {loading ? (
              <div className="flex justify-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                    className="h-12 w-12 border-4 border-slate-200 border-t-blue-700"
+                />
             </div>
         ) : filteredMeetings.length === 0 ? (
              <div className="text-center py-16 bg-white rounded-xl border border-dashed border-gray-300">

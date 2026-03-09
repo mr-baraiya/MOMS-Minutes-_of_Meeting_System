@@ -225,7 +225,10 @@ export default function ConvenerProfilePage() {
     return (
       <DashboardLayout role="convener">
         <div className="flex items-center justify-center h-full">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-900"></div>
+          <div
+            style={{ animation: 'spin 1s linear infinite' }}
+            className="h-12 w-12 border-4 border-slate-200 border-t-blue-700"
+          />
         </div>
       </DashboardLayout>
     );
@@ -254,33 +257,31 @@ export default function ConvenerProfilePage() {
       `}</style>
 
       <div className="convener-profile space-y-8">
-        <div className="relative overflow-hidden rounded-[32px] border border-emerald-200 bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-700 p-8 text-white convener-rise">
-          <div className="absolute -left-12 -top-12 h-36 w-36 rounded-full bg-teal-400/30 blur-3xl"></div>
-          <div className="absolute right-0 bottom-0 h-48 w-48 rounded-full bg-emerald-300/20 blur-3xl"></div>
-          <div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+        <div className="border-2 border-blue-700 bg-blue-700 p-8 text-white">
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-5">
               {avatar ? (
                 <img
                   src={avatar}
                   alt={`${displayName} profile`}
-                  className="h-20 w-20 rounded-3xl border border-white/30 object-cover"
+                  className="h-20 w-20 border-2 border-white object-cover"
                 />
               ) : (
-                <div className="h-20 w-20 rounded-3xl border border-white/30 bg-white/10 text-3xl font-semibold flex items-center justify-center">
+                <div className="h-20 w-20 border-2 border-white bg-white text-blue-700 text-3xl font-semibold flex items-center justify-center">
                   {displayName.slice(0, 1).toUpperCase()}
                 </div>
               )}
               <div>
-                <p className="text-xs uppercase tracking-[0.35em] text-emerald-100">Meeting Convener</p>
-                <h1 className="text-4xl">{displayName}</h1>
-                <p className="text-emerald-100/80 mt-1">{displayEmail}</p>
+                <p className="text-xs uppercase tracking-[0.35em] text-blue-100">Meeting Convener</p>
+                <h1 className="text-4xl uppercase tracking-wide">{displayName}</h1>
+                <p className="text-blue-100 mt-1">{displayEmail}</p>
               </div>
             </div>
             <div className="flex gap-3">
-              <span className="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.2em]">
+              <span className="border-2 border-white bg-white text-blue-700 px-4 py-2 text-xs uppercase tracking-[0.2em]">
                 {displayRole}
               </span>
-              <span className="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.2em]">
+              <span className="border-2 border-white bg-white text-blue-700 px-4 py-2 text-xs uppercase tracking-[0.2em]">
                 {department}
               </span>
             </div>
@@ -289,8 +290,8 @@ export default function ConvenerProfilePage() {
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1.3fr_0.9fr]">
           <div className="grid grid-cols-1 gap-6">
-            <section className="rounded-3xl border border-emerald-100 bg-white p-6 shadow-sm">
-              <h2 className="text-2xl text-emerald-900">Your Mission</h2>
+            <section className="border-2 border-gray-300 bg-white p-6">
+              <h2 className="text-2xl text-gray-900 uppercase tracking-wide">Your Mission</h2>
               <p className="mt-3 text-sm text-slate-600">
                 Lead meeting planning, document capture, and participant alignment with a focus on momentum.
               </p>
@@ -300,19 +301,19 @@ export default function ConvenerProfilePage() {
                   { label: 'Pending Docs', value: '0' },
                   { label: 'Participants', value: '0' },
                 ].map((item) => (
-                  <div key={item.label} className="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-4">
-                    <p className="text-xs uppercase tracking-[0.2em] text-emerald-700">{item.label}</p>
-                    <p className="mt-2 text-2xl font-semibold text-emerald-900">{item.value}</p>
+                  <div key={item.label} className="border-2 border-blue-700 bg-blue-50 p-4">
+                    <p className="text-xs uppercase tracking-[0.2em] text-blue-700">{item.label}</p>
+                    <p className="mt-2 text-2xl font-semibold text-blue-700">{item.value}</p>
                   </div>
                 ))}
               </div>
             </section>
 
-            <section className="rounded-3xl border border-emerald-100 bg-white p-6 shadow-sm">
-              <h2 className="text-2xl text-emerald-900">Edit Profile</h2>
+            <section className="border-2 border-gray-300 bg-white p-6">
+              <h2 className="text-2xl text-gray-900 uppercase tracking-wide">Edit Profile</h2>
               <form onSubmit={handleProfileSubmit} className="mt-4 space-y-4 text-sm">
                 <div>
-                  <label htmlFor="profilePhoto" className="block text-xs uppercase tracking-[0.2em] text-emerald-700">
+                  <label htmlFor="profilePhoto" className="block text-xs uppercase tracking-[0.2em] text-gray-700">
                     Upload Profile Photo
                   </label>
                   <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -327,7 +328,7 @@ export default function ConvenerProfilePage() {
                       type="button"
                       onClick={handlePhotoUpload}
                       disabled={uploadingPhoto}
-                      className="rounded-full border border-emerald-900 px-4 py-2 text-xs font-semibold text-emerald-900 hover:bg-emerald-900 hover:text-white disabled:cursor-not-allowed disabled:opacity-70"
+                      className="border-2 border-blue-700 px-4 py-2 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-700 hover:text-white disabled:cursor-not-allowed disabled:opacity-70 uppercase tracking-wide"
                     >
                       {uploadingPhoto ? 'Uploading...' : 'Upload'}
                     </button>
@@ -404,8 +405,8 @@ export default function ConvenerProfilePage() {
               </form>
             </section>
 
-            <section className="rounded-3xl border border-emerald-100 bg-white p-6 shadow-sm">
-              <h2 className="text-2xl text-emerald-900">Change Password</h2>
+            <section className="border-2 border-gray-300 bg-white p-6">
+              <h2 className="text-2xl text-gray-900 uppercase tracking-wide">Change Password</h2>
               <form onSubmit={handlePasswordSubmit} className="mt-4 space-y-4 text-sm">
                 <div>
                   <label htmlFor="currentPassword" className="block text-xs uppercase tracking-[0.2em] text-emerald-700">

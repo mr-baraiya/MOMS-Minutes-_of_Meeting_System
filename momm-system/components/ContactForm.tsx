@@ -2,6 +2,16 @@
 
 import { useEffect, useState, FormEvent } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import emailjs from '@emailjs/browser';
+
+// Initialize EmailJS with error handling
+if (typeof window !== 'undefined') {
+  try {
+    emailjs.init(process.env.NEXT_PUBLIC_EMAILJS_USER_ID!);
+  } catch (error) {
+    console.warn('EmailJS initialization failed:', error);
+  }
+}
 
 interface ContactFormProps {
   className?: string;
@@ -10,8 +20,9 @@ interface ContactFormProps {
 export default function ContactForm({ className = '' }: ContactFormProps) {
   const { user, token } = useAuth();
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
+    from_name: '',
+    from_email: '',
+    phone: '',
     category: 'MEETING_ISSUE',
     subject: '',
     message: '',
@@ -25,8 +36,8 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
     if (!user) return;
     setFormData((prev) => ({
       ...prev,
-      name: user.staff?.name || user.username || prev.name,
-      email: user.email || prev.email,
+      from_name: user.staff?.name || user.username || prev.from_name,
+      from_email: user.email || prev.from_email,
     }));
   }, [user]);
 
@@ -46,14 +57,14 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
 
     const nextErrors: Record<string, string> = {};
 
-    if (!formData.name.trim()) nextErrors.name = 'Full name is required.';
-    if (!formData.email.trim()) nextErrors.email = 'Email is required.';
+    if (!formData.from_name.trim()) nextErrors.from_name = 'Full name is required.';
+    if (!formData.from_email.trim()) nextErrors.from_email = 'Email is required.';
     if (!formData.subject.trim()) nextErrors.subject = 'Subject is required.';
     if (!formData.message.trim()) nextErrors.message = 'Message is required.';
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (formData.email && !emailRegex.test(formData.email)) {
-      nextErrors.email = 'Enter a valid email address.';
+    if (formData.from_email && !emailRegex.test(formData.from_email)) {
+      nextErrors.from_email = 'Enter a valid email address.';
     }
 
     if (Object.keys(nextErrors).length > 0) {
@@ -63,30 +74,69 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
     }
 
     try {
-      const response = await fetch('/api/support-tickets', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({
-          category: formData.category,
-          subject: formData.subject,
-          message: formData.message,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok || !result.success) {
-        throw new Error(result.error || 'Failed to send message. Please try again later.');
+      // Send email via EmailJS with better error handling
+      console.log('Sending email via EmailJS...');
+      
+      // Ensure EmailJS is properly initialized
+      if (typeof window === 'undefined') {
+        throw new Error('EmailJS can only be used in browser environment');
       }
 
-      setSuccessMessage('Your message has been sent. Our team will respond within 24 hours.');
+      const emailjsResult = await emailjs.send(
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+        {
+          from_name: formData.from_name,
+          from_email: formData.from_email,
+          phone: formData.phone || 'Not provided',
+          subject: `[${formData.category}] ${formData.subject}`,
+          message: formData.message,
+          email: formData.from_email, // Additional mapping for template compatibility
+        },
+        {
+          publicKey: process.env.NEXT_PUBLIC_EMAILJS_USER_ID!,
+          // Disable any unload event handling
+          limitRate: {
+            id: 'contact_form',
+            throttle: 10000, // Once per 10 seconds
+          }
+        }
+      );
+      
+      console.log('EmailJS Response:', emailjsResult);
+      
+      if (emailjsResult.status !== 200) {
+        throw new Error('Failed to send email');
+      }
+
+      // Also log to our API for record keeping (optional)
+      try {
+        await fetch('/api/support-tickets', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({
+            from_name: formData.from_name,
+            from_email: formData.from_email,
+            phone: formData.phone,
+            category: formData.category,
+            subject: `[${formData.category}] ${formData.subject}`,
+            message: formData.message,
+          }),
+        });
+        console.log('Message logged to API successfully');
+      } catch (apiError) {
+        console.warn('Failed to log to API, but email was sent:', apiError);
+      }
+
+      setSuccessMessage('Your message has been sent successfully! Our team will respond within 24 hours.');
       setFormData((prev) => ({
         ...prev,
         subject: '',
         message: '',
+        phone: '',
         category: 'MEETING_ISSUE',
       }));
     } catch (err) {
@@ -103,43 +153,59 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
       
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="name" className="block text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">
+          <label htmlFor="from_name" className="block text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">
             Full Name
           </label>
           <input
             type="text"
-            id="name"
-            name="name"
-            value={formData.name}
+            id="from_name"
+            name="from_name"
+            value={formData.from_name}
             onChange={handleChange}
             readOnly={!!user}
             className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-              errors.name ? 'border-red-400' : 'border-gray-300'
+              errors.from_name ? 'border-red-400' : 'border-gray-300'
             } ${user ? 'bg-gray-50' : ''}`}
             placeholder="John Doe"
             disabled={loading}
           />
-          {errors.name && <p className="mt-2 text-xs text-red-600">{errors.name}</p>}
+          {errors.from_name && <p className="mt-2 text-xs text-red-600">{errors.from_name}</p>}
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">
+          <label htmlFor="from_email" className="block text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">
             Email Address
           </label>
           <input
             type="email"
-            id="email"
-            name="email"
-            value={formData.email}
+            id="from_email"
+            name="from_email"
+            value={formData.from_email}
             onChange={handleChange}
             readOnly={!!user}
             className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-              errors.email ? 'border-red-400' : 'border-gray-300'
+              errors.from_email ? 'border-red-400' : 'border-gray-300'
             } ${user ? 'bg-gray-50' : ''}`}
             placeholder="john@example.com"
             disabled={loading}
           />
-          {errors.email && <p className="mt-2 text-xs text-red-600">{errors.email}</p>}
+          {errors.from_email && <p className="mt-2 text-xs text-red-600">{errors.from_email}</p>}
+        </div>
+
+        <div>
+          <label htmlFor="phone" className="block text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">
+            Phone Number <span className="text-gray-400">(Optional)</span>
+          </label>
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            placeholder="+1 (555) 123-4567"
+            disabled={loading}
+          />
         </div>
 
         <div>
@@ -154,9 +220,9 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
             className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
             disabled={loading}
           >
-            <option value="MEETING_ISSUE">Meeting issue</option>
-            <option value="ACCESS_LOGIN">Access / Login</option>
-            <option value="DOCUMENTS_MOM">Documents / MOM</option>
+            <option value="MEETING_ISSUE">Meeting Issues</option>
+            <option value="ACCESS_LOGIN">Access / Login Problems</option>
+            <option value="DOCUMENTS_MOM">Documents / Minutes</option>
             <option value="REPORTS">Reports</option>
             <option value="OTHER">Other</option>
           </select>

@@ -120,7 +120,10 @@ export default function ConvenerDocumentsPage() {
     return (
       <DashboardLayout role="convener">
         <div className="flex items-center justify-center h-screen">
-          <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+          <div
+            style={{ animation: 'spin 1s linear infinite' }}
+            className="h-12 w-12 border-4 border-slate-200 border-t-blue-700"
+          />
         </div>
       </DashboardLayout>
     );
@@ -134,15 +137,15 @@ export default function ConvenerDocumentsPage() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-lg shadow-sm p-6 border border-gray-200"
+          className="bg-white p-6 border-2 border-gray-300"
         >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <Folders className="w-6 h-6 text-purple-600" />
+              <div className="w-12 h-12 bg-blue-700 text-white flex items-center justify-center border-2 border-blue-800">
+                <Folders className="w-6 h-6" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">My Documents</h1>
+                <h1 className="text-2xl font-bold text-gray-900 uppercase tracking-wide">My Documents</h1>
                 <p className="text-gray-600 mt-1">
                   Documents from meetings you manage
                 </p>
@@ -152,7 +155,7 @@ export default function ConvenerDocumentsPage() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setIsUploadOpen(true)}
-              className="px-5 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+              className="px-5 py-3 bg-blue-700 text-white hover:bg-blue-800 transition-colors font-medium flex items-center justify-center gap-2 border-2 border-blue-800 uppercase tracking-wide"
             >
               <Upload className="w-5 h-5" />
               Upload MOM
@@ -167,34 +170,34 @@ export default function ConvenerDocumentsPage() {
           transition={{ delay: 0.1 }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
         >
-          <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-md p-5 text-white">
+          <div className="bg-blue-50 border-2 border-blue-700 p-5 text-blue-700">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-blue-100 text-sm font-medium">Total Documents</p>
+                <p className="text-sm font-medium uppercase tracking-wide">Total Documents</p>
                 <p className="text-3xl font-bold mt-2">{documents.length}</p>
               </div>
-              <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-blue-700 text-white flex items-center justify-center border-2 border-blue-800">
                 <FileText className="w-6 h-6" />
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-md p-5 text-white">
+          <div className="bg-blue-50 border-2 border-blue-700 p-5 text-blue-700">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-purple-100 text-sm font-medium">My Meetings</p>
+                <p className="text-sm font-medium uppercase tracking-wide">My Meetings</p>
                 <p className="text-3xl font-bold mt-2">{meetings.length}</p>
               </div>
-              <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-blue-700 text-white flex items-center justify-center border-2 border-blue-800">
                 <Folders className="w-6 h-6" />
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-md p-5 text-white">
+          <div className="bg-blue-50 border-2 border-blue-700 p-5 text-blue-700">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-green-100 text-sm font-medium">This Month</p>
+                <p className="text-sm font-medium uppercase tracking-wide">This Month</p>
                 <p className="text-3xl font-bold mt-2">
                   {documents.filter((doc) => {
                     const docDate = new Date(doc.uploadedAt);
@@ -206,7 +209,7 @@ export default function ConvenerDocumentsPage() {
                   }).length}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-blue-700 text-white flex items-center justify-center border-2 border-blue-800">
                 <Upload className="w-6 h-6" />
               </div>
             </div>
@@ -234,8 +237,11 @@ export default function ConvenerDocumentsPage() {
           transition={{ delay: 0.3 }}
         >
           {loading ? (
-            <div className="bg-white rounded-lg shadow-sm p-12 border border-gray-200 flex items-center justify-center">
-              <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+            <div className="bg-white p-12 border-2 border-gray-300 flex items-center justify-center">
+              <div
+                style={{ animation: 'spin 1s linear infinite' }}
+                className="h-12 w-12 border-4 border-slate-200 border-t-blue-700"
+              />
             </div>
           ) : documents.length === 0 ? (
             <div className="bg-white rounded-lg shadow-sm p-12 border border-gray-200 text-center">

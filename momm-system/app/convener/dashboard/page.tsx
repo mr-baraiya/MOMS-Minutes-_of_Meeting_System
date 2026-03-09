@@ -80,17 +80,7 @@ export default function ConvenerDashboard() {
 	const { user, loading: authLoading } = useAuthGuard({ allowedRoles: ['convener'] });
 	const [data, setData] = useState<ConvenerDashboardData | null>(null);
 	const [loading, setLoading] = useState(true);
-	const [showWelcome, setShowWelcome] = useState(false);
 	const headerRef = useRef<HTMLDivElement>(null);
-
-	useEffect(() => {
-		// Check if this is user's first visit
-		const hasVisited = localStorage.getItem('convenerDashboardVisited');
-		if (!hasVisited) {
-			setShowWelcome(true);
-			localStorage.setItem('convenerDashboardVisited', 'true');
-		}
-	}, []);
 
 	useEffect(() => {
 		if (!authLoading) {
@@ -140,7 +130,7 @@ export default function ConvenerDashboard() {
 					<motion.div
 						animate={{ rotate: 360 }}
 						transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-						className="h-12 w-12 rounded-full border-4 border-emerald-200 border-t-emerald-600"
+						className="h-12 w-12 border-4 border-slate-200 border-t-blue-700"
 					/>
 				</div>
 			</DashboardLayout>
@@ -167,49 +157,16 @@ export default function ConvenerDashboard() {
 	return (
 		<DashboardLayout role="convener">
 			<div className="space-y-8 pb-8">
-				{/* Welcome Message for First-Time Users */}
-				{showWelcome && (
-					<motion.div
-						initial={{ opacity: 0, y: -20, scale: 0.95 }}
-						animate={{ opacity: 1, y: 0, scale: 1 }}
-						transition={{ duration: 0.5 }}
-						className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-6 border border-emerald-200 relative overflow-hidden"
-					>
-						<div className="absolute top-0 right-0 w-32 h-32 bg-emerald-200 rounded-full filter blur-3xl opacity-30"></div>
-						<div className="relative flex items-start gap-4">
-							<div className="p-3 bg-emerald-600 rounded-xl">
-								<Sparkles className="h-6 w-6 text-white" />
-							</div>
-							<div className="flex-1">
-								<h3 className="text-lg font-bold text-gray-900 mb-1">
-									Welcome to Your Convener Dashboard! 🎉
-								</h3>
-								<p className="text-sm text-gray-600 mb-3">
-									As a convener, you can create meetings, manage participants, upload minutes, and track engagement. 
-									Get started by exploring your meeting statistics and taking quick actions below.
-								</p>
-								<button
-									onClick={() => setShowWelcome(false)}
-									className="text-sm font-medium text-emerald-600 hover:text-emerald-700 transition-colors"
-								>
-									Got it, thanks! →
-								</button>
-							</div>
-						</div>
-					</motion.div>
-				)}
-
 				{/* Header */}
-				<div ref={headerRef} className="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-2xl p-8 shadow-xl relative overflow-hidden">
-					<div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full filter blur-3xl opacity-10"></div>
-					<div className="relative">
+				<div ref={headerRef} className="bg-blue-700 p-8 text-white border-2 border-blue-800">
+					<div>
 						<motion.div
 							initial={{ opacity: 0, y: 20 }}
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ delay: 0.2 }}
 						>
-							<h1 className="text-4xl font-bold text-white mb-2">Convener Dashboard</h1>
-							<p className="text-emerald-100 text-lg">
+							<h1 className="text-4xl font-bold mb-2 uppercase tracking-wide">Convener Dashboard</h1>
+							<p className="text-blue-100 text-lg">
 								Manage your meetings, track participation, and drive engagement.
 							</p>
 						</motion.div>
@@ -218,10 +175,10 @@ export default function ConvenerDashboard() {
 								initial={{ opacity: 0, scale: 0 }}
 								animate={{ opacity: 1, scale: 1 }}
 								transition={{ delay: 0.4, type: 'spring', stiffness: 200 }}
-								className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 flex items-center gap-2"
+								className="absolute top-4 right-4 bg-white text-blue-700 px-4 py-2 flex items-center gap-2 border-2 border-white"
 							>
-								<Target className="h-5 w-5 text-yellow-300" />
-								<span className="text-white font-semibold">High Completion Rate!</span>
+								<Target className="h-5 w-5" />
+								<span className="font-semibold uppercase tracking-wide">High Completion Rate!</span>
 							</motion.div>
 						)}
 					</div>
@@ -238,40 +195,40 @@ export default function ConvenerDashboard() {
 						label="Total Meetings"
 						value={data?.stats.myMeetings || 0}
 						icon={Calendar}
-						color="from-emerald-50 to-emerald-100"
-						iconColor="bg-emerald-500"
-						textColor="text-emerald-600"
-						borderColor="border-emerald-200"
+						color="bg-blue-50"
+						iconColor="bg-blue-700"
+						textColor="text-blue-700"
+						borderColor="border-blue-700"
 						delay={0.1}
 					/>
 					<StatCard
 						label="Upcoming"
 						value={data?.stats.upcomingMeetings || 0}
 						icon={Clock}
-						color="from-sky-50 to-sky-100"
-						iconColor="bg-sky-500"
-						textColor="text-sky-600"
-						borderColor="border-sky-200"
+						color="bg-blue-50"
+						iconColor="bg-blue-700"
+						textColor="text-blue-700"
+						borderColor="border-blue-700"
 						delay={0.2}
 					/>
 					<StatCard
 						label="Participants"
 						value={data?.stats.totalParticipants || 0}
 						icon={Users}
-						color="from-purple-50 to-purple-100"
-						iconColor="bg-purple-500"
-						textColor="text-purple-600"
-						borderColor="border-purple-200"
+						color="bg-blue-50"
+						iconColor="bg-blue-700"
+						textColor="text-blue-700"
+						borderColor="border-blue-700"
 						delay={0.3}
 					/>
 					<StatCard
 						label="Completion Rate"
 						value={completionRate}
 						icon={TrendingUp}
-						color="from-amber-50 to-amber-100"
-						iconColor="bg-amber-500"
-						textColor="text-amber-600"
-						borderColor="border-amber-200"
+						color="bg-blue-50"
+						iconColor="bg-blue-700"
+						textColor="text-blue-700"
+						borderColor="border-blue-700"
 						delay={0.4}
 						suffix="%"
 					/>
@@ -327,15 +284,15 @@ export default function ConvenerDashboard() {
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ delay: 0.8 }}
-					className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
+					className="border-2 border-gray-300 bg-white p-6"
 				>
-					<h2 className="text-xl font-bold text-gray-900 mb-6">Quick Actions</h2>
+					<h2 className="text-xl font-bold text-gray-900 mb-6 uppercase tracking-wide">Quick Actions</h2>
 					<div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 						<ActionButton
 							icon={Plus}
 							label="Create Meeting"
 							description="Schedule a new meeting"
-							color="emerald"
+							color="blue"
 							delay={0.9}
 							href="/convener/meetings"
 						/>
@@ -351,7 +308,7 @@ export default function ConvenerDashboard() {
 							icon={UserCheck}
 							label="Mark Attendance"
 							description="Record participant attendance"
-							color="purple"
+							color="blue"
 							delay={1.1}
 							href="/convener/meetings"
 						/>
@@ -359,7 +316,7 @@ export default function ConvenerDashboard() {
 							icon={FileBarChart}
 							label="View Reports"
 							description="Generate meeting reports"
-							color="amber"
+							color="blue"
 							delay={1.2}
 							href="/convener/reports"
 						/>
@@ -392,7 +349,7 @@ function StatCard({ label, value, icon: Icon, color, iconColor, textColor, borde
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.5, delay, ease: 'easeOut' }}
 			whileHover={{ scale: 1.05, y: -4 }}
-			className={`rounded-2xl border ${borderColor} bg-gradient-to-br ${color} p-6 shadow-sm hover:shadow-lg transition-shadow`}
+			className={`border-2 ${borderColor} ${color} p-6 hover:shadow-lg transition-shadow`}
 		>
 			<div className="flex items-start justify-between mb-4">
 				<div className="flex-1">
@@ -410,17 +367,17 @@ function StatCard({ label, value, icon: Icon, color, iconColor, textColor, borde
 					initial={{ scale: 0, rotate: -180 }}
 					animate={{ scale: 1, rotate: 0 }}
 					transition={{ delay: delay + 0.2, type: 'spring', stiffness: 200 }}
-					className={`${iconColor} rounded-xl p-3 shadow-md`}
+					className={`${iconColor} p-3 border-2 border-blue-800 text-white`}
 				>
-					<Icon className="h-6 w-6 text-white" />
+					<Icon className="h-6 w-6" />
 				</motion.div>
 			</div>
-			<div className="mt-4 h-2 w-full rounded-full bg-gray-200 overflow-hidden">
+			<div className="mt-4 h-2 w-full bg-gray-200">
 				<motion.div
 					initial={{ width: 0 }}
 					animate={{ width: `${Math.min(value * 10, 100)}%` }}
 					transition={{ delay: delay + 0.4, duration: 0.8, ease: 'easeOut' }}
-					className={`h-2 rounded-full ${iconColor}`}
+					className={`h-2 ${iconColor}`}
 				/>
 			</div>
 		</motion.div>
@@ -440,23 +397,23 @@ function ActionButton({ icon: Icon, label, description, color, delay, href }: Ac
 	const colorClasses = {
 		blue: {
 			bg: 'bg-blue-50 hover:bg-blue-100',
-			icon: 'text-blue-600',
-			border: 'border-blue-200 hover:border-blue-400',
+			icon: 'text-blue-700',
+			border: 'border-blue-700 hover:border-blue-800',
 		},
 		emerald: {
-			bg: 'bg-emerald-50 hover:bg-emerald-100',
-			icon: 'text-emerald-600',
-			border: 'border-emerald-200 hover:border-emerald-400',
+			bg: 'bg-blue-50 hover:bg-blue-100',
+			icon: 'text-blue-700',
+			border: 'border-blue-700 hover:border-blue-800',
 		},
 		purple: {
-			bg: 'bg-purple-50 hover:bg-purple-100',
-			icon: 'text-purple-600',
-			border: 'border-purple-200 hover:border-purple-400',
+			bg: 'bg-blue-50 hover:bg-blue-100',
+			icon: 'text-blue-700',
+			border: 'border-blue-700 hover:border-blue-800',
 		},
 		amber: {
-			bg: 'bg-amber-50 hover:bg-amber-100',
-			icon: 'text-amber-600',
-			border: 'border-amber-200 hover:border-amber-400',
+			bg: 'bg-blue-50 hover:bg-blue-100',
+			icon: 'text-blue-700',
+			border: 'border-blue-700 hover:border-blue-800',
 		},
 	};
 
@@ -470,10 +427,10 @@ function ActionButton({ icon: Icon, label, description, color, delay, href }: Ac
 				transition={{ delay }}
 				whileHover={{ scale: 1.05, y: -4 }}
 				whileTap={{ scale: 0.98 }}
-				className={`rounded-xl border ${classes.border} ${classes.bg} p-6 text-left transition-all shadow-sm hover:shadow-md cursor-pointer`}
+				className={`border-2 ${classes.border} ${classes.bg} p-6 text-left transition-all hover:shadow-md cursor-pointer`}
 			>
 				<Icon className={`h-8 w-8 ${classes.icon} mb-3`} />
-				<p className="font-bold text-gray-900 text-lg mb-1">{label}</p>
+				<p className="font-bold text-gray-900 text-lg mb-1 uppercase tracking-wide">{label}</p>
 				<p className="text-sm text-gray-600">{description}</p>
 			</motion.div>
 		</Link>

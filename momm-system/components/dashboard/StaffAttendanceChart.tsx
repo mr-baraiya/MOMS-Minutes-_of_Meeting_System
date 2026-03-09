@@ -69,8 +69,9 @@ export default function StaffAttendanceChart({ data }: StaffAttendanceChartProps
 				initial={{ opacity: 0 }}
 				animate={{ opacity: 1 }}
 				transition={{ delay: 0.7 }}
+				className="w-full h-[250px] min-h-[250px]"
 			>
-				<ResponsiveContainer width="100%" height={250}>
+				<ResponsiveContainer width="100%" height="100%" minHeight={250}>
 					<PieChart>
 						<Pie
 							data={chartData}

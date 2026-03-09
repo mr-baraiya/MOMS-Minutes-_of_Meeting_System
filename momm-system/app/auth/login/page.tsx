@@ -104,15 +104,15 @@ export default function LoginPage() {
       <Suspense fallback={null}>
         <LoginRedirectHandler />
       </Suspense>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         {/* Card */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-white border-2 border-gray-300 p-8">
           {/* Back to Home */}
-          <div className="mb-4">
+          <div className="mb-6">
             <Link
               href="/"
-              className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium transition-colors"
+              className="inline-flex items-center text-blue-700 hover:text-blue-800 font-medium transition-colors"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Home
@@ -122,19 +122,19 @@ export default function LoginPage() {
           {/* Show loading while checking authentication */}
           {authLoading ? (
             <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-700 mx-auto"></div>
               <p className="mt-4 text-gray-600">Checking authentication...</p>
             </div>
           ) : isAuthenticated ? (
             <div className="text-center py-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-green-600 rounded-full mb-4">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-green-700 mb-4">
                 <LogIn className="w-8 h-8 text-white" />
               </div>
               <h1 className="text-2xl font-bold text-gray-900 mb-2">You are already signed in</h1>
               <p className="text-gray-600 mb-4">Taking you to your dashboard...</p>
               <button
                 onClick={clearStoredToken}
-                className="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                className="px-4 py-2 text-sm bg-red-700 text-white hover:bg-red-800 transition-colors"
               >
                 Clear Session & Refresh
               </button>
@@ -142,12 +142,12 @@ export default function LoginPage() {
           ) : (
             <>
               {/* Header */}
-              <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
-                  <LogIn className="w-8 h-8 text-white" />
+              <div className="text-center mb-8 border-b-2 border-gray-200 pb-6">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-700 text-white mb-4">
+                  <LogIn className="w-8 h-8" />
                 </div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
-                <p className="text-gray-600">Sign in to your MOMM account</p>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">SYSTEM LOGIN</h1>
+                <p className="text-gray-600">Minutes of Meeting Management System</p>
               </div>
 
           {/* Form */}
@@ -168,7 +168,7 @@ export default function LoginPage() {
                   autoComplete="username"
                   value={formData.username}
                   onChange={handleChange}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  className="block w-full pl-10 pr-3 py-3 border-2 border-gray-300 focus:ring-2 focus:ring-blue-700 focus:border-blue-700 transition-colors"
                   placeholder="Enter your username or email"
                 />
               </div>
@@ -190,7 +190,7 @@ export default function LoginPage() {
                   autoComplete="current-password"
                   value={formData.password}
                   onChange={handleChange}
-                  className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  className="block w-full pl-10 pr-12 py-3 border-2 border-gray-300 focus:ring-2 focus:ring-blue-700 focus:border-blue-700 transition-colors"
                   placeholder="Enter your password"
                 />
                 <button
@@ -214,15 +214,15 @@ export default function LoginPage() {
                   id="remember"
                   name="remember"
                   type="checkbox"
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  className="h-4 w-4 text-blue-700 focus:ring-blue-700 border-gray-300"
                 />
-                <label htmlFor="remember" className="ml-2 block text-sm text-gray-700">
+                <label htmlFor="remember" className="ml-2 block text-sm font-medium text-gray-700">
                   Remember me
                 </label>
               </div>
               <Link
                 href="/auth/forgot-password"
-                className="text-sm font-medium text-blue-600 hover:text-blue-500"
+                className="text-sm font-medium text-blue-700 hover:text-blue-800"
               >
                 Forgot password?
               </Link>
@@ -232,17 +232,17 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center py-3 px-4 border-2 border-blue-700 text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Signing in...
+                  SIGNING IN...
                 </>
               ) : (
                 <>
                   <LogIn className="w-5 h-5 mr-2" />
-                  Sign In
+                  SIGN IN
                 </>
               )}
             </button>
@@ -262,9 +262,9 @@ export default function LoginPage() {
           <div className="mt-6">
             <Link
               href="/auth/register"
-              className="w-full flex items-center justify-center py-3 px-4 border-2 border-blue-600 rounded-lg text-blue-600 hover:bg-blue-50 font-medium transition-colors"
+              className="w-full flex items-center justify-center py-3 px-4 border-2 border-blue-700 text-blue-700 hover:bg-blue-50 font-semibold transition-colors"
             >
-              Create Account
+              CREATE ACCOUNT
             </Link>
           </div>
           </>

@@ -105,7 +105,10 @@ export default function StaffDocumentsPage() {
     return (
       <DashboardLayout role="staff">
         <div className="flex items-center justify-center h-screen">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+          <div
+            style={{ animation: 'spin 1s linear infinite' }}
+            className="h-12 w-12 border-4 border-slate-200 border-t-blue-700"
+          />
         </div>
       </DashboardLayout>
     );
@@ -119,7 +122,7 @@ export default function StaffDocumentsPage() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-xl shadow-md p-6 border border-gray-200"
+          className="bg-white border-2 border-gray-300 p-6"
         >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
@@ -127,12 +130,12 @@ export default function StaffDocumentsPage() {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: "spring", delay: 0.2 }}
-                className="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg"
+                className="w-14 h-14 bg-blue-700 border-2 border-blue-800 flex items-center justify-center"
               >
                 <BookOpen className="w-7 h-7 text-white" />
               </motion.div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Meeting Documents</h1>
+                <h1 className="text-2xl font-bold text-gray-900 uppercase tracking-wide">Meeting Documents</h1>
                 <p className="text-gray-600 mt-1">
                   Minutes of meetings you attended
                 </p>
@@ -143,7 +146,7 @@ export default function StaffDocumentsPage() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleDownloadAll}
-                className="px-5 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 transition-all font-medium flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                className="px-5 py-3 bg-blue-700 text-white border-2 border-blue-800 hover:bg-blue-800 transition-colors font-medium flex items-center justify-center gap-2 uppercase tracking-wide"
               >
                 <Download className="w-5 h-5" />
                 Download All
@@ -157,14 +160,14 @@ export default function StaffDocumentsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-lg p-6 text-white"
+          className="bg-blue-700 border-2 border-blue-800 p-6 text-white"
         >
           <div className="flex items-start gap-4">
-            <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
+            <div className="w-10 h-10 bg-blue-800 border-2 border-blue-900 flex items-center justify-center flex-shrink-0">
               <FileText className="w-5 h-5" />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-lg mb-1">Access Your Meeting Records</h3>
+              <h3 className="font-semibold text-lg mb-1 uppercase tracking-wide">Access Your Meeting Records</h3>
               <p className="text-blue-100 text-sm">
                 View and download minutes from all meetings you've been part of. Stay informed and keep track of decisions and action items.
               </p>
@@ -179,38 +182,38 @@ export default function StaffDocumentsPage() {
           transition={{ delay: 0.2 }}
           className="grid grid-cols-1 sm:grid-cols-3 gap-4"
         >
-          <div className="bg-white rounded-lg shadow-sm p-5 border border-gray-200">
+          <div className="bg-white border-2 border-gray-300 p-5">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <FileText className="w-5 h-5 text-blue-600" />
+              <div className="w-10 h-10 bg-blue-700 border-2 border-blue-800 flex items-center justify-center">
+                <FileText className="w-5 h-5 text-white" />
               </div>
               <div>
-                <p className="text-sm text-gray-600 font-medium">Available Documents</p>
-                <p className="text-2xl font-bold text-gray-900">{documents.length}</p>
+                <p className="text-sm text-gray-600 font-medium uppercase tracking-wide">Available Documents</p>
+                <p className="text-2xl font-bold text-blue-700">{documents.length}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-5 border border-gray-200">
+          <div className="bg-white border-2 border-gray-300 p-5">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                <BookOpen className="w-5 h-5 text-purple-600" />
+              <div className="w-10 h-10 bg-blue-700 border-2 border-blue-800 flex items-center justify-center">
+                <BookOpen className="w-5 h-5 text-white" />
               </div>
               <div>
-                <p className="text-sm text-gray-600 font-medium">Meetings Tracked</p>
-                <p className="text-2xl font-bold text-gray-900">{meetings.length}</p>
+                <p className="text-sm text-gray-600 font-medium uppercase tracking-wide">Meetings Tracked</p>
+                <p className="text-2xl font-bold text-blue-700">{meetings.length}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-5 border border-gray-200">
+          <div className="bg-white border-2 border-gray-300 p-5">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                <Eye className="w-5 h-5 text-green-600" />
+              <div className="w-10 h-10 bg-blue-700 border-2 border-blue-800 flex items-center justify-center">
+                <Eye className="w-5 h-5 text-white" />
               </div>
               <div>
-                <p className="text-sm text-gray-600 font-medium">Read-Only Access</p>
-                <p className="text-lg font-semibold text-gray-900">View & Download</p>
+                <p className="text-sm text-gray-600 font-medium uppercase tracking-wide">Read-Only Access</p>
+                <p className="text-lg font-semibold text-blue-700">View & Download</p>
               </div>
             </div>
           </div>
@@ -240,7 +243,10 @@ export default function StaffDocumentsPage() {
           {loading ? (
             <div className="bg-white rounded-xl shadow-sm p-16 border border-gray-200 flex items-center justify-center">
               <div className="text-center">
-                <Loader2 className="w-10 h-10 animate-spin text-blue-600 mx-auto mb-4" />
+                <div
+                  style={{ animation: 'spin 1s linear infinite' }}
+                  className="h-12 w-12 border-4 border-slate-200 border-t-blue-700 mx-auto mb-4"
+                />
                 <p className="text-gray-600">Loading documents...</p>
               </div>
             </div>

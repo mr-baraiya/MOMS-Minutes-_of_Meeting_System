@@ -11,29 +11,32 @@ export const metadata: Metadata = {
 
 export default function TermsOfServicePage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
       
       {/* Header Section */}
-      <section className="pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 via-white to-emerald-50">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-green-600 rounded-2xl mb-6 shadow-lg">
-            <FileText className="w-10 h-10 text-white" />
+      <section className="pt-24 pb-12 px-4 bg-gradient-to-r from-blue-700 to-blue-900">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center bg-white rounded-lg shadow-xl p-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-700 mb-6">
+              <FileText className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-4xl font-bold text-blue-900 mb-4">Terms of Service</h1>
+            <div className="w-24 h-1 bg-blue-700 mx-auto mb-4"></div>
+            <p className="text-lg text-gray-600">Last updated: February 5, 2026</p>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Terms of Service</h1>
-          <p className="text-lg text-gray-600">Last updated: February 5, 2026</p>
         </div>
       </section>
 
       {/* Content */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+      <section className="py-16 px-4 bg-gray-50">
         <div className="max-w-4xl mx-auto">
           <div className="prose prose-lg max-w-none">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 space-y-10">
+          <div className="bg-white rounded-lg shadow-md p-8 md:p-12 space-y-10">
           
           {/* Introduction */}
           <section>
-            <h2 className="text-3xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-green-100">1. Introduction</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-blue-100">1. Introduction</h2>
             <p className="text-gray-700 leading-relaxed text-lg">
               Welcome to the Minutes of Meeting Management (MOMM) System. These Terms of Service (&quot;Terms&quot;) govern your access to and use of our platform. By accessing or using the MOMM System, you agree to be bound by these Terms. If you do not agree with any part of these Terms, you may not use our services.
             </p>
@@ -41,7 +44,7 @@ export default function TermsOfServicePage() {
 
           {/* Account Registration */}
           <section>
-            <h2 className="text-3xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-green-100">2. Account Registration</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-blue-100">2. Account Registration</h2>
             <div className="space-y-3 text-gray-700 leading-relaxed text-lg">
               <p>When creating an account, you agree to:</p>
               <ul className="list-disc list-inside space-y-2 ml-4">

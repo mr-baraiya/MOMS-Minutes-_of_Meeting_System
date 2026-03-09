@@ -8,22 +8,17 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <nav className="bg-white shadow-md fixed w-full top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+    <nav className="bg-white shadow-lg fixed w-full top-0 z-50 border-b-4" style={{borderColor: '#1e40af'}}>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-18">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3">
-            <Image
-              src="/logo.png"
-              alt="MOMM logo"
-              width={48}
-              height={48}
-              priority
-              className="h-12 w-12"
-            />
+            <div className="w-12 h-12 bg-blue-700 text-white flex items-center justify-center font-bold text-xl">
+              M
+            </div>
             <div className="leading-tight">
-              <div className="text-2xl font-bold text-blue-600">MOMS</div>
-              <div className="text-sm font-medium text-gray-600">Minutes of Meeting System</div>
+              <div className="text-2xl font-bold text-blue-700">MOMS</div>
+              <div className="text-sm font-medium text-gray-600">Meeting Management System</div>
             </div>
           </Link>
 
@@ -31,25 +26,25 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-8">
             <Link
               href="/#features"
-              className="text-gray-600 hover:text-blue-600 transition-colors"
+              className="text-gray-700 hover:text-blue-700 transition-colors font-medium"
             >
               Features
             </Link>
             <Link
               href="/about"
-              className="text-gray-600 hover:text-blue-600 transition-colors"
+              className="text-gray-700 hover:text-blue-700 transition-colors font-medium"
             >
               About
             </Link>
             <Link
               href="/contact"
-              className="text-gray-600 hover:text-blue-600 transition-colors"
+              className="text-gray-700 hover:text-blue-700 transition-colors font-medium"
             >
               Contact
             </Link>
             <Link
               href="/auth/login"
-              className="px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+              className="px-6 py-2 bg-blue-700 text-white hover:bg-blue-800 transition-colors font-medium"
             >
               Login
             </Link>
@@ -88,32 +83,32 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white border-t">
+        <div className="md:hidden bg-white border-t-2 border-blue-700">
           <div className="px-4 py-4 space-y-3">
             <Link
               href="/#features"
-              className="block text-gray-600 hover:text-blue-600 transition-colors"
+              className="block text-gray-700 hover:text-blue-700 transition-colors font-medium"
               onClick={() => setIsMenuOpen(false)}
             >
               Features
             </Link>
             <Link
               href="/about"
-              className="block text-gray-600 hover:text-blue-600 transition-colors"
+              className="block text-gray-700 hover:text-blue-700 transition-colors font-medium"
               onClick={() => setIsMenuOpen(false)}
             >
               About
             </Link>
             <Link
               href="/contact"
-              className="block text-gray-600 hover:text-blue-600 transition-colors"
+              className="block text-gray-700 hover:text-blue-700 transition-colors font-medium"
               onClick={() => setIsMenuOpen(false)}
             >
               Contact
             </Link>
             <Link
               href="/auth/login"
-              className="block px-4 py-2 text-center text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+              className="block px-6 py-2 text-center bg-blue-700 text-white hover:bg-blue-800 transition-colors font-medium"
               onClick={() => setIsMenuOpen(false)}
             >
               Login

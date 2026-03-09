@@ -2,6 +2,31 @@ import { put } from "@vercel/blob";
 import { NextRequest, NextResponse } from "next/server";
 import { getUserFromRequest } from "@/lib/auth";
 import { DocumentService } from "@/services/document.service";
+import path from "path";
+import fs from "fs/promises";
+
+const hasVercelBlob = process.env.NODE_ENV === "production";
+
+async function saveFileLocally(
+  file: File,
+  meetingId: string
+): Promise<string> {
+  const timestamp = Date.now();
+  const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+  const fileName = `${timestamp}_${sanitizedFileName}`;
+  const uploadDir = path.join(
+    process.cwd(),
+    "public",
+    "uploads",
+    "documents",
+    `meeting-${meetingId}`
+  );
+  await fs.mkdir(uploadDir, { recursive: true });
+  const filePath = path.join(uploadDir, fileName);
+  const buffer = Buffer.from(await file.arrayBuffer());
+  await fs.writeFile(filePath, buffer);
+  return `/uploads/documents/meeting-${meetingId}/${fileName}`;
+}
 
 /**
  * POST /api/documents/upload
@@ -91,18 +116,24 @@ export async function POST(req: NextRequest) {
     const blobFileName = `${timestamp}_${sanitizedFileName}`;
     const blobPath = `documents/meeting-${meetingId}/${blobFileName}`;
 
-    // Upload to Vercel Blob
-    const blob = await put(blobPath, file, {
-      access: "public",
-      addRandomSuffix: false,
-    });
+    // Upload to Vercel Blob (or local filesystem in dev)
+    let fileUrl: string;
+    if (hasVercelBlob) {
+      const blob = await put(blobPath, file, {
+        access: "public",
+        addRandomSuffix: false,
+      });
+      fileUrl = blob.url;
+    } else {
+      fileUrl = await saveFileLocally(file, meetingId);
+    }
 
     // Save metadata to database
     const document = await DocumentService.create({
       meetingId: Number(meetingId),
       documentTitle,
       fileName: file.name,
-      filePath: blob.url, // Store the Blob URL
+      filePath: fileUrl,
       uploadedBy: user.userId,
     });
 
@@ -112,7 +143,7 @@ export async function POST(req: NextRequest) {
       document: {
         id: document.id,
         fileName: file.name,
-        fileUrl: blob.url,
+        fileUrl: fileUrl,
         documentTitle,
         uploadedAt: document.uploadedAt,
       },

@@ -4,6 +4,31 @@ import { NotificationService } from "@/services/notification.service";
 import { prisma } from "@/lib/prisma";
 import { getUserFromRequest } from "@/lib/auth";
 import { put } from "@vercel/blob";
+import path from "path";
+import fs from "fs/promises";
+
+const hasVercelBlob = process.env.NODE_ENV === "production";
+
+async function saveFileLocally(
+  file: File,
+  meetingId: number
+): Promise<string> {
+  const timestamp = Date.now();
+  const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+  const fileName = `${timestamp}_${sanitizedFileName}`;
+  const uploadDir = path.join(
+    process.cwd(),
+    "public",
+    "uploads",
+    "documents",
+    `meeting-${meetingId}`
+  );
+  await fs.mkdir(uploadDir, { recursive: true });
+  const filePath = path.join(uploadDir, fileName);
+  const buffer = Buffer.from(await file.arrayBuffer());
+  await fs.writeFile(filePath, buffer);
+  return `/uploads/documents/meeting-${meetingId}/${fileName}`;
+}
 
 /**
  * GET /api/documents
@@ -161,18 +186,24 @@ export async function POST(request: NextRequest) {
     const blobFileName = `${timestamp}_${sanitizedFileName}`;
     const blobPath = `documents/meeting-${meetingId}/${blobFileName}`;
 
-    // Upload to Vercel Blob
-    const blob = await put(blobPath, file, {
-      access: "public",
-      addRandomSuffix: false,
-    });
+    // Upload to Vercel Blob (or local filesystem in dev)
+    let fileUrl: string;
+    if (hasVercelBlob) {
+      const blob = await put(blobPath, file, {
+        access: "public",
+        addRandomSuffix: false,
+      });
+      fileUrl = blob.url;
+    } else {
+      fileUrl = await saveFileLocally(file, meetingId);
+    }
 
     // Create database record with Blob URL
     const document = await DocumentService.create({
       meetingId,
       documentTitle,
       fileName: file.name,
-      filePath: blob.url,
+      filePath: fileUrl,
       uploadedBy: user.userId,
     });
 

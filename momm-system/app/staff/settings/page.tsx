@@ -60,7 +60,10 @@ export default function StaffSettingsPage() {
     return (
       <DashboardLayout role="staff">
         <div className="flex items-center justify-center h-full">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-900"></div>
+          <div
+            style={{ animation: 'spin 1s linear infinite' }}
+            className="h-12 w-12 border-4 border-slate-200 border-t-blue-700"
+          />
         </div>
       </DashboardLayout>
     );
@@ -82,9 +85,9 @@ export default function StaffSettingsPage() {
       )}
       <div className="space-y-6">
         {/* Header */}
-        <div className="bg-gradient-to-r from-slate-700 to-slate-900 text-white rounded-lg p-6">
-          <h1 className="text-3xl font-bold">Settings</h1>
-          <p className="text-slate-200 mt-2">Manage your personal preferences</p>
+        <div className="bg-blue-700 border-2 border-blue-800 text-white p-6">
+          <h1 className="text-3xl font-bold uppercase tracking-wide">Settings</h1>
+          <p className="text-blue-100 mt-2">Manage your personal preferences</p>
         </div>
 
         {/* Tab Navigation */}
@@ -93,10 +96,10 @@ export default function StaffSettingsPage() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors whitespace-nowrap ${
+              className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors whitespace-nowrap uppercase tracking-wide ${
                 activeTab === tab.id
-                  ? 'border-slate-600 text-slate-600 font-semibold'
-                  : 'border-transparent text-slate-600 hover:text-slate-900'
+                  ? 'border-blue-700 text-blue-700 font-semibold'
+                  : 'border-transparent text-gray-600 hover:text-blue-700'
               }`}
             >
               <tab.icon className="w-4 h-4" />
@@ -106,7 +109,7 @@ export default function StaffSettingsPage() {
         </div>
 
         {/* Content Panel */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white border-2 border-gray-300 p-6">
           {activeTab === 'profile' && <ProfileSection data={settingsData.profile} onSave={saveSettings} />}
           {activeTab === 'notifications' && <NotificationsSection data={settingsData.notificationPreferences} onSave={saveSettings} />}
         </div>
@@ -120,18 +123,18 @@ function ProfileSection({ data, onSave }: any) {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-semibold">Profile Settings</h2>
+      <h2 className="text-2xl font-semibold uppercase tracking-wide">Profile Settings</h2>
       
       <div className="grid gap-4">
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">Username</label>
-          <input type="text" value={data.username} disabled className="w-full px-3 py-2 border border-slate-300 rounded-md bg-slate-100" />
+          <input type="text" value={data.username} disabled className="w-full px-3 py-2 border-2 border-gray-300 bg-gray-100" />
           <p className="text-xs text-slate-500 mt-1">Username cannot be changed</p>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
-          <input type="email" value={data.email} disabled className="w-full px-3 py-2 border border-slate-300 rounded-md bg-slate-100" />
+          <input type="email" value={data.email} disabled className="w-full px-3 py-2 border-2 border-gray-300 bg-gray-100" />
           <p className="text-xs text-slate-500 mt-1">Email is read-only</p>
         </div>
 
@@ -142,7 +145,7 @@ function ProfileSection({ data, onSave }: any) {
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             placeholder={data.staff?.staffName || 'Enter your name'}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md"
+            className="w-full px-3 py-2 border-2 border-gray-300 focus:border-blue-700 focus:outline-none"
           />
         </div>
 
@@ -153,14 +156,14 @@ function ProfileSection({ data, onSave }: any) {
             value={formData.mobile}
             onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
             placeholder={data.staff?.mobileNo || 'Enter mobile number'}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md"
+            className="w-full px-3 py-2 border-2 border-gray-300 focus:border-blue-700 focus:outline-none"
           />
         </div>
       </div>
 
       <button
         onClick={() => onSave('profile', formData)}
-        className="px-6 py-2 bg-slate-600 text-white rounded-md hover:bg-slate-700"
+        className="px-6 py-2 bg-blue-700 text-white border-2 border-blue-800 hover:bg-blue-800 uppercase tracking-wide"
       >
         Save Profile
       </button>
@@ -194,7 +197,7 @@ function PasswordChangeSection({ onSave }: any) {
           onClose={() => setToast(null)}
         />
       )}
-      <h3 className="text-xl font-semibold">Change Password</h3>
+      <h3 className="text-xl font-semibold uppercase tracking-wide">Change Password</h3>
       
       <div>
         <label className="block text-sm font-medium text-slate-700 mb-1">Current Password</label>
@@ -202,7 +205,7 @@ function PasswordChangeSection({ onSave }: any) {
           type="password"
           value={passwords.currentPassword}
           onChange={(e) => setPasswords({ ...passwords, currentPassword: e.target.value })}
-          className="w-full px-3 py-2 border border-slate-300 rounded-md"
+          className="w-full px-3 py-2 border-2 border-gray-300 focus:border-blue-700 focus:outline-none"
         />
       </div>
 
@@ -212,7 +215,7 @@ function PasswordChangeSection({ onSave }: any) {
           type="password"
           value={passwords.newPassword}
           onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })}
-          className="w-full px-3 py-2 border border-slate-300 rounded-md"
+          className="w-full px-3 py-2 border-2 border-gray-300 focus:border-blue-700 focus:outline-none"
         />
       </div>
 
@@ -222,13 +225,13 @@ function PasswordChangeSection({ onSave }: any) {
           type="password"
           value={passwords.confirmPassword}
           onChange={(e) => setPasswords({ ...passwords, confirmPassword: e.target.value })}
-          className="w-full px-3 py-2 border border-slate-300 rounded-md"
+          className="w-full px-3 py-2 border-2 border-gray-300 focus:border-blue-700 focus:outline-none"
         />
       </div>
 
-      <button
+        <button
         onClick={handlePasswordChange}
-        className="px-6 py-2 bg-slate-900 text-white rounded-md hover:bg-slate-800"
+        className="px-6 py-2 bg-blue-700 text-white border-2 border-blue-800 hover:bg-blue-800 uppercase tracking-wide"
       >
         Change Password
       </button>
@@ -241,7 +244,7 @@ function NotificationsSection({ data, onSave }: any) {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-semibold">Notification Preferences</h2>
+      <h2 className="text-2xl font-semibold uppercase tracking-wide">Notification Preferences</h2>
       <p className="text-sm text-slate-600">Control how you get notified about meetings and documents</p>
       
       <div className="space-y-4">

@@ -225,7 +225,10 @@ export default function StaffProfilePage() {
     return (
       <DashboardLayout role="staff">
         <div className="flex items-center justify-center h-full">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-900"></div>
+          <div
+            style={{ animation: 'spin 1s linear infinite' }}
+            className="h-12 w-12 border-4 border-slate-200 border-t-blue-700"
+          />
         </div>
       </DashboardLayout>
     );
@@ -253,33 +256,31 @@ export default function StaffProfilePage() {
       `}</style>
 
       <div className="staff-profile space-y-8">
-        <div className="relative overflow-hidden rounded-[28px] border border-amber-200 bg-gradient-to-r from-amber-100 via-rose-100 to-sky-100 p-8 text-slate-900 staff-pop">
-          <div className="absolute -left-10 top-8 h-28 w-28 rounded-full bg-rose-200/60 blur-2xl"></div>
-          <div className="absolute right-4 -bottom-12 h-32 w-32 rounded-full bg-sky-200/60 blur-2xl"></div>
+        <div className="relative bg-blue-700 border-2 border-blue-800 p-8 text-white staff-pop">
           <div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-5">
               {avatar ? (
                 <img
                   src={avatar}
                   alt={`${displayName} profile`}
-                  className="h-20 w-20 rounded-2xl border border-white object-cover"
+                  className="h-20 w-20 border-2 border-blue-800 object-cover"
                 />
               ) : (
-                <div className="h-20 w-20 rounded-2xl border border-white bg-white/70 text-2xl font-semibold flex items-center justify-center">
+                <div className="h-20 w-20 border-2 border-blue-800 bg-blue-800 text-2xl font-semibold flex items-center justify-center">
                   {displayName.slice(0, 1).toUpperCase()}
                 </div>
               )}
               <div>
-                <p className="text-xs uppercase tracking-[0.3em] text-slate-600">Staff Profile</p>
-                <h1 className="text-3xl font-semibold">{displayName}</h1>
-                <p className="text-slate-600 mt-1">{displayEmail}</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-blue-100">Staff Profile</p>
+                <h1 className="text-3xl font-semibold uppercase tracking-wide">{displayName}</h1>
+                <p className="text-blue-100 mt-1">{displayEmail}</p>
               </div>
             </div>
             <div className="flex gap-3">
-              <span className="rounded-full border border-slate-200 bg-white/70 px-4 py-2 text-xs uppercase tracking-[0.2em]">
+              <span className="border-2 border-blue-800 bg-blue-800 px-4 py-2 text-xs uppercase tracking-[0.2em]">
                 {displayRole}
               </span>
-              <span className="rounded-full border border-slate-200 bg-white/70 px-4 py-2 text-xs uppercase tracking-[0.2em]">
+              <span className="border-2 border-blue-800 bg-blue-800 px-4 py-2 text-xs uppercase tracking-[0.2em]">
                 {department}
               </span>
             </div>
@@ -287,8 +288,8 @@ export default function StaffProfilePage() {
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_1fr]">
-          <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-semibold text-slate-900">Edit Profile</h2>
+          <section className="border-2 border-gray-300 bg-white p-6">
+            <h2 className="text-xl font-semibold text-slate-900 uppercase tracking-wide">Edit Profile</h2>
             <form onSubmit={handleProfileSubmit} className="mt-4 space-y-4 text-sm">
               <div>
                 <label htmlFor="profilePhoto" className="block text-xs uppercase tracking-[0.2em] text-slate-400">
@@ -376,15 +377,15 @@ export default function StaffProfilePage() {
               <button
                 type="submit"
                 disabled={savingProfile}
-                className="w-full rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-900 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-70"
+                className="w-full border-2 border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:border-blue-700 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-70 uppercase tracking-wide"
               >
                 {savingProfile ? 'Saving...' : 'Save Changes'}
               </button>
             </form>
           </section>
 
-          <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-semibold text-slate-900">Change Password</h2>
+          <section className="border-2 border-gray-300 bg-white p-6">
+            <h2 className="text-xl font-semibold text-slate-900 uppercase tracking-wide">Change Password</h2>
             <form onSubmit={handlePasswordSubmit} className="mt-4 space-y-4 text-sm">
               <div>
                 <label htmlFor="currentPassword" className="block text-xs uppercase tracking-[0.2em] text-slate-400">
@@ -439,22 +440,22 @@ export default function StaffProfilePage() {
               <button
                 type="submit"
                 disabled={savingPassword}
-                className="w-full rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
+                className="w-full bg-blue-700 border-2 border-blue-800 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-70 uppercase tracking-wide"
               >
                 {savingPassword ? 'Updating...' : 'Update Password'}
               </button>
             </form>
           </section>
 
-          <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-semibold text-slate-900">Support & Tasks</h2>
+          <section className="border-2 border-gray-300 bg-white p-6">
+            <h2 className="text-xl font-semibold text-slate-900 uppercase tracking-wide">Support & Tasks</h2>
             <div className="mt-4 grid grid-cols-1 gap-4">
-              <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Upcoming Meetings</p>
-                <p className="mt-2 text-lg font-semibold text-slate-900">0 scheduled</p>
+              <div className="border-2 border-gray-300 bg-blue-50 p-4">
+                <p className="text-xs uppercase tracking-[0.2em] text-gray-600">Upcoming Meetings</p>
+                <p className="mt-2 text-lg font-semibold text-blue-700">0 scheduled</p>
               </div>
-              <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Attendance</p>
+              <div className="border-2 border-gray-300 bg-blue-50 p-4">
+                <p className="text-xs uppercase tracking-[0.2em] text-gray-600">Attendance</p>
                 <p className="mt-2 text-lg font-semibold text-slate-900">All caught up</p>
               </div>
             </div>

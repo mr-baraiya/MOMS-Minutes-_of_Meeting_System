@@ -59,7 +59,10 @@ export default function StaffAttendancePage() {
         return (
             <DashboardLayout role={(user?.role as 'admin' | 'convener' | 'staff') || 'staff'}>
                 <div className="flex items-center justify-center h-full">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-900"></div>
+                    <div
+                        style={{ animation: 'spin 1s linear infinite' }}
+                        className="h-12 w-12 border-4 border-slate-200 border-t-blue-700"
+                    />
                 </div>
             </DashboardLayout>
         );
@@ -70,49 +73,49 @@ export default function StaffAttendancePage() {
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-900">My Attendance</h1>
+                        <h1 className="text-2xl font-bold text-slate-900 uppercase tracking-wide">My Attendance</h1>
                         <p className="text-slate-500">Track your meeting attendance history.</p>
                     </div>
-                    <div className="bg-white px-4 py-2 border border-slate-200 rounded-lg shadow-sm">
-                        <span className="text-sm text-slate-500">Attendance Rate</span>
-                        <p className={`text-2xl font-bold ${stats.percentage >= 75 ? 'text-emerald-600' : stats.percentage >= 50 ? 'text-amber-500' : 'text-rose-600'}`}>
+                    <div className="bg-white px-4 py-2 border-2 border-gray-300">
+                        <span className="text-sm text-gray-600 uppercase tracking-wide">Attendance Rate</span>
+                        <p className={`text-2xl font-bold text-blue-700`}>
                             {stats.percentage}%
                         </p>
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-white p-4 rounded-xl border border-emerald-100 shadow-sm flex items-center gap-4">
-                        <div className="p-3 bg-emerald-50 rounded-lg text-emerald-600">
+                    <div className="bg-white p-4 border-2 border-gray-300 flex items-center gap-4">
+                        <div className="p-3 bg-blue-700 border-2 border-blue-800 text-white">
                             <CheckCircle className="w-6 h-6" />
                         </div>
                         <div>
-                            <p className="text-sm text-slate-500">Present</p>
-                            <p className="text-2xl font-semibold text-slate-900">{stats.present}</p>
+                            <p className="text-sm text-gray-600 uppercase tracking-wide">Present</p>
+                            <p className="text-2xl font-semibold text-blue-700">{stats.present}</p>
                         </div>
                     </div>
-                     <div className="bg-white p-4 rounded-xl border border-rose-100 shadow-sm flex items-center gap-4">
-                        <div className="p-3 bg-rose-50 rounded-lg text-rose-600">
+                     <div className="bg-white p-4 border-2 border-gray-300 flex items-center gap-4">
+                        <div className="p-3 bg-blue-700 border-2 border-blue-800 text-white">
                             <XCircle className="w-6 h-6" />
                         </div>
                         <div>
-                            <p className="text-sm text-slate-500">Absent</p>
-                            <p className="text-2xl font-semibold text-slate-900">{stats.absent}</p>
+                            <p className="text-sm text-gray-600 uppercase tracking-wide">Absent</p>
+                            <p className="text-2xl font-semibold text-blue-700">{stats.absent}</p>
                         </div>
                     </div>
-                    <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-                        <div className="p-3 bg-slate-50 rounded-lg text-slate-600">
+                    <div className="bg-white p-4 border-2 border-gray-300 flex items-center gap-4">
+                        <div className="p-3 bg-blue-700 border-2 border-blue-800 text-white">
                             <Calendar className="w-6 h-6" />
                         </div>
                         <div>
-                            <p className="text-sm text-slate-500">Total Completed</p>
-                            <p className="text-2xl font-semibold text-slate-900">{stats.total}</p>
+                            <p className="text-sm text-gray-600 uppercase tracking-wide">Total Completed</p>
+                            <p className="text-2xl font-semibold text-blue-700">{stats.total}</p>
                         </div>
                     </div>
                 </div>
 
-                <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                    <h2 className="text-lg font-semibold text-slate-900 mb-4">Detailed History</h2>
+                <div className="bg-white border-2 border-gray-300 p-6">
+                    <h2 className="text-lg font-semibold text-slate-900 mb-4 uppercase tracking-wide">Detailed History</h2>
                     <AttendanceHistory history={history} />
                 </div>
             </div>

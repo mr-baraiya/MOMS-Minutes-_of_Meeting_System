@@ -82,7 +82,11 @@ export default function AdminDashboard() {
 		return (
 			<DashboardLayout role="admin">
 				<div className="flex items-center justify-center h-full">
-					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+					<motion.div
+						animate={{ rotate: 360 }}
+						transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+						className="h-12 w-12 border-4 border-slate-200 border-t-blue-700"
+					/>
 				</div>
 			</DashboardLayout>
 		);
@@ -92,8 +96,8 @@ export default function AdminDashboard() {
 		<DashboardLayout role="admin">
 			<div className="space-y-8 pb-8">
 				{/* Header */}
-				<div ref={headerRef} className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 shadow-xl">
-					<h1 className="text-4xl font-bold text-white mb-2">Admin Dashboard</h1>
+				<div ref={headerRef} className="bg-blue-700 p-8 text-white border-2 border-blue-800">
+					<h1 className="text-4xl font-bold mb-2 uppercase tracking-wide">Admin Dashboard</h1>
 					<p className="text-blue-100 text-lg">
 						Welcome back! Here's an overview of your system performance
 					</p>

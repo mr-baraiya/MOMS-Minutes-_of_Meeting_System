@@ -77,16 +77,6 @@ export default function StaffDashboard() {
 	const [data, setData] = useState<StaffDashboardData | null>(null);
 	const [loading, setLoading] = useState(true);
 	const headerRef = useRef<HTMLDivElement>(null);
-	const [showWelcome, setShowWelcome] = useState(false);
-
-	useEffect(() => {
-		// Check if this is user's first visit
-		const hasVisited = localStorage.getItem('staffDashboardVisited');
-		if (!hasVisited) {
-			setShowWelcome(true);
-			localStorage.setItem('staffDashboardVisited', 'true');
-		}
-	}, []);
 
 	useEffect(() => {
 		if (!authLoading) {
@@ -138,13 +128,12 @@ export default function StaffDashboard() {
 					<motion.div
 						animate={{ rotate: 360 }}
 						transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-						className="h-12 w-12 rounded-full border-4 border-slate-200 border-t-blue-600"
+						className="h-12 w-12 border-4 border-slate-200 border-t-blue-700"
 					/>
 				</div>
 			</DashboardLayout>
 		);
 	}
-
 	// Generate trend data from stats
 	const meetingTrendData = [
 		{ month: 'Jan', meetings: Math.max(0, (data?.stats.assignedMeetings || 0) - 5) },
@@ -188,65 +177,32 @@ export default function StaffDashboard() {
 	return (
 		<DashboardLayout role="staff">
 			<div className="space-y-8 pb-8">
-				{/* Welcome Message for First-Time Users */}
-				{showWelcome && (
-					<motion.div
-						initial={{ opacity: 0, y: -20, scale: 0.95 }}
-						animate={{ opacity: 1, y: 0, scale: 1 }}
-						transition={{ duration: 0.5 }}
-						className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200 relative overflow-hidden"
-					>
-						<div className="absolute top-0 right-0 w-32 h-32 bg-blue-200 rounded-full filter blur-3xl opacity-30"></div>
-						<div className="relative flex items-start gap-4">
-							<div className="p-3 bg-blue-600 rounded-xl">
-								<Sparkles className="h-6 w-6 text-white" />
-							</div>
-							<div className="flex-1">
-								<h3 className="text-lg font-bold text-gray-900 mb-1">
-									Welcome to Your Dashboard! 🎉
-								</h3>
-								<p className="text-sm text-gray-600 mb-3">
-									This is your central hub for managing meetings, tracking attendance, and accessing important documents. 
-									Get started by exploring your upcoming meetings and attendance history below.
-								</p>
-								<button
-									onClick={() => setShowWelcome(false)}
-									className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
-								>
-									Got it, thanks! →
-								</button>
-							</div>
-						</div>
-					</motion.div>
-				)}
-
 				{/* Header */}
-				<div ref={headerRef} className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 shadow-xl relative overflow-hidden">
-					<div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full filter blur-3xl opacity-10"></div>
-					<div className="relative">
+			<div ref={headerRef} className="bg-blue-700 border-2 border-blue-800 p-8 relative">
+				<div className="relative">
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ delay: 0.2 }}
+					>
+						<h1 className="text-4xl font-bold text-white mb-2 uppercase tracking-wide">Staff Dashboard</h1>
+						<p className="text-blue-100 text-lg">
+							Welcome back, {user?.staff?.name || user?.username}! Track your meetings and performance.
+						</p>
+					</motion.div>
+					{attendanceRate >= 80 && (
 						<motion.div
-							initial={{ opacity: 0, y: 20 }}
-							animate={{ opacity: 1, y: 0 }}
-							transition={{ delay: 0.2 }}
+							initial={{ opacity: 0, scale: 0 }}
+							animate={{ opacity: 1, scale: 1 }}
+							transition={{ delay: 0.4, type: 'spring', stiffness: 200 }}
+							className="absolute top-4 right-4 bg-blue-800 border-2 border-blue-900 px-4 py-2 flex items-center gap-2"
 						>
-							<h1 className="text-4xl font-bold text-white mb-2">Staff Dashboard</h1>
-							<p className="text-blue-100 text-lg">
-								Welcome back, {user?.staff?.name || user?.username}! Track your meetings and performance.
-							</p>
+							<Award className="h-5 w-5 text-yellow-300" />
+							<span className="text-white font-semibold uppercase tracking-wide">Great Attendance!</span>
 						</motion.div>
-						{attendanceRate >= 80 && (
-							<motion.div
-								initial={{ opacity: 0, scale: 0 }}
-								animate={{ opacity: 1, scale: 1 }}
-								transition={{ delay: 0.4, type: 'spring', stiffness: 200 }}
-								className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 flex items-center gap-2"
-							>
-								<Award className="h-5 w-5 text-yellow-300" />
-								<span className="text-white font-semibold">Great Attendance!</span>
-							</motion.div>
-						)}
-					</div>
+					)}
 				</div>
+			</div>
 
 				{/* Key Stats Cards */}
 				<motion.div 
@@ -259,30 +215,18 @@ export default function StaffDashboard() {
 						label="Assigned Meetings"
 						value={data?.stats.assignedMeetings || 0}
 						icon={Calendar}
-						color="from-blue-50 to-blue-100"
-						iconColor="bg-blue-500"
-						textColor="text-blue-600"
-						borderColor="border-blue-200"
 						delay={0.1}
 					/>
 					<StatCard
 						label="Upcoming Meetings"
 						value={data?.stats.upcomingMeetings || 0}
 						icon={Clock}
-						color="from-emerald-50 to-emerald-100"
-						iconColor="bg-emerald-500"
-						textColor="text-emerald-600"
-						borderColor="border-emerald-200"
 						delay={0.2}
 					/>
 					<StatCard
 						label="Attendance Rate"
 						value={attendanceRate}
 						icon={TrendingUp}
-						color="from-indigo-50 to-indigo-100"
-						iconColor="bg-indigo-500"
-						textColor="text-indigo-600"
-						borderColor="border-indigo-200"
 						delay={0.3}
 						suffix="%"
 					/>
@@ -290,10 +234,6 @@ export default function StaffDashboard() {
 						label="Documents Available"
 						value={data?.stats.documentsAvailable || 0}
 						icon={FileText}
-						color="from-purple-50 to-purple-100"
-						iconColor="bg-purple-500"
-						textColor="text-purple-600"
-						borderColor="border-purple-200"
 						delay={0.4}
 					/>
 				</motion.div>
@@ -343,15 +283,14 @@ export default function StaffDashboard() {
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ delay: 0.8 }}
-					className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
+					className="border-2 border-gray-300 bg-white p-6"
 				>
-					<h2 className="text-xl font-bold text-gray-900 mb-6">Quick Actions</h2>
+					<h2 className="text-xl font-bold text-gray-900 mb-6 uppercase tracking-wide">Quick Actions</h2>
 					<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 						<ActionButton
 							icon={CalendarDays}
 							label="My Calendar"
 							description="View all your meetings"
-							color="blue"
 							delay={0.9}
 							href="/staff/meetings"
 						/>
@@ -359,7 +298,6 @@ export default function StaffDashboard() {
 							icon={Download}
 							label="Get Documents"
 							description="Download meeting files"
-							color="emerald"
 							delay={1.0}
 							href="/staff/documents"
 						/>
@@ -367,7 +305,6 @@ export default function StaffDashboard() {
 							icon={UserCheck}
 							label="Update Profile"
 							description="Keep your info current"
-							color="purple"
 							delay={1.1}
 							href="/staff/profile"
 						/>
@@ -383,15 +320,11 @@ interface StatCardProps {
 	label: string;
 	value: number;
 	icon: React.ComponentType<{ className?: string }>;
-	color: string;
-	iconColor: string;
-	textColor: string;
-	borderColor: string;
 	delay: number;
 	suffix?: string;
 }
 
-function StatCard({ label, value, icon: Icon, color, iconColor, textColor, borderColor, delay, suffix = '' }: StatCardProps) {
+function StatCard({ label, value, icon: Icon, delay, suffix = '' }: StatCardProps) {
 	const count = useCounter(value);
 
 	return (
@@ -399,8 +332,8 @@ function StatCard({ label, value, icon: Icon, color, iconColor, textColor, borde
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.5, delay, ease: 'easeOut' }}
-			whileHover={{ scale: 1.05, y: -4 }}
-			className={`rounded-2xl border ${borderColor} bg-gradient-to-br ${color} p-6 shadow-sm hover:shadow-lg transition-shadow`}
+			whileHover={{ scale: 1.02, y: -2 }}
+			className={`border-2 border-gray-300 bg-white p-6 hover:bg-blue-50 transition-colors`}
 		>
 			<div className="flex items-start justify-between mb-4">
 				<div className="flex-1">
@@ -409,7 +342,7 @@ function StatCard({ label, value, icon: Icon, color, iconColor, textColor, borde
 						initial={{ scale: 0.8 }}
 						animate={{ scale: 1 }}
 						transition={{ delay: delay + 0.2, duration: 0.3 }}
-						className={`text-4xl font-bold ${textColor} mt-2`}
+						className={`text-4xl font-bold text-blue-700 mt-2`}
 					>
 						{count}{suffix}
 					</motion.p>
@@ -418,17 +351,17 @@ function StatCard({ label, value, icon: Icon, color, iconColor, textColor, borde
 					initial={{ scale: 0, rotate: -180 }}
 					animate={{ scale: 1, rotate: 0 }}
 					transition={{ delay: delay + 0.2, type: 'spring', stiffness: 200 }}
-					className={`${iconColor} rounded-xl p-3 shadow-md`}
+					className={`bg-blue-700 border-2 border-blue-800 p-3`}
 				>
 					<Icon className="h-6 w-6 text-white" />
 				</motion.div>
 			</div>
-			<div className="mt-4 h-2 w-full rounded-full bg-gray-200 overflow-hidden">
+			<div className="mt-4 h-2 w-full bg-gray-200 overflow-hidden">
 				<motion.div
 					initial={{ width: 0 }}
 					animate={{ width: `${Math.min(value * 10, 100)}%` }}
 					transition={{ delay: delay + 0.4, duration: 0.8, ease: 'easeOut' }}
-					className={`h-2 rounded-full ${iconColor}`}
+					className={`h-2 bg-blue-700`}
 				/>
 			</div>
 		</motion.div>
@@ -439,44 +372,23 @@ interface ActionButtonProps {
 	icon: React.ComponentType<{ className?: string }>;
 	label: string;
 	description: string;
-	color: 'blue' | 'emerald' | 'purple';
 	delay: number;
 	href: string;
 }
 
-function ActionButton({ icon: Icon, label, description, color, delay, href }: ActionButtonProps) {
-	const colorClasses = {
-		blue: {
-			bg: 'bg-blue-50 hover:bg-blue-100',
-			icon: 'text-blue-600',
-			border: 'border-blue-200 hover:border-blue-400',
-		},
-		emerald: {
-			bg: 'bg-emerald-50 hover:bg-emerald-100',
-			icon: 'text-emerald-600',
-			border: 'border-emerald-200 hover:border-emerald-400',
-		},
-		purple: {
-			bg: 'bg-purple-50 hover:bg-purple-100',
-			icon: 'text-purple-600',
-			border: 'border-purple-200 hover:border-purple-400',
-		},
-	};
-
-	const classes = colorClasses[color];
-
+function ActionButton({ icon: Icon, label, description, delay, href }: ActionButtonProps) {
 	return (
 		<Link href={href}>
 			<motion.div
 				initial={{ opacity: 0, y: 20 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ delay }}
-				whileHover={{ scale: 1.05, y: -4 }}
+				whileHover={{ scale: 1.02, y: -2 }}
 				whileTap={{ scale: 0.98 }}
-				className={`rounded-xl border ${classes.border} ${classes.bg} p-6 text-left transition-all shadow-sm hover:shadow-md cursor-pointer`}
+				className={`border-2 border-gray-300 bg-white hover:bg-blue-50 p-6 text-left transition-colors cursor-pointer`}
 			>
-				<Icon className={`h-8 w-8 ${classes.icon} mb-3`} />
-				<p className="font-bold text-gray-900 text-lg mb-1">{label}</p>
+				<Icon className={`h-8 w-8 text-blue-700 mb-3`} />
+				<p className="font-bold text-gray-900 text-lg mb-1 uppercase tracking-wide">{label}</p>
 				<p className="text-sm text-gray-600">{description}</p>
 			</motion.div>
 		</Link>
