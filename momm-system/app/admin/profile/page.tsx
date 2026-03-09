@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react';
+import { useEffect, useState, useRef, type ChangeEvent, type FormEvent } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
+import ImageCropModal from '@/components/common/ImageCropModal';
 
 export default function AdminProfilePage() {
   const { user: authUser, token, refreshUser } = useAuth();
@@ -31,6 +32,9 @@ export default function AdminProfilePage() {
     { type: 'success' | 'error'; message: string } | null
   >(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [cropSrc, setCropSrc] = useState<string | null>(null);
+  const [pendingFileInfo, setPendingFileInfo] = useState<{ name: string; type: string } | null>(null);
+  const photoInputRef = useRef<HTMLInputElement>(null);
 
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: '',
@@ -61,8 +65,26 @@ export default function AdminProfilePage() {
 
   const handlePhotoChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
-    setPhotoFile(file);
+    if (!file) return;
+    setPendingFileInfo({ name: file.name, type: file.type });
+    const reader = new FileReader();
+    reader.onload = () => setCropSrc(reader.result as string);
+    reader.readAsDataURL(file);
     setPhotoStatus(null);
+    // reset input so same file can be re-selected
+    event.target.value = '';
+  };
+
+  const handleCropConfirm = (croppedFile: File) => {
+    setPhotoFile(croppedFile);
+    setCropSrc(null);
+    setPendingFileInfo(null);
+    handlePhotoUpload(croppedFile);
+  };
+
+  const handleCropCancel = () => {
+    setCropSrc(null);
+    setPendingFileInfo(null);
   };
 
   const handlePasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -131,10 +153,11 @@ export default function AdminProfilePage() {
     }
   };
 
-  const handlePhotoUpload = async () => {
+  const handlePhotoUpload = async (fileToUpload?: File) => {
+    const file = fileToUpload ?? photoFile;
     setPhotoStatus(null);
 
-    if (!photoFile) {
+    if (!file) {
       setPhotoStatus({ type: 'error', message: 'Select an image to upload.' });
       return;
     }
@@ -142,7 +165,7 @@ export default function AdminProfilePage() {
     setUploadingPhoto(true);
     try {
       const formData = new FormData();
-      formData.append('file', photoFile);
+      formData.append('file', file);
 
       const response = await fetch('/api/auth/profile-photo', {
         method: 'POST',
@@ -318,24 +341,22 @@ export default function AdminProfilePage() {
               <form onSubmit={handleProfileSubmit} className="space-y-4">
                 {/* Photo upload */}
                 <div>
-                  <label htmlFor="profilePhoto" className={labelCls}>Profile Photo</label>
-                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                    <input
-                      id="profilePhoto"
-                      type="file"
-                      accept="image/*"
-                      onChange={handlePhotoChange}
-                      className="flex-1 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm file:mr-3 file:rounded-md file:border-0 file:bg-blue-50 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-blue-600 hover:file:bg-blue-100"
-                    />
-                    <button
-                      type="button"
-                      onClick={handlePhotoUpload}
-                      disabled={uploadingPhoto}
-                      className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-600 hover:bg-blue-100 transition disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                      {uploadingPhoto ? 'Uploading…' : 'Upload'}
-                    </button>
-                  </div>
+                  <label className={labelCls}>Profile Photo</label>
+                  <input
+                    ref={photoInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoChange}
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => photoInputRef.current?.click()}
+                    disabled={uploadingPhoto}
+                    className="mt-2 w-full rounded-lg border border-blue-200 bg-blue-50 px-4 py-2.5 text-sm font-semibold text-blue-600 hover:bg-blue-100 transition disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {uploadingPhoto ? 'Uploading…' : 'Upload Photo'}
+                  </button>
                   {photoStatus && (
                     <p className={`mt-2 rounded-lg px-3 py-2 text-xs font-medium ${photoStatus.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600'}`}>
                       {photoStatus.message}
@@ -480,6 +501,16 @@ export default function AdminProfilePage() {
 
         </div>
       </div>
+
+      {cropSrc && pendingFileInfo && (
+        <ImageCropModal
+          imageSrc={cropSrc}
+          originalFileName={pendingFileInfo.name}
+          originalFileType={pendingFileInfo.type}
+          onConfirm={handleCropConfirm}
+          onCancel={handleCropCancel}
+        />
+      )}
     </DashboardLayout>
   );
 }
