@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 import {
 	X,
 	Calendar,
@@ -13,6 +14,7 @@ import {
 	CheckCircle,
 	XCircle,
 	Edit,
+	Video,
 } from 'lucide-react';
 import { MeetingWithCount } from '@/types/models';
 
@@ -301,25 +303,39 @@ export default function MeetingDetailDrawer({
 							</section>
 
 							{/* Action Buttons */}
-							<div className="flex gap-3 pt-4 border-t border-gray-200">
-								{onEdit && !meeting.isCancelled && (
-									<button
-										onClick={() => {
-											onEdit(meeting);
-											onClose();
-										}}
-										className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+							<div className="space-y-3 pt-4 border-t border-gray-200">
+								{/* Join Online — always shown unless cancelled */}
+								{!meeting.isCancelled && (
+									<Link
+										href={`/meeting/${meeting.id}/join`}
+										target="_blank"
+										rel="noopener noreferrer"
+										className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
 									>
-										<Edit size={18} />
-										Edit Meeting
-									</button>
+										<Video size={18} />
+										Join Online Meeting
+									</Link>
 								)}
-								<button
-									onClick={onClose}
-									className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-								>
-									Close
-								</button>
+								<div className="flex gap-3">
+									{onEdit && !meeting.isCancelled && (
+										<button
+											onClick={() => {
+												onEdit(meeting);
+												onClose();
+											}}
+											className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+										>
+											<Edit size={18} />
+											Edit Meeting
+										</button>
+									)}
+									<button
+										onClick={onClose}
+										className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+									>
+										Close
+									</button>
+								</div>
 							</div>
 						</div>
 					)}

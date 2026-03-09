@@ -10,12 +10,12 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
   // Content Security Policy to prevent extension script injection
   response.headers.set('Content-Security-Policy', [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.emailjs.com https://fonts.googleapis.com",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.emailjs.com https://fonts.googleapis.com https://meet.jit.si",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' data: blob: https:",
     "font-src 'self' https://fonts.gstatic.com",
-    "connect-src 'self' https://api.emailjs.com",
-    "frame-src 'self' https:",
+    "connect-src 'self' https://api.emailjs.com https://meet.jit.si wss://meet.jit.si https://*.jitsi.net wss://*.jitsi.net",
+    "frame-src 'self' https: https://meet.jit.si",
     "object-src 'none'",
     "base-uri 'self'"
   ].join('; '));

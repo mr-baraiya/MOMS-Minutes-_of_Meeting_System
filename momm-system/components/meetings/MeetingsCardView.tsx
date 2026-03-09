@@ -1,7 +1,8 @@
 'use client';
 
+import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Calendar, MapPin, User, Users, Eye, Edit, Clock } from 'lucide-react';
+import { Calendar, MapPin, User, Users, Eye, Edit, Clock, Video } from 'lucide-react';
 import { MeetingWithCount } from '@/types/models';
 
 interface MeetingsCardViewProps {
@@ -165,6 +166,18 @@ export default function MeetingsCardView({
 								<Edit size={16} />
 								Edit
 							</button>
+							{!meeting.isCancelled && meeting.meetingLink && (
+								<Link
+									href={`/meeting/${meeting.id}/join`}
+									target="_blank"
+									rel="noopener noreferrer"
+									onClick={(e) => e.stopPropagation()}
+									className="flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors"
+							>
+								<Video size={16} />
+								Join
+								</Link>
+							)}
 						</div>
 					</motion.div>
 				);

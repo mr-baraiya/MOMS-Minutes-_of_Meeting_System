@@ -9,7 +9,7 @@ export default function Home() {
       <Navbar />
 
       {/* Header Section */}
-      <section className="pt-20 pb-16 px-4 bg-gradient-to-br from-blue-700 to-blue-900">
+      <section className="pt-20 pb-16 px-4 bg-linear-to-br from-blue-700 to-blue-900">
         <div className="max-w-6xl mx-auto">
           <div className="text-center bg-white rounded-lg shadow-xl p-10">
             <h1 className="text-4xl md:text-5xl font-bold text-blue-900 mb-4">

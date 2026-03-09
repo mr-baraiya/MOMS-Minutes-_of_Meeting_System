@@ -1,7 +1,9 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Eye, Edit, Users, FileText, XCircle, Calendar, MapPin, User } from 'lucide-react';
+import { Eye, Edit, Users, FileText, XCircle, Calendar, MapPin, User, Video, MoreHorizontal } from 'lucide-react';
 import { MeetingWithCount } from '@/types/models';
 
 interface MeetingsTableViewProps {
@@ -25,6 +27,15 @@ export default function MeetingsTableView({
 	onCancelMeeting,
 	onRefresh,
 }: MeetingsTableViewProps) {
+	const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
+
+	useEffect(() => {
+		if (openDropdownId === null) return;
+		const close = () => setOpenDropdownId(null);
+		document.addEventListener('click', close);
+		return () => document.removeEventListener('click', close);
+	}, [openDropdownId]);
+
 	const getStatus = (meeting: MeetingWithCount) => {
 		if (meeting.isCancelled) return 'cancelled';
 		const meetingDate = new Date(meeting.meetingDate);
@@ -95,7 +106,7 @@ export default function MeetingsTableView({
 
 	return (
 		<div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
-			<div className="overflow-x-auto">
+			<div className="overflow-x-auto scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
 				<table className="w-full">
 					<thead className="bg-gray-50 border-b border-gray-200">
 						<tr>
@@ -128,6 +139,7 @@ export default function MeetingsTableView({
 					<tbody className="divide-y divide-gray-200">
 						{meetings.map((meeting, index) => {
 							const status = getStatus(meeting);
+							const isLastRows = index >= meetings.length - 2;
 							return (
 								<motion.tr
 									key={meeting.id}
@@ -189,60 +201,97 @@ export default function MeetingsTableView({
 											</span>
 										</div>
 									</td>
-									<td className="px-6 py-4">
+									<td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
 										<div className="flex items-center gap-1">
 											<button
 												onClick={(e) => {
 													e.stopPropagation();
 													onViewMeeting(meeting);
 												}}
-												className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors border border-transparent hover:border-blue-200"
-												title="View Details"
+												className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50 rounded-md transition-colors border border-transparent hover:border-blue-200"
 											>
-												<Eye size={16} />
+												<Eye size={13} />
+												View
 											</button>
 											<button
 												onClick={(e) => {
 													e.stopPropagation();
 													onEditMeeting(meeting);
 												}}
-												className="p-2 text-green-600 hover:bg-green-50 rounded-md transition-colors border border-transparent hover:border-green-200"
-												title="Edit Meeting"
+												className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-green-600 hover:bg-green-50 rounded-md transition-colors border border-transparent hover:border-green-200"
 											>
-												<Edit size={16} />
+												<Edit size={13} />
+												Edit
 											</button>
-											<button
-												onClick={(e) => {
-													e.stopPropagation();
-													onViewAttendance(meeting);
-												}}
-												className="p-2 text-purple-600 hover:bg-purple-50 rounded-md transition-colors border border-transparent hover:border-purple-200"
-												title="Attendance"
-											>
-												<Users size={16} />
-											</button>
-											<button
-												onClick={(e) => {
-													e.stopPropagation();
-													onViewDocuments(meeting);
-												}}
-												className="p-2 text-orange-600 hover:bg-orange-50 rounded-md transition-colors border border-transparent hover:border-orange-200"
-												title="Documents"
-											>
-												<FileText size={16} />
-											</button>
-											{!meeting.isCancelled && (
+											<div className="relative">
 												<button
 													onClick={(e) => {
 														e.stopPropagation();
-														onCancelMeeting(meeting);
+														setOpenDropdownId(openDropdownId === meeting.id ? null : meeting.id);
 													}}
-													className="p-2 text-red-600 hover:bg-red-50 rounded-md transition-colors border border-transparent hover:border-red-200"
-													title="Cancel Meeting"
+													className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-md transition-colors border border-transparent hover:border-gray-200"
 												>
-													<XCircle size={16} />
+													<MoreHorizontal size={13} />
+													More
 												</button>
-											)}
+												{openDropdownId === meeting.id && (
+													<div className={`absolute right-0 w-44 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50 ${isLastRows ? 'bottom-full mb-1' : 'top-full mt-1'}`}>
+														<button
+															onClick={(e) => {
+																e.stopPropagation();
+																onViewAttendance(meeting);
+																setOpenDropdownId(null);
+															}}
+															className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-purple-600 hover:bg-purple-50 transition-colors"
+														>
+															<Users size={14} />
+															Participants
+														</button>
+														<button
+															onClick={(e) => {
+																e.stopPropagation();
+																onViewDocuments(meeting);
+																setOpenDropdownId(null);
+															}}
+															className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-orange-600 hover:bg-orange-50 transition-colors"
+														>
+															<FileText size={14} />
+															Documents
+														</button>
+														{!meeting.isCancelled && meeting.meetingLink && (
+															<Link
+																href={`/meeting/${meeting.id}/join`}
+																target="_blank"
+																rel="noopener noreferrer"
+																onClick={(e) => {
+																	e.stopPropagation();
+																	setOpenDropdownId(null);
+																}}
+																className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-green-600 hover:bg-green-50 transition-colors"
+															>
+																<Video size={14} />
+																Join Meeting
+															</Link>
+														)}
+														{!meeting.isCancelled && (
+															<>
+																<div className="my-1 border-t border-gray-100" />
+																<button
+																	onClick={(e) => {
+																	e.stopPropagation();
+																	onCancelMeeting(meeting);
+																	setOpenDropdownId(null);
+																}}
+																className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+															>
+																<XCircle size={14} />
+																Cancel Meeting
+															</button>
+															</>
+														)}
+													</div>
+												)}
+											</div>
 										</div>
 									</td>
 								</motion.tr>

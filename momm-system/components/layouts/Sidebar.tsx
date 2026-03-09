@@ -245,7 +245,7 @@ export default function Sidebar({ role }: SidebarProps) {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto p-4">
+      <nav className="flex-1 overflow-y-auto p-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         <ul className="space-y-2">
           {filteredMenuItems.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + '/');

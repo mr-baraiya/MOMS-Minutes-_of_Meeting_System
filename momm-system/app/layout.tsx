@@ -27,7 +27,7 @@ export default function RootLayout({
         {/* Client-side permissions policy for better browser extension compatibility */}
         <meta httpEquiv="Permissions-Policy" content="unload=(), accelerometer=(self), camera=(self), geolocation=(self)" />
         {/* Updated CSP to reduce frame violations */}
-        <meta httpEquiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.emailjs.com; frame-src 'self' https:; object-src 'none';" />
+        <meta httpEquiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.emailjs.com https://fonts.googleapis.com https://meet.jit.si; frame-src 'self' https: https://meet.jit.si; connect-src 'self' https://api.emailjs.com https://meet.jit.si wss://meet.jit.si https://*.jitsi.net wss://*.jitsi.net; object-src 'none';" />
       </head>
       <body className={`${inter.variable} antialiased`}>
         {/* Security: Block unload events for policy compliance */}

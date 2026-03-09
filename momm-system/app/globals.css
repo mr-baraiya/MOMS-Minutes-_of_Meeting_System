@@ -34,14 +34,11 @@ html {
   background: #555;
 }
 
-/* Hide scrollbar utility */
-.scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
-
+/* Hide scrollbars on main layout areas */
+main::-webkit-scrollbar,
+nav::-webkit-scrollbar,
 .scrollbar-hide::-webkit-scrollbar {
-  display: none;  /* Chrome, Safari and Opera */
+  display: none;
 }
 
 @keyframes slide-in-right {

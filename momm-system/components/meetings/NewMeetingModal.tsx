@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { X, ChevronRight, ChevronLeft, Check } from 'lucide-react';
+import { X, ChevronRight, ChevronLeft, Check, Video, Globe, Copy } from 'lucide-react';
 import { MeetingWithRelations } from '@/types/models';
 
 interface NewMeetingModalProps {
@@ -24,12 +24,22 @@ interface FormData {
 	selectedStaff: number[];
 }
 
+function generateJitsiLink() {
+	const random = Math.random().toString(36).substring(2, 10).toUpperCase();
+	const ts = Date.now().toString(36).toUpperCase();
+	return `https://meet.jit.si/MOMM-${ts}-${random}`;
+}
+
 export default function NewMeetingModal({ onClose, onSuccess, editMeeting }: NewMeetingModalProps) {
 	const [currentStep, setCurrentStep] = useState(1);
 	const [loading, setLoading] = useState(false);
 	const [meetingTypes, setMeetingTypes] = useState<any[]>([]);
 	const [venues, setVenues] = useState<any[]>([]);
 	const [staff, setStaff] = useState<any[]>([]);
+	const [isOnlineMeeting, setIsOnlineMeeting] = useState<boolean>(
+		!!editMeeting?.meetingLink
+	);
+	const [linkCopied, setLinkCopied] = useState(false);
 	
 	const [formData, setFormData] = useState<FormData>({
 		meetingTitle: '',
@@ -398,17 +408,68 @@ export default function NewMeetingModal({ onClose, onSuccess, editMeeting }: New
 											{errors.venueId && <p className="text-red-600 text-sm mt-1">{errors.venueId}</p>}
 										</div>
 
+{/* Online Meeting Toggle */}
+							<div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+								<div className="flex items-center justify-between">
+									<div className="flex items-center gap-3">
+										<div className="p-2 bg-green-100 rounded-lg">
+											<Video className="w-4 h-4 text-green-600" />
+										</div>
 										<div>
-											<label className="block text-sm font-medium text-gray-700 mb-2">
-												Meeting Link (Optional)
-											</label>
-											<input
-												type="url"
-												value={formData.meetingLink}
-												onChange={(e) => setFormData({ ...formData, meetingLink: e.target.value })}
-												className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-												placeholder="https://meet.example.com/meeting-id"
-											/>
+											<p className="text-sm font-medium text-gray-800">Online Meeting (Jitsi)</p>
+											<p className="text-xs text-gray-500">Auto-generate a video meeting link</p>
+										</div>
+									</div>
+									<button
+										type="button"
+										onClick={() => {
+											const next = !isOnlineMeeting;
+											setIsOnlineMeeting(next);
+											setFormData(f => ({
+												...f,
+												meetingLink: next ? (f.meetingLink || generateJitsiLink()) : '',
+											}));
+										}}
+										className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+											isOnlineMeeting ? 'bg-green-500' : 'bg-gray-300'
+										}`}
+									>
+										<span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
+											isOnlineMeeting ? 'translate-x-6' : 'translate-x-1'
+										}`} />
+									</button>
+								</div>
+
+								{isOnlineMeeting && (
+									<div className="mt-3">
+										<div className="flex items-center gap-2">
+											<div className="flex items-center gap-2 flex-1 px-3 py-2 bg-white border border-green-200 rounded-lg">
+												<Globe className="w-3.5 h-3.5 text-green-500 shrink-0" />
+												<span className="text-xs text-gray-700 truncate flex-1">{formData.meetingLink}</span>
+											</div>
+											<button
+												type="button"
+												onClick={() => {
+													navigator.clipboard.writeText(formData.meetingLink);
+													setLinkCopied(true);
+													setTimeout(() => setLinkCopied(false), 2000);
+												}}
+												className="p-2 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+												title="Copy link"
+											>
+												{linkCopied ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
+											</button>
+											<button
+												type="button"
+												onClick={() => setFormData(f => ({ ...f, meetingLink: generateJitsiLink() }))}
+												className="px-2 py-1.5 text-xs text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border border-blue-200"
+											>
+												Regenerate
+											</button>
+										</div>
+										<p className="text-xs text-gray-400 mt-1.5">Participants with the link can join directly via browser — no install needed.</p>
+									</div>
+								)}
 										</div>
 
 										<div>
@@ -518,6 +579,16 @@ export default function NewMeetingModal({ onClose, onSuccess, editMeeting }: New
 													<p className="font-medium text-gray-900">{formData.selectedStaff.length} people</p>
 												</div>
 											</div>
+											{isOnlineMeeting && formData.meetingLink && (
+												<div className="pt-2 border-t border-gray-200">
+													<p className="text-sm text-gray-600 mb-1 flex items-center gap-1.5">
+														<Video className="w-3.5 h-3.5 text-green-600" /> Online Meeting Link
+													</p>
+													<p className="text-xs font-medium text-green-700 break-all bg-green-50 border border-green-200 rounded px-2 py-1.5">
+														{formData.meetingLink}
+													</p>
+												</div>
+											)}
 										</div>
 
 										{errors.submit && (
