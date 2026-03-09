@@ -46,7 +46,8 @@ export async function GET(request: NextRequest) {
       if (!currentUser.staffId) {
         return errorResponse("Convener staff id missing", 400);
       }
-      filters.organizerStaffId = currentUser.staffId;
+      // Convener sees meetings they organized OR were added to as member
+      filters.convenerStaffId = currentUser.staffId;
     } else if (currentUser.role === "staff") {
       if (!currentUser.staffId) {
         return errorResponse("Staff id missing", 400);

@@ -188,6 +188,8 @@ export interface MeetingFilters extends PaginationParams {
   meetingTypeId?: number;
   organizerStaffId?: number;
   memberStaffId?: number;
+  /** Convener: show meetings where staff is organizer OR member */
+  convenerStaffId?: number;
   venueId?: number;
   isCancelled?: boolean;
   search?: string;

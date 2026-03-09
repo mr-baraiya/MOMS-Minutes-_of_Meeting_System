@@ -23,7 +23,7 @@ export default function DepartmentDistributionChart({ data }: Props) {
     >
       <h3 className="text-xl font-bold text-gray-900 mb-6">Meetings by Department</h3>
       <div className="h-[300px] w-full">
-        {mounted ? <ResponsiveContainer width="100%" height="100%">
+        {mounted ? <ResponsiveContainer width="100%" height="100%" minHeight={300}>
           <BarChart data={data} layout="vertical" margin={{ left: 10, right: 30 }}>
             <CartesianGrid strokeDasharray="3 3" horizontal={false} vertical={true} />
             <XAxis type="number" hide />

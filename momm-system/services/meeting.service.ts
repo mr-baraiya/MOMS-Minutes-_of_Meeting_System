@@ -19,12 +19,11 @@ export class MeetingService {
       meetingTypeId,
       organizerStaffId,
       memberStaffId,
+      convenerStaffId,
       venueId,
       isCancelled,
       search,
     } = filters;
-
-    const skip = (page - 1) * limit;
 
     const where: Record<string, unknown> = {};
 
@@ -37,52 +36,98 @@ export class MeetingService {
     if (meetingTypeId) where.meetingTypeId = meetingTypeId;
     if (organizerStaffId) where.organizerStaffId = organizerStaffId;
     if (memberStaffId) where.meetingMembers = { some: { staffId: memberStaffId } };
+    if (convenerStaffId) {
+      where.OR = [
+        { organizerStaffId: convenerStaffId },
+        { meetingMembers: { some: { staffId: convenerStaffId } } },
+      ];
+    }
     if (venueId) where.venueId = venueId;
     if (isCancelled !== undefined) where.isCancelled = isCancelled;
 
     if (search) {
-      where.OR = [
-        { meetingTitle: { contains: search, mode: "insensitive" } },
-        { meetingDescription: { contains: search, mode: "insensitive" } },
-      ];
+      // If OR already set by convenerStaffId, wrap in AND so both conditions apply
+      if (where.OR) {
+        where.AND = [
+          { OR: where.OR as object[] },
+          {
+            OR: [
+              { meetingTitle: { contains: search, mode: "insensitive" } },
+              { meetingDescription: { contains: search, mode: "insensitive" } },
+            ],
+          },
+        ];
+        delete where.OR;
+      } else {
+        where.OR = [
+          { meetingTitle: { contains: search, mode: "insensitive" } },
+          { meetingDescription: { contains: search, mode: "insensitive" } },
+        ];
+      }
     }
 
-    const [meetings, total] = await Promise.all([
-      prisma.meeting.findMany({
-        where,
-        skip,
-        take: limit,
+    const include = {
+      meetingType: true,
+      organizer: {
         include: {
-          meetingType: true,
-          organizer: {
-            include: {
-              department: true,
-            },
-          },
-          venue: true,
-          meetingMembers: memberStaffId
-            ? {
-                where: { staffId: memberStaffId },
-                select: {
-                  id: true,
-                  staffId: true,
-                  isPresent: true,
-                  attendanceMarkedAt: true,
-                  remarks: true,
-                },
-              }
-            : false,
-          _count: {
-            select: {
-              meetingMembers: true,
-              documents: true,
-            },
-          },
+          department: true,
         },
-        orderBy: { meetingDate: "desc" },
-      }),
-      prisma.meeting.count({ where }),
+      },
+      venue: true,
+      meetingMembers: memberStaffId
+        ? {
+            where: { staffId: memberStaffId },
+            select: {
+              id: true,
+              staffId: true,
+              isPresent: true,
+              attendanceMarkedAt: true,
+              remarks: true,
+            },
+          }
+        : convenerStaffId
+        ? true  // convener sees all members
+        : (false as const),
+      _count: {
+        select: {
+          meetingMembers: true,
+          documents: true,
+        },
+      },
+    };
+
+    // Sort: upcoming (today/future) ASC first, then past DESC — fetched in two passes
+    // so pagination works correctly across the combined sorted list.
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const upcomingWhere = { ...where, meetingDate: { ...(where.meetingDate as object ?? {}), gte: today } };
+    const pastWhere     = { ...where, meetingDate: { ...(where.meetingDate as object ?? {}), lt:  today } };
+
+    const [upcomingCount, pastCount] = await Promise.all([
+      prisma.meeting.count({ where: upcomingWhere }),
+      prisma.meeting.count({ where: pastWhere }),
     ]);
+
+    const total = upcomingCount + pastCount;
+    const skip = (page - 1) * limit;
+
+    // Figure out how many upcoming rows fit in this page
+    const upcomingSkip = Math.min(skip, upcomingCount);
+    const upcomingTake = Math.min(limit, upcomingCount - upcomingSkip);
+    const pastSkip     = Math.max(0, skip - upcomingCount);
+    const pastTake     = limit - upcomingTake;
+
+    const [upcomingMeetings, pastMeetings] = await Promise.all([
+      upcomingTake > 0
+        ? prisma.meeting.findMany({ where: upcomingWhere, skip: upcomingSkip, take: upcomingTake, include, orderBy: { meetingDate: "asc" } })
+        : Promise.resolve([]),
+      pastTake > 0
+        ? prisma.meeting.findMany({ where: pastWhere, skip: pastSkip, take: pastTake, include, orderBy: { meetingDate: "desc" } })
+        : Promise.resolve([]),
+    ]);
+
+    const meetings = [...upcomingMeetings, ...pastMeetings];
 
     return {
       data: meetings,

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { Calendar, Clock, MapPin, Users, Eye, FileText, Edit } from "lucide-react";
+import { Calendar, Clock, MapPin, Users, Eye, FileText, Edit, Video } from "lucide-react";
 import { MeetingWithCount } from "@/types/models";
 import MeetingDetailDrawer from "./MeetingDetailDrawer";
 import MeetingsCardView from "./MeetingsCardView";
@@ -102,6 +102,14 @@ export default function ConvenerMeetingsView({
               >
                 <Eye className="w-4 h-4" /> View
               </button>
+              {!meeting.isCancelled && meeting.meetingLink && (
+                <a
+                  href={`/meeting/${meeting.id}/join`}
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  <Video className="w-4 h-4" /> Join
+                </a>
+              )}
             </div>
         </div>
       ))}
@@ -118,15 +126,9 @@ export default function ConvenerMeetingsView({
         <div className="flex gap-2">
           <button
             onClick={() => setShowNewMeetingModal(true)}
-            className="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            className="px-4 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
           >
             Create Meeting
-          </button>
-          <button
-            onClick={onRefresh}
-            className="px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50"
-          >
-            Refresh
           </button>
           <button
             onClick={() => setView(view === "card" ? "table" : "card")}
@@ -148,7 +150,7 @@ export default function ConvenerMeetingsView({
           <p className="text-gray-600 mb-4">Create a meeting to get started.</p>
           <button
             onClick={() => setShowNewMeetingModal(true)}
-            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
           >
             Create Your First Meeting
           </button>

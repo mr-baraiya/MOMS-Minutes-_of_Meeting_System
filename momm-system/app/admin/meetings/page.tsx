@@ -63,6 +63,12 @@ function AdminMeetingsContent() {
 		departmentId: '',
 	});
 
+	// Pagination
+	const [currentPage, setCurrentPage] = useState(1);
+	const [totalPages, setTotalPages] = useState(1);
+	const [totalMeetings, setTotalMeetings] = useState(0);
+	const PAGE_SIZE = 10;
+
 	// Dropdown data
 	const [meetingTypes, setMeetingTypes] = useState<any[]>([]);
 	const [departments, setDepartments] = useState<any[]>([]);
@@ -73,7 +79,7 @@ function AdminMeetingsContent() {
 			fetchMeetingTypes();
 			fetchDepartments();
 		}
-	}, [authLoading, user, filters]);
+	}, [authLoading, user, filters, currentPage]);
 
 	useEffect(() => {
 		if (!authLoading && user) {
@@ -94,12 +100,19 @@ function AdminMeetingsContent() {
 			if (filters.status !== 'all') params.append('status', filters.status);
 			if (filters.meetingTypeId) params.append('meetingTypeId', filters.meetingTypeId);
 			if (filters.departmentId) params.append('departmentId', filters.departmentId);
+			params.append('page', currentPage.toString());
+			params.append('limit', PAGE_SIZE.toString());
 
 			const response = await fetch(`/api/meetings?${params.toString()}`);
 			const result = await response.json();
 			
 			if (result.success) {
-				setMeetings(result.data.data || result.data);
+				const payload = result.data;
+				setMeetings(payload.data ?? payload);
+				if (payload.pagination) {
+					setTotalPages(payload.pagination.totalPages ?? 1);
+					setTotalMeetings(payload.pagination.total ?? 0);
+				}
 			}
 		} catch (error) {
 			console.error('Failed to fetch meetings:', error);
@@ -133,6 +146,7 @@ function AdminMeetingsContent() {
 	};
 
 	const handleResetFilters = () => {
+		setCurrentPage(1);
 		setFilters({
 			search: '',
 			dateFrom: '',
@@ -337,7 +351,7 @@ function AdminMeetingsContent() {
 								<input
 									type="text"
 									value={filters.search}
-									onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+									onChange={(e) => { setCurrentPage(1); setFilters({ ...filters, search: e.target.value }); }}
 									placeholder="Search meetings..."
 									className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 								/>
@@ -352,7 +366,7 @@ function AdminMeetingsContent() {
 							<input
 								type="date"
 								value={filters.dateFrom}
-								onChange={(e) => setFilters({ ...filters, dateFrom: e.target.value })}
+								onChange={(e) => { setCurrentPage(1); setFilters({ ...filters, dateFrom: e.target.value }); }}
 								className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 							/>
 						</div>
@@ -365,7 +379,7 @@ function AdminMeetingsContent() {
 							<input
 								type="date"
 								value={filters.dateTo}
-								onChange={(e) => setFilters({ ...filters, dateTo: e.target.value })}
+								onChange={(e) => { setCurrentPage(1); setFilters({ ...filters, dateTo: e.target.value }); }}
 								className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 							/>
 						</div>
@@ -377,7 +391,7 @@ function AdminMeetingsContent() {
 							</label>
 							<select
 								value={filters.status}
-								onChange={(e) => setFilters({ ...filters, status: e.target.value as MeetingStatus })}
+								onChange={(e) => { setCurrentPage(1); setFilters({ ...filters, status: e.target.value as MeetingStatus }); }}
 								className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 							>
 								<option value="all">All Status</option>
@@ -394,7 +408,7 @@ function AdminMeetingsContent() {
 							</label>
 							<select
 								value={filters.meetingTypeId}
-								onChange={(e) => setFilters({ ...filters, meetingTypeId: e.target.value })}
+								onChange={(e) => { setCurrentPage(1); setFilters({ ...filters, meetingTypeId: e.target.value }); }}
 								className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 							>
 								<option value="">All Types</option>
@@ -413,7 +427,7 @@ function AdminMeetingsContent() {
 							</label>
 							<select
 								value={filters.departmentId}
-								onChange={(e) => setFilters({ ...filters, departmentId: e.target.value })}
+								onChange={(e) => { setCurrentPage(1); setFilters({ ...filters, departmentId: e.target.value }); }}
 								className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 							>
 								<option value="">All Departments</option>
@@ -523,6 +537,74 @@ function AdminMeetingsContent() {
 							meetings={meetings}
 							onViewMeeting={handleViewMeeting}
 						/>
+					)}
+
+					{/* Pagination */}
+					{viewMode !== 'calendar' && totalPages > 1 && (
+						<div className="flex items-center justify-between mt-4 px-1">
+							<p className="text-sm text-gray-600">
+								Showing{' '}
+								<span className="font-medium">{(currentPage - 1) * PAGE_SIZE + 1}</span>
+								{' – '}
+								<span className="font-medium">{Math.min(currentPage * PAGE_SIZE, totalMeetings)}</span>
+								{' of '}
+								<span className="font-medium">{totalMeetings}</span> meetings
+							</p>
+							<div className="flex items-center gap-1">
+								<button
+									onClick={() => setCurrentPage(1)}
+									disabled={currentPage === 1}
+									className="px-2 py-1.5 text-sm rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+								>
+									«
+								</button>
+								<button
+									onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+									disabled={currentPage === 1}
+									className="px-3 py-1.5 text-sm rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+								>
+									← Prev
+								</button>
+								{Array.from({ length: totalPages }, (_, i) => i + 1)
+									.filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+									.reduce<(number | '...')[]>((acc, p, idx, arr) => {
+										if (idx > 0 && p - (arr[idx - 1] as number) > 1) acc.push('...');
+										acc.push(p);
+										return acc;
+									}, [])
+									.map((p, idx) =>
+										p === '...' ? (
+											<span key={`ellipsis-${idx}`} className="px-2 py-1.5 text-sm text-gray-400">…</span>
+										) : (
+											<button
+												key={p}
+												onClick={() => setCurrentPage(p as number)}
+												className={`px-3 py-1.5 text-sm rounded-md border transition-colors ${
+													currentPage === p
+														? 'bg-blue-600 text-white border-blue-600'
+														: 'border-gray-200 text-gray-600 hover:bg-gray-50'
+												}`}
+											>
+												{p}
+											</button>
+										)
+									)}
+								<button
+									onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+									disabled={currentPage === totalPages}
+									className="px-3 py-1.5 text-sm rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+								>
+									Next →
+								</button>
+								<button
+									onClick={() => setCurrentPage(totalPages)}
+									disabled={currentPage === totalPages}
+									className="px-2 py-1.5 text-sm rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+								>
+									»
+								</button>
+							</div>
+						</div>
 					)}
 				</motion.div>
 			</div>

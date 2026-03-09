@@ -14,7 +14,9 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' data: blob: https:",
     "font-src 'self' https://fonts.gstatic.com",
-    "connect-src 'self' https://api.emailjs.com https://meet.jit.si wss://meet.jit.si https://*.jitsi.net wss://*.jitsi.net",
+    "media-src 'self' blob: mediastream:",
+    "worker-src 'self' blob:",
+    "connect-src 'self' https://api.emailjs.com https://meet.jit.si wss://meet.jit.si https://*.jitsi.net wss://*.jitsi.net https://*.8x8.vc wss://*.8x8.vc",
     "frame-src 'self' https: https://meet.jit.si",
     "object-src 'none'",
     "base-uri 'self'"
@@ -24,11 +26,12 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
   response.headers.set('Permissions-Policy', [
     'unload=()',
     'accelerometer=(self)',
-    'camera=(self)',
+    'camera=(self "https://meet.jit.si")',
+    'display-capture=(self "https://meet.jit.si")',
     'geolocation=(self)',
     'gyroscope=(self)',
     'magnetometer=(self)',
-    'microphone=(self)',
+    'microphone=(self "https://meet.jit.si")',
     'payment=(self)',
     'usb=()'
   ].join(', '));

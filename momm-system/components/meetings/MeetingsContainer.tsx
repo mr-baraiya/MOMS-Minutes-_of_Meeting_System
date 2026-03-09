@@ -28,7 +28,20 @@ export default function MeetingsContainer({ role }: MeetingsContainerProps) {
       setLoading(true);
       setError(null);
 
-      const response = await fetch("/api/meetings", {
+      const params = new URLSearchParams();
+
+      // Staff and convener only see current month's meetings
+      if (role === "staff" || role === "convener") {
+        const now = new Date();
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        params.set("startDate", startOfMonth.toISOString().split("T")[0]);
+        params.set("endDate", endOfMonth.toISOString().split("T")[0]);
+        params.set("limit", "100"); // fetch all this month's meetings at once
+      }
+
+      const url = `/api/meetings${params.toString() ? `?${params.toString()}` : ""}`;
+      const response = await fetch(url, {
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
 

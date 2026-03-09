@@ -425,9 +425,13 @@ export default function NewMeetingModal({ onClose, onSuccess, editMeeting }: New
 										onClick={() => {
 											const next = !isOnlineMeeting;
 											setIsOnlineMeeting(next);
+											const jitsiVenue = venues.find(v =>
+												v.venueName?.toLowerCase().includes('jitsi')
+											);
 											setFormData(f => ({
 												...f,
 												meetingLink: next ? (f.meetingLink || generateJitsiLink()) : '',
+												...(next && jitsiVenue ? { venueId: jitsiVenue.id.toString() } : {}),
 											}));
 										}}
 										className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${

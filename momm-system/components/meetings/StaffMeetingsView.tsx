@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { Calendar, Clock, MapPin, User, FileText, Eye } from "lucide-react";
+import { Calendar, Clock, MapPin, User, FileText, Eye, Video } from "lucide-react";
 import { MeetingWithCount } from "@/types/models";
 import MeetingDetailDrawer from "./MeetingDetailDrawer";
 
@@ -123,14 +123,22 @@ export default function StaffMeetingsView({
                   onClick={() => onSelect(meeting)}
                   className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
-                  <Eye className="w-4 h-4" /> View Details
+                  <Eye className="w-4 h-4" /> View
                 </button>
                 <a
                   href={`/api/meetings/${meeting.id}/documents`}
                   className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-sm bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50"
                 >
-                  <FileText className="w-4 h-4" /> Documents
+                  <FileText className="w-4 h-4" /> Docs
                 </a>
+                {!meeting.isCancelled && meeting.meetingLink && (
+                  <a
+                    href={`/meeting/${meeting.id}/join`}
+                    className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                  >
+                    <Video className="w-4 h-4" /> Join
+                  </a>
+                )}
               </div>
             </div>
           ))}

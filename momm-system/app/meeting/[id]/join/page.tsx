@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import {
-  Video, VideoOff, Mic, MicOff, Monitor, Users, Copy, Check,
-  ArrowLeft, Loader2, Calendar, Clock, MapPin, AlertCircle,
+  Video, Mic, Monitor, Users, Copy, Check,
+  ArrowLeft, Calendar, Clock, MapPin, AlertCircle,
 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 declare global {
   interface Window {
@@ -17,9 +18,7 @@ declare global {
 export default function JoinMeetingPage() {
   const params = useParams();
   const meetingId = params.id as string;
-
-  const containerRef = useRef<HTMLDivElement>(null);
-  const apiRef = useRef<any>(null);
+  const { user } = useAuth();
 
   const [meeting, setMeeting] = useState<any>(null);
   const [meetingLoading, setMeetingLoading] = useState(true);
@@ -27,9 +26,21 @@ export default function JoinMeetingPage() {
 
   const [displayName, setDisplayName] = useState('');
   const [joined, setJoined] = useState(false);
-  const [scriptReady, setScriptReady] = useState(false);
-  const [joining, setJoining] = useState(false);
+  const [iframeUrl, setIframeUrl] = useState('');
   const [copied, setCopied] = useState(false);
+
+  // Auto-fill display name from logged-in user
+  useEffect(() => {
+    if (user) {
+      setDisplayName(user.staff?.name || user.username || '');
+    }
+  }, [user]);
+
+  // Determine if logged-in user is the organizer of this meeting
+  const isOrganizer =
+    !!user &&
+    !!meeting &&
+    (user.staff?.id === meeting.organizerStaffId || user.id === meeting.organizer?.userId);
 
   // ── Fetch meeting info ────────────────────────────────────────────
   useEffect(() => {
@@ -43,95 +54,30 @@ export default function JoinMeetingPage() {
       .finally(() => setMeetingLoading(false));
   }, [meetingId]);
 
-  // ── Load Jitsi script once ────────────────────────────────────────
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.JitsiMeetExternalAPI) {
-      setScriptReady(true);
-      return;
-    }
-    const script = document.createElement('script');
-    script.src = 'https://meet.jit.si/external_api.js';
-    script.async = true;
-    script.onload = () => setScriptReady(true);
-    script.onerror = () => console.error('Failed to load Jitsi script');
-    document.head.appendChild(script);
-  }, []);
-
-  // ── Cleanup on unmount ───────────────────────────────────────────
-  useEffect(() => {
-    return () => {
-      if (apiRef.current) {
-        try { apiRef.current.dispose(); } catch {}
-        apiRef.current = null;
-      }
-    };
-  }, []);
-
-  // ── Start meeting ────────────────────────────────────────────────
+  // ── Start meeting ─────────────────────────────────────────────────
   const handleJoin = useCallback(() => {
-    if (!scriptReady || !containerRef.current || !window.JitsiMeetExternalAPI) return;
-    setJoining(true);
-
     const roomName = `MOMM-System-${meetingId}`;
     const name = displayName.trim() || 'Guest';
+    const jitsiName = isOrganizer ? `${name} (Host)` : name;
 
-    try {
-      apiRef.current = new window.JitsiMeetExternalAPI('meet.jit.si', {
-        roomName,
-        width: '100%',
-        height: '100%',
-        parentNode: containerRef.current,
-        userInfo: { displayName: name },
-        configOverwrite: {
-          startWithAudioMuted: false,
-          startWithVideoMuted: false,
-          enableNoisyMicDetection: true,
-          disableDeepLinking: true,
-          enableWelcomePage: false,
-          prejoinPageEnabled: false,
-          defaultLanguage: 'en',
-        },
-        interfaceConfigOverwrite: {
-          SHOW_JITSI_WATERMARK: false,
-          SHOW_WATERMARK_FOR_GUESTS: false,
-          TOOLBAR_BUTTONS: [
-            'microphone', 'camera', 'closedcaptions', 'desktop',
-            'fullscreen', 'fodeviceselection', 'hangup', 'profile',
-            'chat', 'recording', 'settings', 'raisehand',
-            'videoquality', 'filmstrip', 'feedback', 'stats',
-            'shortcuts', 'tileview', 'select-background', 'help',
-            'mute-everyone', 'security',
-          ],
-          DEFAULT_BACKGROUND: '#111827',
-          BRAND_WATERMARK_LINK: '',
-          HIDE_INVITE_MORE_HEADER: false,
-        },
-      });
+    // Build config via URL hash — this is the only reliable way to grant
+    // camera/microphone permissions to the iframe (allow attr is set in JSX
+    // before the frame navigates, so timing is never an issue).
+    const hash = [
+      `userInfo.displayName=${encodeURIComponent(JSON.stringify(jitsiName))}`,
+      'config.disableLobbyMode=true',
+      'config.startWithAudioMuted=false',
+      'config.startWithVideoMuted=false',
+      'config.prejoinPageEnabled=false',
+      'config.disableDeepLinking=true',
+      'config.enableWelcomePage=false',
+      'config.enableNoisyMicDetection=true',
+    ].join('&');
 
-      apiRef.current.addEventListener('videoConferenceLeft', () => {
-        setJoined(false);
-        if (apiRef.current) {
-          try { apiRef.current.dispose(); } catch {}
-          apiRef.current = null;
-        }
-      });
-
-      apiRef.current.addEventListener('readyToClose', () => {
-        setJoined(false);
-        if (apiRef.current) {
-          try { apiRef.current.dispose(); } catch {}
-          apiRef.current = null;
-        }
-      });
-
-      setJoined(true);
-    } catch (err) {
-      console.error('Jitsi init failed:', err);
-    } finally {
-      setJoining(false);
-    }
-  }, [scriptReady, meetingId, displayName]);
-
+    setIframeUrl(`https://meet.jit.si/${roomName}#${hash}`);
+    setJoined(true);
+  }, [meetingId, displayName, isOrganizer]);
+        // Grant media permissions to the embedded iframe
   // ── Copy shareable link ──────────────────────────────────────────
   const handleCopy = () => {
     navigator.clipboard.writeText(window.location.href).then(() => {
@@ -229,6 +175,12 @@ export default function JoinMeetingPage() {
 
             {/* Name + Join */}
             <div className="bg-gray-800 rounded-2xl border border-gray-700 p-6 space-y-4">
+              {isOrganizer && (
+                <div className="flex items-center gap-2 bg-purple-900/40 border border-purple-600/50 rounded-lg px-3 py-2 text-sm text-purple-200 font-medium">
+                  <Users size={14} className="text-purple-400 shrink-0" />
+                  You are the <span className="text-purple-300 font-semibold">Host</span> of this meeting
+                </div>
+              )}
               <h2 className="text-white font-semibold text-lg">Enter your name to join</h2>
               <input
                 type="text"
@@ -241,16 +193,13 @@ export default function JoinMeetingPage() {
 
               <button
                 onClick={handleJoin}
-                disabled={joining || !scriptReady}
-                className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-55 disabled:cursor-not-allowed text-white font-semibold py-3 text-sm transition"
+                className={`w-full flex items-center justify-center gap-2 rounded-xl text-white font-semibold py-3 text-sm transition ${
+                  isOrganizer
+                    ? 'bg-purple-600 hover:bg-purple-700'
+                    : 'bg-blue-600 hover:bg-blue-700'
+                }`}
               >
-                {joining ? (
-                  <><Loader2 size={16} className="animate-spin" /> Connecting…</>
-                ) : !scriptReady ? (
-                  <><Loader2 size={16} className="animate-spin" /> Loading…</>
-                ) : (
-                  <><Video size={16} /> Join Meeting</>
-                )}
+                <Video size={16} /> Join Meeting
               </button>
 
               <div className="flex items-start gap-2 bg-amber-900/30 border border-amber-700/40 rounded-lg px-3 py-2.5 text-xs text-amber-200">
@@ -275,12 +224,15 @@ export default function JoinMeetingPage() {
           </div>
         )}
 
-        {/* ── Active meeting iframe container ──────────────────────── */}
-        <div
-          ref={containerRef}
-          className={`w-full rounded-xl overflow-hidden border border-gray-700 ${joined ? 'block' : 'hidden'}`}
-          style={{ height: 'calc(100vh - 140px)' }}
-        />
+        {/* ── Active meeting — plain iframe with allow set in JSX ── */}
+        {joined && iframeUrl && (
+          <iframe
+            src={iframeUrl}
+            allow="camera; microphone; display-capture; autoplay; fullscreen"
+            className="w-full rounded-xl border border-gray-700"
+            style={{ height: 'calc(100vh - 140px)', border: 'none' }}
+          />
+        )}
       </div>
     </div>
   );
