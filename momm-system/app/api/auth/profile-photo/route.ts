@@ -1,6 +1,5 @@
 import { NextRequest } from "next/server";
-import path from "path";
-import { promises as fs } from "fs";
+import { put } from "@vercel/blob";
 import { prisma } from "@/lib/prisma";
 import { getUserFromRequest } from "@/lib/auth";
 import { errorResponse, handleApiError, successResponse } from "@/lib/api-utils";
@@ -35,23 +34,20 @@ export async function POST(request: NextRequest) {
       return errorResponse("Profile photo must be 5MB or smaller", 400);
     }
 
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const extension = path.extname(file.name) || ".png";
-    const fileName = `user-${user.userId}-${Date.now()}${extension}`;
-    const uploadDir = path.join(process.cwd(), "public", "uploads", "profile-photos");
-    const filePath = path.join(uploadDir, fileName);
+    const extension = file.name.split(".").pop() || "png";
+    const blobName = `profile-photos/user-${user.userId}-${Date.now()}.${extension}`;
 
-    await fs.mkdir(uploadDir, { recursive: true });
-    await fs.writeFile(filePath, buffer);
-
-    const publicUrl = `/uploads/profile-photos/${fileName}`;
+    const blob = await put(blobName, file, {
+      access: "public",
+      contentType: file.type,
+    });
 
     await prisma.user.update({
       where: { id: user.userId },
-      data: { profilePicture: publicUrl },
+      data: { profilePicture: blob.url },
     });
 
-    return successResponse({ profilePicture: publicUrl }, "Profile photo updated successfully");
+    return successResponse({ profilePicture: blob.url }, "Profile photo updated successfully");
   } catch (error) {
     return handleApiError(error);
   }
