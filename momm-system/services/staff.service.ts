@@ -9,8 +9,8 @@ export class StaffService {
   /**
    * Get all staff with pagination
    */
-  static async getAll(params: PaginationParams & { departmentId?: number; includeInactive?: boolean } = {}) {
-    const { page = 1, limit = 10, departmentId, includeInactive = false } = params;
+  static async getAll(params: PaginationParams & { departmentId?: number; includeInactive?: boolean; roleFilter?: string } = {}) {
+    const { page = 1, limit = 10, departmentId, includeInactive = false, roleFilter } = params;
     const skip = (page - 1) * limit;
 
     const where: any = {};
@@ -20,6 +20,10 @@ export class StaffService {
 
     if (departmentId) {
       where.departmentId = departmentId;
+    }
+
+    if (roleFilter) {
+      where.user = { role: roleFilter.toUpperCase() };
     }
 
     const [staff, total] = await Promise.all([

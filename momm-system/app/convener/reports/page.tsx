@@ -77,10 +77,10 @@ export default function ConvenerReportsPage() {
   const fetchMeetings = async () => {
     try {
       // Fetch only convener's own meetings
-      const response = await fetch('/api/meetings?role=convener');
+      const response = await fetch('/api/meetings?limit=500');
       if (response.ok) {
         const data = await response.json();
-        setMeetings(data.meetings || []);
+        setMeetings(data.data?.data || []);
       }
     } catch (error) {
       console.error('Error fetching meetings:', error);

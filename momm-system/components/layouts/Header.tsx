@@ -30,6 +30,8 @@ export default function Header({ role }: HeaderProps) {
   const router = useRouter();
   const searchTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const searchRef = useRef<HTMLDivElement>(null);
+  const notifRef = useRef<HTMLDivElement>(null);
+  const profileRef = useRef<HTMLDivElement>(null);
 
   const displayName = user?.staff?.name || user?.username || 'User';
   const displayEmail = user?.email || 'user@example.com';
@@ -52,12 +54,19 @@ export default function Header({ role }: HeaderProps) {
     
     try {
       setNotificationsLoading(true);
-      const response = await fetch('/api/notifications?limit=10');
-      const data = await response.json();
-      
-      if (data.success) {
-        setNotifications(data.data.notifications);
-        setUnreadCount(data.data.unreadCount);
+      // Popup shows only unread; unreadCount badge stays accurate
+      const [unreadRes, countRes] = await Promise.all([
+        fetch('/api/notifications?limit=10&unreadOnly=true'),
+        fetch('/api/notifications?limit=1'),
+      ]);
+      const unreadData = await unreadRes.json();
+      const countData = await countRes.json();
+
+      if (unreadData.success) {
+        setNotifications(unreadData.data.notifications);
+      }
+      if (countData.success) {
+        setUnreadCount(countData.data.unreadCount);
       }
     } catch (error) {
       console.error('Failed to fetch notifications:', error);
@@ -163,11 +172,17 @@ export default function Header({ role }: HeaderProps) {
     }, 300);
   };
 
-  // Close search results when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
         setShowSearchResults(false);
+      }
+      if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
+        setShowNotifications(false);
+      }
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setShowProfile(false);
       }
     };
 
@@ -317,7 +332,7 @@ export default function Header({ role }: HeaderProps) {
           )}
 
           {/* Notifications */}
-          <div className="relative">
+          <div className="relative" ref={notifRef}>
             <button
               onClick={() => setShowNotifications(!showNotifications)}
               className="relative p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
@@ -352,7 +367,8 @@ export default function Header({ role }: HeaderProps) {
                   ) : notifications.length === 0 ? (
                     <div className="p-8 text-center">
                       <Bell className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                      <p className="text-sm text-gray-500">No notifications yet</p>
+                      <p className="text-sm font-medium text-gray-600">All caught up!</p>
+                      <p className="text-xs text-gray-400 mt-1">No new notifications</p>
                     </div>
                   ) : (
                     notifications.map((notification) => (
@@ -379,7 +395,7 @@ export default function Header({ role }: HeaderProps) {
                   <button
                     onClick={() => {
                       setShowNotifications(false);
-                      // Navigate to notifications page if exists
+                      router.push(`/${role}/notifications`);
                     }}
                     className="text-sm text-blue-600 hover:text-blue-700 font-medium"
                   >
@@ -392,7 +408,7 @@ export default function Header({ role }: HeaderProps) {
 
           <div className="hidden h-8 w-px bg-gray-200 md:block" />
           {/* Profile */}
-          <div className="relative">
+          <div className="relative" ref={profileRef}>
             <button
               onClick={() => setShowProfile(!showProfile)}
               className="flex items-center gap-3 p-2 hover:bg-gray-100 rounded-lg transition-colors"

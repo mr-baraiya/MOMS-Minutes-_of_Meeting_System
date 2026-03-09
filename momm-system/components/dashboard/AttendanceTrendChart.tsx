@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
 
 interface AttendanceChartProps {
@@ -8,6 +9,9 @@ interface AttendanceChartProps {
 }
 
 export default function AttendanceTrendChart({ data }: AttendanceChartProps) {
+	const [mounted, setMounted] = useState(false);
+	useEffect(() => { setMounted(true); }, []);
+
 	return (
 		<motion.div
 			initial={{ opacity: 0, x: 50 }}
@@ -29,7 +33,7 @@ export default function AttendanceTrendChart({ data }: AttendanceChartProps) {
 				transition={{ delay: 0.9 }}
                 className="h-[300px] w-full min-h-[300px]"
 			>
-				<ResponsiveContainer width="100%" height="100%" minHeight={300}>
+				{mounted ? <ResponsiveContainer width="100%" height="100%" minHeight={300}>
 					<AreaChart data={data}>
 						<defs>
 							<linearGradient id="colorAttendance" x1="0" y1="0" x2="0" y2="1">
@@ -68,7 +72,7 @@ export default function AttendanceTrendChart({ data }: AttendanceChartProps) {
 							animationBegin={900}
 						/>
 					</AreaChart>
-				</ResponsiveContainer>
+				</ResponsiveContainer> : <div className="h-full w-full animate-pulse bg-gray-100 rounded-lg" />}
 			</motion.div>
 		</motion.div>
 	);

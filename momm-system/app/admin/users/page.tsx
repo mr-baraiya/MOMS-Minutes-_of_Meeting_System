@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
-import { Users, Plus, Edit2, Trash2, Search, X, Eye, EyeOff, AlertTriangle, Info, Calendar, Mail, User as UserIcon, Shield, Activity } from 'lucide-react';
+import { Users, Plus, Edit2, Trash2, Search, X, Eye, EyeOff, AlertTriangle, Info, Calendar, Mail, User as UserIcon, Shield, Activity, Download } from 'lucide-react';
 import Swal from 'sweetalert2';
 
 interface User {
@@ -17,7 +17,7 @@ interface User {
 	profilePicture?: string;
 	staff?: {
 		id: number;
-		name: string;
+		staffName: string;
 		designation: string;
 		mobileNo?: string;
 		emailAddress: string;
@@ -66,6 +66,30 @@ export default function UsersManagement() {
 			fetchUsers();
 		}
 	}, [authLoading, user]);
+
+	const exportToCSV = () => {
+		const headers = ['ID', 'Username', 'Email', 'Role', 'Status', 'Staff Name', 'Designation', 'Department', 'Mobile', 'Created At'];
+		const rows = users.map(u => [
+			u.id,
+			u.username,
+			u.email,
+			u.role,
+			u.isActive ? 'Active' : 'Inactive',
+			u.staff?.staffName ?? '',
+			u.staff?.designation ?? '',
+			u.staff?.department?.departmentName ?? '',
+			u.staff?.mobileNo ?? '',
+			new Date(u.createdAt).toLocaleDateString(),
+		]);
+		const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+		const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = `users_${new Date().toISOString().slice(0, 10)}.csv`;
+		a.click();
+		URL.revokeObjectURL(url);
+	};
 
 	const fetchUsers = async () => {
 		try {
@@ -318,7 +342,7 @@ export default function UsersManagement() {
 				user.username.toLowerCase().includes(searchLower) ||
 				user.email.toLowerCase().includes(searchLower) ||
 				user.role.toLowerCase().includes(searchLower) ||
-				user.staff?.name.toLowerCase().includes(searchLower)
+				(user.staff?.staffName ?? '').toLowerCase().includes(searchLower)
 			);
 		}
 
@@ -350,13 +374,22 @@ export default function UsersManagement() {
 						</h1>
 						<p className="text-gray-600 mt-2">Manage all system users and their roles</p>
 					</div>
-					<button
-						onClick={() => handleOpenModal()}
-						className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2"
-					>
-						<Plus size={20} />
-						Add User
-					</button>
+					<div className="flex gap-2">
+						<button
+							onClick={exportToCSV}
+							className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition font-medium"
+						>
+							<Download size={18} />
+							Export CSV
+						</button>
+						<button
+							onClick={() => handleOpenModal()}
+							className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2"
+						>
+							<Plus size={20} />
+							Add User
+						</button>
+					</div>
 				</div>
 
 				{/* Success Message */}
@@ -456,8 +489,8 @@ export default function UsersManagement() {
 											<td className="px-6 py-4 whitespace-nowrap">
 												<div>
 													<div className="text-sm font-medium text-gray-900">{user.username}</div>
-													{user.staff?.name && (
-														<div className="text-sm text-gray-500">{user.staff.name}</div>
+													{user.staff?.staffName && (
+														<div className="text-sm text-gray-500">{user.staff.staffName}</div>
 													)}
 												</div>
 											</td>
@@ -887,7 +920,7 @@ export default function UsersManagement() {
 										</div>
 										<div>
 											<p className="text-xs text-gray-600">Full Name</p>
-											<p className="text-sm font-medium text-gray-900">{selectedUser.staff.name}</p>
+											<p className="text-sm font-medium text-gray-900">{selectedUser.staff.staffName}</p>
 										</div>
 										{selectedUser.staff.designation && (
 											<div>

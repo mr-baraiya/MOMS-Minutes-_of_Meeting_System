@@ -21,6 +21,7 @@ export async function GET(request: NextRequest) {
     const departmentId = searchParams.get("departmentId");
     const all = searchParams.get("all") === "true";
     const includeInactive = searchParams.get("includeInactive") === "true";
+    const roleFilter = searchParams.get("role") || undefined;
 
     // Return all active staff for dropdowns
     if (all) {
@@ -33,6 +34,7 @@ export async function GET(request: NextRequest) {
       limit,
       departmentId: departmentId ? parseInt(departmentId, 10) : undefined,
       includeInactive,
+      roleFilter,
     });
 
     return successResponse(result);

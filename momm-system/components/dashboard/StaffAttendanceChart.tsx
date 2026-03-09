@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { CheckCircle, XCircle, Clock } from 'lucide-react';
 
@@ -19,6 +20,9 @@ const COLORS = {
 };
 
 export default function StaffAttendanceChart({ data }: StaffAttendanceChartProps) {
+	const [mounted, setMounted] = useState(false);
+	useEffect(() => { setMounted(true); }, []);
+
 	const chartData = [
 		{ name: 'Attended', value: data.attended, color: COLORS.attended, icon: CheckCircle },
 		{ name: 'Missed', value: data.missed, color: COLORS.missed, icon: XCircle },
@@ -71,7 +75,7 @@ export default function StaffAttendanceChart({ data }: StaffAttendanceChartProps
 				transition={{ delay: 0.7 }}
 				className="w-full h-[250px] min-h-[250px]"
 			>
-				<ResponsiveContainer width="100%" height="100%" minHeight={250}>
+				{mounted ? <ResponsiveContainer width="100%" height="100%" minHeight={250}>
 					<PieChart>
 						<Pie
 							data={chartData}
@@ -97,7 +101,7 @@ export default function StaffAttendanceChart({ data }: StaffAttendanceChartProps
 							}}
 						/>
 					</PieChart>
-				</ResponsiveContainer>
+				</ResponsiveContainer> : <div className="h-full w-full animate-pulse bg-gray-100 rounded-lg" />}
 			</motion.div>
 
 			<div className="mt-6 space-y-3">

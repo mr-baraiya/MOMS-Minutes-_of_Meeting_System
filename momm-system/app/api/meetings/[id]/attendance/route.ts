@@ -51,6 +51,21 @@ export async function PUT(request: NextRequest, { params }: Params) {
       return forbiddenResponse("Staff members are not authorized to mark attendance");
     }
 
+    // Fetch meeting to check date
+    const meetingForDate = await MeetingService.getById(meetingId);
+    if (!meetingForDate) {
+      return errorResponse("Meeting not found", 404);
+    }
+
+    // Block attendance marking for future meetings
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const meetingDate = new Date(meetingForDate.meetingDate);
+    meetingDate.setHours(0, 0, 0, 0);
+    if (meetingDate > today) {
+      return errorResponse("Attendance cannot be marked for future meetings", 400);
+    }
+
     const body = await request.json();
 
     // Bulk attendance

@@ -37,8 +37,15 @@ export default function ReportPreviewDrawer({
 }: ReportPreviewDrawerProps) {
   if (!report) return null;
 
+  // fileUrl may be a relative path like /api/reports/5/download?...
+  // Resolve to an absolute URL so iframe and window.open both work
+  const absoluteUrl =
+    typeof window !== 'undefined' && report.fileUrl.startsWith('/')
+      ? `${window.location.origin}${report.fileUrl}`
+      : report.fileUrl;
+
   const handleDownload = () => {
-    window.open(report.fileUrl, '_blank');
+    window.open(absoluteUrl, '_blank');
   };
 
   const formatReportType = (type: string) => {
@@ -72,8 +79,8 @@ export default function ReportPreviewDrawer({
             {/* Header */}
             <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-gradient-to-r from-blue-600 to-purple-600">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-                  <FileText className="w-5 h-5 text-white" />
+                <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
+                  <FileText className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
                   <h2 className="text-lg font-semibold text-white">Report Preview</h2>
@@ -172,7 +179,7 @@ export default function ReportPreviewDrawer({
             {/* PDF Preview */}
             <div className="flex-1 overflow-hidden bg-gray-100">
               <iframe
-                src={report.fileUrl}
+                src={absoluteUrl}
                 className="w-full h-full border-0"
                 title="Report Preview"
               />

@@ -77,23 +77,13 @@ export async function POST(req: NextRequest) {
     // Generate report name
     const reportName = generateReportName(reportType, meetingId, dateFrom, dateTo);
 
-    // TODO: Actual PDF generation would happen here
-    // For now, we'll create a placeholder URL
-    // In production, you would:
-    // 1. Fetch data based on reportType, filters
-    // 2. Generate PDF using library (puppeteer, pdfkit, etc.)
-    // 3. Upload to Vercel Blob
-    // 4. Store blob URL in database
-
-    const placeholderUrl = `https://placeholder-report-${Date.now()}.pdf`;
-
-    // Create report record
+    // Create report record (filePath updated below once we have the ID)
     const report = await prisma.report.create({
       data: {
         reportName,
         reportType: dbReportType,
         meetingId: meetingId || null,
-        filePath: placeholderUrl,
+        filePath: 'pending',
         generatedBy: user.userId,
       },
       include: {
@@ -116,6 +106,25 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    // Build the real on-demand download URL with filter params encoded
+    const typeLabel = reportType
+      .split('-')
+      .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
+    const downloadParams = new URLSearchParams({
+      from: dateFrom,
+      to: dateTo,
+      typeLabel,
+      ...(departmentId ? { deptId: String(departmentId) } : {}),
+    });
+    const downloadUrl = `/api/reports/${report.id}/download?${downloadParams.toString()}`;
+
+    // Update the stored filePath to the real download URL
+    await prisma.report.update({
+      where: { id: report.id },
+      data: { filePath: downloadUrl },
+    });
+
     return NextResponse.json({
       success: true,
       message: 'Report generated successfully',
@@ -123,7 +132,7 @@ export async function POST(req: NextRequest) {
         id: report.id,
         reportName: report.reportName,
         reportType: reportType,
-        fileUrl: report.filePath,
+        fileUrl: downloadUrl,
         createdAt: report.generatedAt,
         meeting: report.meeting,
       },

@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 interface Props {
@@ -10,6 +11,9 @@ interface Props {
 const COLORS = ['#3B82F6', '#10B981', '#8B5CF6', '#F59E0B', '#EF4444', '#06B6D4', '#EC4899', '#8B5CF6'];
 
 export default function DepartmentDistributionChart({ data }: Props) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -19,7 +23,7 @@ export default function DepartmentDistributionChart({ data }: Props) {
     >
       <h3 className="text-xl font-bold text-gray-900 mb-6">Meetings by Department</h3>
       <div className="h-[300px] w-full">
-        <ResponsiveContainer width="100%" height="100%">
+        {mounted ? <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} layout="vertical" margin={{ left: 10, right: 30 }}>
             <CartesianGrid strokeDasharray="3 3" horizontal={false} vertical={true} />
             <XAxis type="number" hide />
@@ -41,7 +45,7 @@ export default function DepartmentDistributionChart({ data }: Props) {
               ))}
             </Bar>
           </BarChart>
-        </ResponsiveContainer>
+        </ResponsiveContainer> : <div className="h-full w-full animate-pulse bg-gray-100 rounded-lg" />}
       </div>
     </motion.div>
   );

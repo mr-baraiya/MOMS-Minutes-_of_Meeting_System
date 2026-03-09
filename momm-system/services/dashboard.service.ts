@@ -390,6 +390,7 @@ export class DashboardService {
       prisma.staff.count({
         where: { isActive: true },
       }),
+      prisma.document.count(),
     ]).then(
       ([
         totalUsers,
@@ -400,6 +401,7 @@ export class DashboardService {
         completedMeetings,
         cancelledMeetings,
         totalStaff,
+        totalDocuments,
       ]) => ({
         totalUsers,
         totalMeetings,
@@ -409,6 +411,7 @@ export class DashboardService {
         completedMeetings,
         cancelledMeetings,
         totalStaff,
+        totalDocuments,
       })
     );
   }

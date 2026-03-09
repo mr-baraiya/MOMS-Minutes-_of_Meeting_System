@@ -106,7 +106,7 @@ export default function RecentActivityList({ activities }: RecentActivityListPro
 					className="mt-6 pt-4 border-t border-gray-100 text-center"
 				>
 					<Link 
-						href="/admin/reports" 
+						href="/admin/activity" 
 						className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline transition-colors"
 					>
 						View All Activity

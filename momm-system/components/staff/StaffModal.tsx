@@ -214,14 +214,17 @@ export default function StaffModal({ isOpen, mode, staff, departments, onClose, 
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-gray-700">Designation</label>
                             <div className="relative">
-                                <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                                <input
-                                    type="text"
-                                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                                    placeholder="Software Engineer"
+                                <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
+                                <select
+                                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all appearance-none bg-white"
                                     value={formData.designation}
                                     onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
-                                />
+                                >
+                                    <option value="">Select Designation</option>
+                                    <option value="Admin">Admin</option>
+                                    <option value="Convener">Convener</option>
+                                    <option value="Staff">Staff</option>
+                                </select>
                             </div>
                         </div>
                         <div className="space-y-2">

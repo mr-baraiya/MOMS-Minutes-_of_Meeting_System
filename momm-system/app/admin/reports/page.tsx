@@ -85,10 +85,10 @@ export default function AdminReportsPage() {
 
   const fetchMeetings = async () => {
     try {
-      const response = await fetch('/api/meetings');
+      const response = await fetch('/api/meetings?limit=500');
       if (response.ok) {
         const data = await response.json();
-        setMeetings(data.meetings || []);
+        setMeetings(data.data?.data || []);
       }
     } catch (error) {
       console.error('Error fetching meetings:', error);
@@ -100,7 +100,7 @@ export default function AdminReportsPage() {
       const response = await fetch('/api/departments');
       if (response.ok) {
         const data = await response.json();
-        setDepartments(data.departments || []);
+        setDepartments(data.data || []);
       }
     } catch (error) {
       console.error('Error fetching departments:', error);

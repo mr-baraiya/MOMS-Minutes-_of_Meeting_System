@@ -53,48 +53,6 @@ const menuItems: MenuItem[] = [
     roles: ['admin'],
   },
   {
-    label: 'Documents',
-    href: '/documents',
-    icon: FileText,
-    roles: ['admin', 'convener', 'staff'],
-  },
-  {
-    label: 'Reports',
-    href: '/reports',
-    icon: FileBarChart,
-    roles: ['admin', 'convener'],
-  },
-  {
-    label: 'Users',
-    href: '/admin/users',
-    icon: Users,
-    roles: ['admin'],
-  },
-  {
-    label: 'Staff',
-    href: '/admin/staff',
-    icon: UserCog,
-    roles: ['admin'],
-  },
-  {
-    label: 'Departments',
-    href: '/admin/departments',
-    icon: Building2,
-    roles: ['admin'],
-  },
-  {
-    label: 'Venues',
-    href: '/admin/venues',
-    icon: MapPin,
-    roles: ['admin'],
-  },
-  {
-    label: 'Meeting Types',
-    href: '/admin/meeting-types',
-    icon: Tags,
-    roles: ['admin'],
-  },
-  {
     label: 'Manage Attendance',
     href: '/admin/attendance',
     icon: CheckSquare,
@@ -106,6 +64,49 @@ const menuItems: MenuItem[] = [
     icon: CheckSquare,
     roles: ['convener', 'staff'],
   },
+  {
+    label: 'Documents',
+    href: '/documents',
+    icon: FileText,
+    roles: ['admin', 'convener', 'staff'],
+  },
+  {
+    label: 'Departments',
+    href: '/admin/departments',
+    icon: Building2,
+    roles: ['admin'],
+  },
+  {
+    label: 'Staff',
+    href: '/admin/staff',
+    icon: UserCog,
+    roles: ['admin'],
+  },
+  {
+    label: 'Users',
+    href: '/admin/users',
+    icon: Users,
+    roles: ['admin'],
+  },
+  {
+    label: 'Meeting Types',
+    href: '/admin/meeting-types',
+    icon: Tags,
+    roles: ['admin'],
+  },
+  {
+    label: 'Venues',
+    href: '/admin/venues',
+    icon: MapPin,
+    roles: ['admin'],
+  },
+  {
+    label: 'Reports',
+    href: '/reports',
+    icon: FileBarChart,
+    roles: ['admin', 'convener'],
+  },
+  // ── System ────────────────────────────────────
   {
     label: 'Settings',
     href: '/admin/settings',

@@ -41,7 +41,7 @@ export default function StaffManagementPage() {
     const fetchData = async () => {
         try {
             const [staffRes, deptRes] = await Promise.all([
-                fetch('/api/staff?limit=100&includeInactive=true'),
+                fetch('/api/staff?limit=100&includeInactive=true&role=staff'),
                 fetch('/api/departments')
             ]);
             

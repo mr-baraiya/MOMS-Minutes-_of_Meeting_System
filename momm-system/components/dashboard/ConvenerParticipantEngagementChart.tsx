@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { RadialBarChart, RadialBar, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { Users, UserCheck, TrendingUp } from 'lucide-react';
 
@@ -13,6 +14,9 @@ interface ConvenerParticipantEngagementChartProps {
 }
 
 export default function ConvenerParticipantEngagementChart({ data }: ConvenerParticipantEngagementChartProps) {
+	const [mounted, setMounted] = useState(false);
+	useEffect(() => { setMounted(true); }, []);
+
 	const engagementRate = data.totalParticipants > 0
 		? Math.round((data.activeParticipants / data.totalParticipants) * 100)
 		: 0;
@@ -61,7 +65,7 @@ export default function ConvenerParticipantEngagementChart({ data }: ConvenerPar
 					transition={{ delay: 0.7, type: 'spring', stiffness: 200 }}
 					className="relative"
 				>
-					<ResponsiveContainer width={220} height={220}>
+				{mounted ? <ResponsiveContainer width={220} height={220}>
 						<RadialBarChart
 							cx="50%"
 							cy="50%"
@@ -79,7 +83,7 @@ export default function ConvenerParticipantEngagementChart({ data }: ConvenerPar
 								max={100}
 							/>
 						</RadialBarChart>
-					</ResponsiveContainer>
+				</ResponsiveContainer> : <div className="w-[220px] h-[220px] animate-pulse bg-gray-100 rounded-full" />}
 					<div className="absolute inset-0 flex flex-col items-center justify-center">
 						<div className="text-4xl font-bold text-emerald-600">{engagementRate}%</div>
 						<div className="text-sm text-gray-600 mt-1">Engagement</div>

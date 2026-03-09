@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Legend } from 'recharts';
 import { Calendar, CheckCircle, XCircle } from 'lucide-react';
 
@@ -20,6 +21,9 @@ const COLORS = {
 };
 
 export default function ConvenerMeetingStatsChart({ data, monthlyData }: ConvenerMeetingStatsChartProps) {
+	const [mounted, setMounted] = useState(false);
+	useEffect(() => { setMounted(true); }, []);
+
 	const statsData = [
 		{ name: 'Completed', value: data.completed, color: COLORS.completed, icon: CheckCircle },
 		{ name: 'Upcoming', value: data.upcoming, color: COLORS.upcoming, icon: Calendar },
@@ -79,7 +83,7 @@ export default function ConvenerMeetingStatsChart({ data, monthlyData }: Convene
 				animate={{ opacity: 1 }}
 				transition={{ delay: 0.7 }}
 			>
-				<ResponsiveContainer width="100%" height={250}>
+				{mounted ? <ResponsiveContainer width="100%" height={250}>
 					<BarChart data={defaultMonthlyData}>
 						<defs>
 							<linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
@@ -113,7 +117,7 @@ export default function ConvenerMeetingStatsChart({ data, monthlyData }: Convene
 							animationBegin={700}
 						/>
 					</BarChart>
-				</ResponsiveContainer>
+				</ResponsiveContainer> : <div className="h-[250px] w-full animate-pulse bg-gray-100 rounded-lg" />}
 			</motion.div>
 
 			<div className="mt-6 grid grid-cols-3 gap-3">

@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { Layers } from 'lucide-react';
@@ -14,6 +15,9 @@ const mockData = [
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 const MeetingTypeDistribution = () => {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -26,7 +30,7 @@ const MeetingTypeDistribution = () => {
         Meeting Type Distribution
       </h2>
       <div style={{ width: '100%', height: 300 }}>
-        <ResponsiveContainer>
+        {mounted ? <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
               data={mockData}
@@ -44,7 +48,7 @@ const MeetingTypeDistribution = () => {
             <Tooltip />
             <Legend />
           </PieChart>
-        </ResponsiveContainer>
+        </ResponsiveContainer> : <div className="h-full w-full animate-pulse bg-gray-100 rounded-lg" />}
       </div>
     </motion.div>
   );

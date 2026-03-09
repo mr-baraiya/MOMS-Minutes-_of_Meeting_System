@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 interface MeetingsChartProps {
@@ -12,6 +12,8 @@ const COLORS = ['#3B82F6', '#10B981', '#8B5CF6', '#F59E0B', '#EF4444', '#06B6D4'
 
 export default function MeetingsPerMonthChart({ data }: MeetingsChartProps) {
 	const chartRef = useRef<HTMLDivElement>(null);
+	const [mounted, setMounted] = useState(false);
+	useEffect(() => { setMounted(true); }, []);
 
 	return (
 		<motion.div
@@ -35,7 +37,7 @@ export default function MeetingsPerMonthChart({ data }: MeetingsChartProps) {
 				transition={{ delay: 0.8 }}
                 className="h-[300px] w-full"
 			>
-				<ResponsiveContainer width="100%" height="100%">
+				{mounted ? <ResponsiveContainer width="100%" height="100%">
 					<BarChart data={data}>
 						<CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
 						<XAxis 
@@ -66,7 +68,7 @@ export default function MeetingsPerMonthChart({ data }: MeetingsChartProps) {
 							))}
 						</Bar>
 					</BarChart>
-				</ResponsiveContainer>
+				</ResponsiveContainer> : <div className="h-full w-full animate-pulse bg-gray-100 rounded-lg" />}
 			</motion.div>
 		</motion.div>
 	);

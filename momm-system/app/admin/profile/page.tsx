@@ -221,509 +221,263 @@ export default function AdminProfilePage() {
     }
   };
 
+  const inputCls =
+    'w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100 transition';
+
+  const labelCls = 'block mb-1.5 text-xs font-semibold uppercase tracking-widest text-gray-400';
+
   if (loading) {
     return (
       <DashboardLayout role="admin">
         <div className="flex items-center justify-center h-full">
-          <div
-            style={{ animation: 'spin 1s linear infinite' }}
-            className="h-12 w-12 border-4 border-slate-200 border-t-blue-700"
-          />
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-100 border-t-blue-600" />
         </div>
       </DashboardLayout>
     );
   }
 
+  const getInitial = (name: string) => name.trim().charAt(0).toUpperCase();
+
   return (
     <DashboardLayout role="admin">
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Sora:wght@400;500;600&display=swap');
-        .admin-profile {
-          --ink: #0f172a;
-          --muted: #6b7280;
-          --paper: #ffffff;
-          --line: #e5e7eb;
-          --gold: #c08b2d;
-          --gold-soft: #f7efe2;
-          --shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
-          --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.08);
-          position: relative;
-          font-family: 'Sora', sans-serif;
-          color: var(--ink);
-          padding: 8px;
-        }
-        .admin-profile::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background:
-            radial-gradient(900px 420px at 6% -10%, #f6efe3 0%, rgba(246, 239, 227, 0) 60%),
-            radial-gradient(700px 420px at 100% 0%, #ede7dc 0%, rgba(237, 231, 220, 0) 55%),
-            #f6f7f9;
-          border-radius: 28px;
-          z-index: 0;
-        }
-        .admin-shell {
-          position: relative;
-          z-index: 1;
-          display: flex;
-          flex-direction: column;
-          gap: 24px;
-        }
-        .hero-card {
-          position: relative;
-          overflow: hidden;
-          border-radius: 26px;
-          padding: 28px;
-          background: linear-gradient(120deg, #0b1324 0%, #131b2a 50%, #2c2a23 100%);
-          border: 1px solid rgba(255, 255, 255, 0.08);
-          box-shadow: var(--shadow);
-          color: #f8fafc;
-        }
-        .hero-card::after {
-          content: '';
-          position: absolute;
-          right: -120px;
-          top: -160px;
-          width: 280px;
-          height: 280px;
-          background: radial-gradient(circle, rgba(192, 139, 45, 0.45), rgba(192, 139, 45, 0));
-          opacity: 0.7;
-        }
-        .hero-top {
-          display: flex;
-          flex-wrap: wrap;
-          align-items: center;
-          justify-content: space-between;
-          gap: 20px;
-        }
-        .hero-identity {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-        }
-        .hero-avatar {
-          width: 72px;
-          height: 72px;
-          border-radius: 18px;
-          border: 1px solid rgba(255, 255, 255, 0.25);
-          background: rgba(255, 255, 255, 0.08);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 24px;
-          font-weight: 600;
-          color: #f8fafc;
-        }
-        .hero-name {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: clamp(28px, 3vw, 36px);
-          letter-spacing: 0.02em;
-        }
-        .hero-eyebrow {
-          font-size: 11px;
-          letter-spacing: 0.36em;
-          text-transform: uppercase;
-          color: rgba(248, 250, 252, 0.7);
-        }
-        .hero-email {
-          font-size: 14px;
-          color: rgba(248, 250, 252, 0.75);
-        }
-        .hero-tags {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 10px;
-        }
-        .hero-pill {
-          border-radius: 999px;
-          padding: 8px 16px;
-          font-size: 11px;
-          letter-spacing: 0.18em;
-          text-transform: uppercase;
-          border: 1px solid rgba(255, 255, 255, 0.18);
-          color: rgba(248, 250, 252, 0.85);
-          background: rgba(255, 255, 255, 0.05);
-        }
-        .hero-pill--solid {
-          border-color: rgba(192, 139, 45, 0.65);
-          background: rgba(192, 139, 45, 0.25);
-          color: #fef6e7;
-        }
-        .hero-strip {
-          margin-top: 18px;
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-          gap: 12px;
-          border-radius: 18px;
-          background: rgba(255, 255, 255, 0.08);
-          border: 1px solid rgba(255, 255, 255, 0.12);
-          padding: 12px 16px;
-        }
-        .strip-label {
-          font-size: 10px;
-          letter-spacing: 0.26em;
-          text-transform: uppercase;
-          color: rgba(248, 250, 252, 0.6);
-        }
-        .strip-value {
-          margin-top: 6px;
-          font-size: 14px;
-          font-weight: 600;
-        }
-        .admin-grid {
-          display: grid;
-          gap: 24px;
-        }
-        .admin-main {
-          display: flex;
-          flex-direction: column;
-          gap: 24px;
-        }
-        .admin-aside {
-          display: flex;
-          flex-direction: column;
-          gap: 24px;
-        }
-        .panel {
-          border-radius: 22px;
-          background: var(--paper);
-          border: 1px solid var(--line);
-          padding: 22px;
-          box-shadow: var(--shadow-soft);
-        }
-        .panel-accent {
-          background: var(--gold-soft);
-          border-color: #f0dfc2;
-        }
-        .panel-title {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: 22px;
-          letter-spacing: 0.02em;
-        }
-        .panel-subtitle {
-          margin-top: 6px;
-          font-size: 13px;
-          color: var(--muted);
-        }
-        .form-label {
-          font-size: 11px;
-          letter-spacing: 0.24em;
-          text-transform: uppercase;
-          color: #94a3b8;
-        }
-        .form-input {
-          margin-top: 8px;
-          width: 100%;
-          border-radius: 14px;
-          border: 1px solid #e2e8f0;
-          padding: 10px 12px;
-          font-size: 14px;
-          color: #0f172a;
-          background: #ffffff;
-          transition: border-color 200ms ease, box-shadow 200ms ease;
-        }
-        .form-input:focus {
-          outline: none;
-          border-color: rgba(192, 139, 45, 0.7);
-          box-shadow: 0 0 0 3px rgba(192, 139, 45, 0.15);
-        }
-        .btn-outline {
-          border-radius: 999px;
-          border: 1px solid #cbd5f5;
-          padding: 10px 18px;
-          font-size: 13px;
-          font-weight: 600;
-          color: #0f172a;
-          transition: border-color 200ms ease, background 200ms ease;
-        }
-        .btn-outline:hover {
-          border-color: #0f172a;
-          background: #f8fafc;
-        }
-        .btn-primary {
-          border-radius: 999px;
-          padding: 10px 18px;
-          font-size: 13px;
-          font-weight: 600;
-          color: #f8fafc;
-          background: #0f172a;
-          transition: transform 200ms ease, box-shadow 200ms ease;
-        }
-        .btn-primary:hover {
-          transform: translateY(-1px);
-          box-shadow: 0 12px 24px rgba(15, 23, 42, 0.2);
-        }
-        .alert {
-          border-radius: 12px;
-          padding: 10px 12px;
-          font-size: 12px;
-        }
-        .alert-success {
-          background: #ecfdf3;
-          color: #0f7a46;
-        }
-        .alert-error {
-          background: #fff1f2;
-          color: #b42318;
-        }
-        .fade-rise {
-          opacity: 0;
-          animation: riseIn 650ms ease forwards;
-        }
-        @keyframes riseIn {
-          from { opacity: 0; transform: translateY(16px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @media (min-width: 1024px) {
-          .admin-grid {
-            grid-template-columns: 2.1fr 1fr;
-            align-items: start;
-          }
-        }
-      `}</style>
+      <div className="min-h-full bg-gray-50/60 p-6 space-y-6">
 
-      <div className="admin-profile">
-        <div className="admin-shell">
-          <header className="hero-card fade-rise">
-            <div className="hero-top">
-              <div className="hero-identity">
-                {avatar ? (
-                  <img
-                    src={avatar}
-                    alt={`${displayName} profile`}
-                    className="hero-avatar"
-                  />
-                ) : (
-                  <div className="hero-avatar">{displayName.slice(0, 1).toUpperCase()}</div>
-                )}
-                <div>
-                  <p className="hero-eyebrow">Administrator Profile</p>
-                  <h1 className="hero-name">{displayName}</h1>
-                  <p className="hero-email">{displayEmail}</p>
+        {/* ── Hero banner ───────────────────────────────────── */}
+        <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-blue-600 via-blue-700 to-indigo-800 p-8 text-white shadow-lg">
+          {/* decorative circles */}
+          <span className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/5" />
+          <span className="pointer-events-none absolute -bottom-10 right-24 h-40 w-40 rounded-full bg-white/5" />
+
+          <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+            {/* Avatar + info */}
+            <div className="flex items-center gap-5">
+              {avatar ? (
+                <img
+                  src={avatar}
+                  alt={displayName}
+                  className="h-20 w-20 rounded-2xl border-2 border-white/30 object-cover shadow-md"
+                />
+              ) : (
+                <div className="flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-white/30 bg-white/10 text-3xl font-bold shadow-md">
+                  {getInitial(displayName)}
                 </div>
-              </div>
-              <div className="hero-tags">
-                <span className="hero-pill hero-pill--solid">{displayRole}</span>
-                <span className="hero-pill">{department}</span>
+              )}
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-blue-200">
+                  Administrator Profile
+                </p>
+                <h1 className="mt-1 text-2xl font-bold">{displayName}</h1>
+                <p className="mt-0.5 text-sm text-blue-100">{displayEmail}</p>
               </div>
             </div>
-            <div className="hero-strip">
-              <div>
-                <p className="strip-label">Status</p>
-                <p className="strip-value">Active</p>
-              </div>
-              <div>
-                <p className="strip-label">Account Role</p>
-                <p className="strip-value">Administrator</p>
-              </div>
-              <div>
-                <p className="strip-label">Department</p>
-                <p className="strip-value">{department}</p>
-              </div>
+
+            {/* Badges */}
+            <div className="flex flex-wrap gap-2">
+              <span className="rounded-full bg-white/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider border border-white/20">
+                {displayRole}
+              </span>
+              <span className="rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider border border-white/15 text-blue-100">
+                {department}
+              </span>
             </div>
-          </header>
-
-          <div className="admin-grid">
-            <div className="admin-main">
-              <section className="panel fade-rise">
-                <h2 className="panel-title">Edit Profile</h2>
-                <p className="panel-subtitle">Keep your identity details current for system records.</p>
-                <form onSubmit={handleProfileSubmit} className="mt-5 space-y-4 text-sm">
-                  <div>
-                    <label htmlFor="profilePhoto" className="form-label">
-                      Upload Profile Photo
-                    </label>
-                    <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center">
-                      <input
-                        id="profilePhoto"
-                        type="file"
-                        accept="image/*"
-                        onChange={handlePhotoChange}
-                        className="form-input"
-                      />
-                      <button
-                        type="button"
-                        onClick={handlePhotoUpload}
-                        disabled={uploadingPhoto}
-                        className="btn-outline disabled:cursor-not-allowed disabled:opacity-70"
-                      >
-                        {uploadingPhoto ? 'Uploading...' : 'Upload'}
-                      </button>
-                    </div>
-                    {photoStatus ? (
-                      <p
-                        className={`alert mt-3 ${
-                          photoStatus.type === 'success' ? 'alert-success' : 'alert-error'
-                        }`}
-                      >
-                        {photoStatus.message}
-                      </p>
-                    ) : null}
-                  </div>
-                  <div>
-                    <label htmlFor="username" className="form-label">
-                      Username
-                    </label>
-                    <input
-                      id="username"
-                      name="username"
-                      value={profileForm.username}
-                      onChange={handleProfileChange}
-                      className="form-input"
-                    />
-                  </div>
-                  {profile?.staff?.id ? (
-                    <div>
-                      <label htmlFor="staffName" className="form-label">
-                        Full Name
-                      </label>
-                      <input
-                        id="staffName"
-                        name="staffName"
-                        value={profileForm.staffName}
-                        onChange={handleProfileChange}
-                        className="form-input"
-                      />
-                    </div>
-                  ) : null}
-                  <div>
-                    <label htmlFor="email" className="form-label">
-                      Email
-                    </label>
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={profileForm.email}
-                      onChange={handleProfileChange}
-                      className="form-input"
-                    />
-                  </div>
-                  {profileStatus ? (
-                    <p
-                      className={`alert ${
-                        profileStatus.type === 'success' ? 'alert-success' : 'alert-error'
-                      }`}
-                    >
-                      {profileStatus.message}
-                    </p>
-                  ) : null}
-                  <button
-                    type="submit"
-                    disabled={savingProfile}
-                    className="btn-outline w-full disabled:cursor-not-allowed disabled:opacity-70"
-                  >
-                    {savingProfile ? 'Saving...' : 'Save Changes'}
-                  </button>
-                </form>
-              </section>
-
-              <section className="panel fade-rise">
-                <h2 className="panel-title">Change Password</h2>
-                <p className="panel-subtitle">Rotate credentials regularly to stay compliant.</p>
-                <form onSubmit={handlePasswordSubmit} className="mt-5 space-y-4 text-sm">
-                  <div>
-                    <label htmlFor="currentPassword" className="form-label">
-                      Current Password
-                    </label>
-                    <input
-                      id="currentPassword"
-                      name="currentPassword"
-                      type="password"
-                      value={passwordForm.currentPassword}
-                      onChange={handlePasswordChange}
-                      className="form-input"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="newPassword" className="form-label">
-                      New Password
-                    </label>
-                    <input
-                      id="newPassword"
-                      name="newPassword"
-                      type="password"
-                      value={passwordForm.newPassword}
-                      onChange={handlePasswordChange}
-                      className="form-input"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="confirmPassword" className="form-label">
-                      Confirm Password
-                    </label>
-                    <input
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      type="password"
-                      value={passwordForm.confirmPassword}
-                      onChange={handlePasswordChange}
-                      className="form-input"
-                    />
-                  </div>
-                  {passwordStatus ? (
-                    <p
-                      className={`alert ${
-                        passwordStatus.type === 'success' ? 'alert-success' : 'alert-error'
-                      }`}
-                    >
-                      {passwordStatus.message}
-                    </p>
-                  ) : null}
-                  <button
-                    type="submit"
-                    disabled={savingPassword}
-                    className="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-70"
-                  >
-                    {savingPassword ? 'Updating...' : 'Update Password'}
-                  </button>
-                </form>
-              </section>
-            </div>
-
-            <aside className="admin-aside">
-              <section className="panel panel-accent fade-rise">
-                <h2 className="panel-title">Access Summary</h2>
-                <p className="panel-subtitle">Your authority footprint across the system.</p>
-                <ul className="mt-5 space-y-3 text-sm text-slate-700">
-                  <li className="flex items-center justify-between">
-                    <span>System Control</span>
-                    <span className="text-amber-700 font-semibold">Full</span>
-                  </li>
-                  <li className="flex items-center justify-between">
-                    <span>User Management</span>
-                    <span className="text-emerald-700 font-semibold">Enabled</span>
-                  </li>
-                  <li className="flex items-center justify-between">
-                    <span>Report Access</span>
-                    <span className="text-emerald-700 font-semibold">Enabled</span>
-                  </li>
-                </ul>
-                <div className="mt-5 rounded-2xl border border-amber-200 bg-white/70 p-4 text-sm text-amber-900">
-                  You hold administrator privileges across all departments and meetings.
-                </div>
-              </section>
-
-              <section className="panel fade-rise">
-                <h2 className="panel-title">Security Notes</h2>
-                <p className="panel-subtitle">Recommended actions for administrators.</p>
-                <div className="mt-5 space-y-3 text-sm text-slate-700">
-                  <div className="flex items-center justify-between">
-                    <span>Last credential check</span>
-                    <span className="font-semibold text-slate-900">Today</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>Session status</span>
-                    <span className="font-semibold text-emerald-700">Secure</span>
-                  </div>
-                </div>
-                <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
-                  Tip: update your password every 90 days and keep recovery email current.
-                </div>
-              </section>
-            </aside>
           </div>
+
+          {/* Stats strip */}
+          <div className="relative mt-6 grid grid-cols-3 divide-x divide-white/20 rounded-xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-sm">
+            {[
+              { label: 'Status', value: 'Active' },
+              { label: 'Account Role', value: 'Administrator' },
+              { label: 'Department', value: department },
+            ].map(({ label, value }) => (
+              <div key={label} className="px-4 first:pl-0 last:pr-0">
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-blue-200">{label}</p>
+                <p className="mt-1 text-sm font-semibold truncate">{value}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Body grid ─────────────────────────────────────── */}
+        <div className="grid gap-6 lg:grid-cols-[1fr_340px] lg:items-start">
+
+          {/* Left column */}
+          <div className="space-y-6">
+
+            {/* Edit Profile */}
+            <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="text-blue-600" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+                <div>
+                  <h2 className="text-base font-semibold text-gray-900">Edit Profile</h2>
+                  <p className="text-xs text-gray-400">Keep your details current for system records</p>
+                </div>
+              </div>
+
+              <form onSubmit={handleProfileSubmit} className="space-y-4">
+                {/* Photo upload */}
+                <div>
+                  <label htmlFor="profilePhoto" className={labelCls}>Profile Photo</label>
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                    <input
+                      id="profilePhoto"
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoChange}
+                      className="flex-1 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm file:mr-3 file:rounded-md file:border-0 file:bg-blue-50 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-blue-600 hover:file:bg-blue-100"
+                    />
+                    <button
+                      type="button"
+                      onClick={handlePhotoUpload}
+                      disabled={uploadingPhoto}
+                      className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-600 hover:bg-blue-100 transition disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {uploadingPhoto ? 'Uploading…' : 'Upload'}
+                    </button>
+                  </div>
+                  {photoStatus && (
+                    <p className={`mt-2 rounded-lg px-3 py-2 text-xs font-medium ${photoStatus.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600'}`}>
+                      {photoStatus.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label htmlFor="username" className={labelCls}>Username</label>
+                  <input id="username" name="username" value={profileForm.username} onChange={handleProfileChange} className={inputCls} />
+                </div>
+
+                {profile?.staff?.id && (
+                  <div>
+                    <label htmlFor="staffName" className={labelCls}>Full Name</label>
+                    <input id="staffName" name="staffName" value={profileForm.staffName} onChange={handleProfileChange} className={inputCls} />
+                  </div>
+                )}
+
+                <div>
+                  <label htmlFor="email" className={labelCls}>Email</label>
+                  <input id="email" name="email" type="email" value={profileForm.email} onChange={handleProfileChange} className={inputCls} />
+                </div>
+
+                {profileStatus && (
+                  <p className={`rounded-lg px-3 py-2 text-xs font-medium ${profileStatus.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600'}`}>
+                    {profileStatus.message}
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={savingProfile}
+                  className="w-full rounded-lg bg-blue-600 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 active:scale-[0.99] transition disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {savingProfile ? 'Saving…' : 'Save Changes'}
+                </button>
+              </form>
+            </div>
+
+            {/* Change Password */}
+            <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-50">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="text-indigo-600" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+                <div>
+                  <h2 className="text-base font-semibold text-gray-900">Change Password</h2>
+                  <p className="text-xs text-gray-400">Rotate credentials regularly to stay secure</p>
+                </div>
+              </div>
+
+              <form onSubmit={handlePasswordSubmit} className="space-y-4">
+                <div>
+                  <label htmlFor="currentPassword" className={labelCls}>Current Password</label>
+                  <input id="currentPassword" name="currentPassword" type="password" value={passwordForm.currentPassword} onChange={handlePasswordChange} className={inputCls} />
+                </div>
+                <div>
+                  <label htmlFor="newPassword" className={labelCls}>New Password</label>
+                  <input id="newPassword" name="newPassword" type="password" value={passwordForm.newPassword} onChange={handlePasswordChange} className={inputCls} />
+                </div>
+                <div>
+                  <label htmlFor="confirmPassword" className={labelCls}>Confirm Password</label>
+                  <input id="confirmPassword" name="confirmPassword" type="password" value={passwordForm.confirmPassword} onChange={handlePasswordChange} className={inputCls} />
+                </div>
+
+                {passwordStatus && (
+                  <p className={`rounded-lg px-3 py-2 text-xs font-medium ${passwordStatus.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600'}`}>
+                    {passwordStatus.message}
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={savingPassword}
+                  className="w-full rounded-lg bg-indigo-600 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 active:scale-[0.99] transition disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {savingPassword ? 'Updating…' : 'Update Password'}
+                </button>
+              </form>
+            </div>
+          </div>
+
+          {/* Right column */}
+          <div className="space-y-6">
+
+            {/* Access Summary */}
+            <div className="rounded-2xl border border-blue-100 bg-linear-to-br from-blue-50 to-indigo-50 p-6 shadow-sm">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="text-white" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <div>
+                  <h2 className="text-base font-semibold text-gray-900">Access Summary</h2>
+                  <p className="text-xs text-gray-500">Your system privileges</p>
+                </div>
+              </div>
+              <ul className="space-y-3">
+                {[
+                  { label: 'System Control', value: 'Full', color: 'text-blue-700' },
+                  { label: 'User Management', value: 'Enabled', color: 'text-green-700' },
+                  { label: 'Report Access', value: 'Enabled', color: 'text-green-700' },
+                ].map(({ label, value, color }) => (
+                  <li key={label} className="flex items-center justify-between rounded-lg bg-white/70 px-4 py-2.5 text-sm border border-white">
+                    <span className="text-gray-600">{label}</span>
+                    <span className={`font-semibold ${color}`}>{value}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-4 rounded-xl border border-blue-200 bg-blue-600/10 px-4 py-3 text-xs text-blue-800 leading-relaxed">
+                You hold full administrator privileges across all departments and meetings.
+              </div>
+            </div>
+
+            {/* Security */}
+            <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="text-emerald-600" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                </div>
+                <div>
+                  <h2 className="text-base font-semibold text-gray-900">Security</h2>
+                  <p className="text-xs text-gray-400">Account security status</p>
+                </div>
+              </div>
+              <ul className="space-y-3">
+                {[
+                  { label: 'Last credential check', value: 'Today', color: 'text-gray-900' },
+                  { label: 'Session status', value: 'Secure', color: 'text-emerald-600' },
+                ].map(({ label, value, color }) => (
+                  <li key={label} className="flex items-center justify-between rounded-lg bg-gray-50 px-4 py-2.5 text-sm">
+                    <span className="text-gray-500">{label}</span>
+                    <span className={`font-semibold ${color}`}>{value}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-4 rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 text-xs text-gray-500 leading-relaxed">
+                Tip: update your password every 90 days and keep your recovery email current.
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </DashboardLayout>

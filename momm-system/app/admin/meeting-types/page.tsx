@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Search, SlidersHorizontal, ArrowUpDown } from 'lucide-react';
+import { Plus, Search, SlidersHorizontal, ArrowUpDown, Download } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { MeetingType } from '@/types/models';
 import MeetingTypeListTable from '@/components/meeting-types/MeetingTypeListTable';
@@ -53,6 +53,25 @@ export default function MeetingTypesPage() {
       fetchMeetingTypes();
     }
   }, [authLoading]);
+
+  const exportToCSV = () => {
+    const headers = ['ID', 'Meeting Type Name', 'Status', 'Meetings Count', 'Created At'];
+    const rows = meetingTypes.map(t => [
+      t.id,
+      t.meetingTypeName,
+      t.isActive ? 'Active' : 'Inactive',
+      t._count?.meetings ?? 0,
+      new Date(t.createdAt).toLocaleDateString(),
+    ]);
+    const csv = [headers, ...rows].map(r => r.map(val => `"${String(val).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `meeting_types_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   // Filter and sort meeting types
   const filteredAndSortedTypes = meetingTypes
@@ -193,13 +212,22 @@ export default function MeetingTypesPage() {
             <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Meeting Types</h1>
             <p className="text-sm text-gray-500 mt-1">Manage meeting categories used across the system.</p>
           </div>
-          <button
-            onClick={handleAdd}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-medium shadow-sm shadow-indigo-200"
-          >
-            <Plus size={18} />
-            Add Meeting Type
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={exportToCSV}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors font-medium shadow-sm shadow-emerald-200"
+            >
+              <Download size={18} />
+              Export CSV
+            </button>
+            <button
+              onClick={handleAdd}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-medium shadow-sm shadow-indigo-200"
+            >
+              <Plus size={18} />
+              Add Meeting Type
+            </button>
+          </div>
         </div>
 
         {/* Filters */}

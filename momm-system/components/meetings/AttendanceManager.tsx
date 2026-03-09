@@ -128,6 +128,17 @@ export default function AttendanceManager({ meetingId, role }: AttendanceManager
     }
   };
 
+  // Determine if meeting is in the future (attendance locked)
+  const isFutureMeeting = meeting
+    ? (() => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const mDate = new Date(meeting.meetingDate);
+        mDate.setHours(0, 0, 0, 0);
+        return mDate > today;
+      })()
+    : false;
+
   const filteredMembers = members.filter((m) => {
     const matchesSearch =
       m.staffName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -192,6 +203,12 @@ export default function AttendanceManager({ meetingId, role }: AttendanceManager
 
         {/* Stats and Actions */}
         <div className="flex flex-col items-end gap-3">
+          {isFutureMeeting && (
+            <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 text-amber-700 rounded-lg text-sm font-medium">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              Attendance can only be marked on or after the meeting date
+            </div>
+          )}
           <div className="flex gap-2">
             <div className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-lg border border-emerald-100 font-medium">
               Present: {stats.present}
@@ -202,8 +219,9 @@ export default function AttendanceManager({ meetingId, role }: AttendanceManager
           </div>
           <button
             onClick={handleSave}
-            disabled={saving}
-            className="flex items-center px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 disabled:opacity-50 transition-all shadow-md hover:shadow-lg active:scale-95"
+            disabled={saving || isFutureMeeting}
+            title={isFutureMeeting ? 'Cannot save attendance for a future meeting' : undefined}
+            className="flex items-center px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg active:scale-95"
           >
             {saving ? (
               <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/20 border-t-white mr-2" />
@@ -243,13 +261,15 @@ export default function AttendanceManager({ meetingId, role }: AttendanceManager
 
           <button
             onClick={() => handleMarkAll(true)}
-            className="px-3 py-2 text-xs font-medium bg-emerald-100 text-emerald-800 rounded-lg hover:bg-emerald-200 transition-colors"
+            disabled={isFutureMeeting}
+            className="px-3 py-2 text-xs font-medium bg-emerald-100 text-emerald-800 rounded-lg hover:bg-emerald-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             Mark All Present
           </button>
           <button
             onClick={() => handleMarkAll(false)}
-            className="px-3 py-2 text-xs font-medium bg-rose-100 text-rose-800 rounded-lg hover:bg-rose-200 transition-colors"
+            disabled={isFutureMeeting}
+            className="px-3 py-2 text-xs font-medium bg-rose-100 text-rose-800 rounded-lg hover:bg-rose-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             Mark All Absent
           </button>
@@ -299,9 +319,12 @@ export default function AttendanceManager({ meetingId, role }: AttendanceManager
                     </td>
                     <td className="py-3 px-4">
                       <button
-                        onClick={() => handleToggleAttendance(member.id)}
+                        onClick={() => !isFutureMeeting && handleToggleAttendance(member.id)}
+                        disabled={isFutureMeeting}
+                        title={isFutureMeeting ? 'Cannot mark attendance for future meetings' : undefined}
                         className={`
-                          relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2
+                          relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2
+                          ${isFutureMeeting ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}
                           ${member.isPresent ? 'bg-emerald-500 focus:ring-emerald-500' : 'bg-slate-200 focus:ring-slate-500'}
                         `}
                       >
@@ -324,7 +347,8 @@ export default function AttendanceManager({ meetingId, role }: AttendanceManager
                         value={member.remarks || ''}
                         onChange={(e) => handleRemarkChange(member.id, e.target.value)}
                         placeholder="Add remarks..."
-                        className="w-full text-sm border-0 border-b border-transparent bg-transparent focus:border-slate-300 focus:ring-0 placeholder:text-slate-400 hover:border-slate-200 transition-colors"
+                        disabled={isFutureMeeting}
+                        className="w-full text-sm border-0 border-b border-transparent bg-transparent focus:border-slate-300 focus:ring-0 placeholder:text-slate-400 hover:border-slate-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                       />
                     </td>
                     <td className="py-3 px-4 text-xs text-slate-400">

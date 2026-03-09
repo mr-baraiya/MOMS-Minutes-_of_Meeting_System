@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
 interface Props {
@@ -10,6 +11,9 @@ interface Props {
 const COLORS = ['#3B82F6', '#10B981', '#8B5CF6', '#F59E0B', '#EF4444', '#06B6D4'];
 
 export default function MeetingTypePieChart({ data }: Props) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -19,7 +23,7 @@ export default function MeetingTypePieChart({ data }: Props) {
     >
       <h3 className="text-xl font-bold text-gray-900 mb-6">Meeting Types</h3>
       <div className="h-[300px] w-full">
-        <ResponsiveContainer width="100%" height="100%">
+        {mounted ? <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
               data={data}
@@ -39,7 +43,7 @@ export default function MeetingTypePieChart({ data }: Props) {
             />
             <Legend verticalAlign="bottom" height={36} iconType="circle" />
           </PieChart>
-        </ResponsiveContainer>
+        </ResponsiveContainer> : <div className="h-full w-full animate-pulse bg-gray-100 rounded-lg" />}
       </div>
     </motion.div>
   );

@@ -97,29 +97,39 @@ export async function GET(req: NextRequest) {
     }
 
     // Transform the data to match frontend interface
-    const transformedReports = reports?.map((report) => ({
-      id: report.id,
-      reportName: report.reportName,
-      reportType: report.reportType.toLowerCase().replace('_', '-'),
-      fileUrl: report.filePath,
-      createdAt: report.generatedAt,
-      generatedBy: report.generator
-        ? {
-            username: report.generator.username,
-            staff: report.generator.staff
-              ? {
-                  staffName: report.generator.staff.staffName,
-                }
-              : undefined,
-          }
-        : undefined,
-      meeting: report.meeting
-        ? {
-            meetingTitle: report.meeting.meetingTitle,
-            meetingDate: report.meeting.meetingDate,
-          }
-        : undefined,
-    }));
+    const transformedReports = reports?.map((report) => {
+      // Old reports may have placeholder URLs — rebuild the download URL for them
+      const isPlaceholder =
+        report.filePath === 'pending' ||
+        report.filePath.startsWith('https://placeholder-report-');
+      const fileUrl = isPlaceholder
+        ? `/api/reports/${report.id}/download`
+        : report.filePath;
+
+      return {
+        id: report.id,
+        reportName: report.reportName,
+        reportType: report.reportType.toLowerCase().replace('_', '-'),
+        fileUrl,
+        createdAt: report.generatedAt,
+        generatedBy: report.generator
+          ? {
+              username: report.generator.username,
+              staff: report.generator.staff
+                ? {
+                    staffName: report.generator.staff.staffName,
+                  }
+                : undefined,
+            }
+          : undefined,
+        meeting: report.meeting
+          ? {
+              meetingTitle: report.meeting.meetingTitle,
+              meetingDate: report.meeting.meetingDate,
+            }
+          : undefined,
+      };
+    });
 
     return NextResponse.json({
       success: true,

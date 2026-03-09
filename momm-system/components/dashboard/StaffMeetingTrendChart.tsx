@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { TrendingUp } from 'lucide-react';
 
@@ -9,6 +10,9 @@ interface StaffMeetingTrendChartProps {
 }
 
 export default function StaffMeetingTrendChart({ data }: StaffMeetingTrendChartProps) {
+	const [mounted, setMounted] = useState(false);
+	useEffect(() => { setMounted(true); }, []);
+
 	const maxValue = Math.max(...data.map(d => d.meetings), 1);
 	const avgMeetings = data.length > 0 
 		? Math.round(data.reduce((sum, d) => sum + d.meetings, 0) / data.length)
@@ -60,7 +64,7 @@ export default function StaffMeetingTrendChart({ data }: StaffMeetingTrendChartP
 				transition={{ delay: 0.8 }}
 				className="w-full h-[280px] min-h-[280px]"
 			>
-				<ResponsiveContainer width="100%" height="100%" minHeight={280}>
+				{mounted ? <ResponsiveContainer width="100%" height="100%" minHeight={280}>
 					<AreaChart data={data}>
 						<defs>
 							<linearGradient id="colorMeetings" x1="0" y1="0" x2="0" y2="1">
@@ -98,7 +102,7 @@ export default function StaffMeetingTrendChart({ data }: StaffMeetingTrendChartP
 							animationBegin={800}
 						/>
 					</AreaChart>
-				</ResponsiveContainer>
+				</ResponsiveContainer> : <div className="h-full w-full animate-pulse bg-gray-100 rounded-lg" />}
 			</motion.div>
 		</motion.div>
 	);

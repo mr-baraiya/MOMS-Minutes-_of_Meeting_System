@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Search, MapPin, SlidersHorizontal, ArrowUpDown } from 'lucide-react';
+import { Plus, Search, MapPin, SlidersHorizontal, ArrowUpDown, Download } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Venue } from '@/types/models';
 import VenueListTable from '@/components/venues/VenueListTable';
@@ -47,6 +47,26 @@ export default function VenuesPage() {
   useEffect(() => {
     fetchVenues();
   }, []);
+
+  const exportToCSV = () => {
+    const headers = ['ID', 'Venue Name', 'Location', 'Status', 'Meetings Count', 'Created At'];
+    const rows = venues.map(v => [
+      v.id,
+      v.venueName,
+      v.location ?? '',
+      v.isActive ? 'Active' : 'Inactive',
+      v._count?.meetings ?? 0,
+      new Date(v.createdAt).toLocaleDateString(),
+    ]);
+    const csv = [headers, ...rows].map(r => r.map(val => `"${String(val).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `venues_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   // Filter venues
   const filteredVenues = venues.filter(venue => 
@@ -152,13 +172,22 @@ export default function VenuesPage() {
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Venue Management</h1>
           <p className="text-sm text-gray-500 mt-1">Manage physical locations and virtual meeting platforms.</p>
         </div>
-        <button
-          onClick={handleAdd}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-medium shadow-sm shadow-blue-200"
-        >
-          <Plus size={18} />
-          Add New Venue
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={exportToCSV}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors font-medium shadow-sm shadow-emerald-200"
+          >
+            <Download size={18} />
+            Export CSV
+          </button>
+          <button
+            onClick={handleAdd}
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-medium shadow-sm shadow-blue-200"
+          >
+            <Plus size={18} />
+            Add New Venue
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
