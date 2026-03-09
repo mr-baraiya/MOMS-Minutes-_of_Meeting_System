@@ -3,31 +3,31 @@ import { DocumentService } from "@/services/document.service";
 import { NotificationService } from "@/services/notification.service";
 import { prisma } from "@/lib/prisma";
 import { getUserFromRequest } from "@/lib/auth";
-import { put } from "@vercel/blob";
 import path from "path";
-import fs from "fs/promises";
+import { promises as fs } from "fs";
 
-const hasVercelBlob = process.env.NODE_ENV === "production";
-
-async function saveFileLocally(
-  file: File,
-  meetingId: number
-): Promise<string> {
+async function uploadDocumentFile(file: File, meetingId: number): Promise<string> {
   const timestamp = Date.now();
   const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-  const fileName = `${timestamp}_${sanitizedFileName}`;
-  const uploadDir = path.join(
-    process.cwd(),
-    "public",
-    "uploads",
-    "documents",
-    `meeting-${meetingId}`
-  );
+  const blobFileName = `${timestamp}_${sanitizedFileName}`;
+  const blobPath = `documents/meeting-${meetingId}/${blobFileName}`;
+
+  if (process.env.BLOB_READ_WRITE_TOKEN) {
+    try {
+      const { put } = await import("@vercel/blob");
+      const blob = await put(blobPath, file, { access: "public", addRandomSuffix: false });
+      return blob.url;
+    } catch (err) {
+      if (process.env.NODE_ENV === "production") throw err;
+      console.warn("[documents] Blob failed, falling back to local storage:", err);
+    }
+  }
+
+  const uploadDir = path.join(process.cwd(), "public", "uploads", "documents", `meeting-${meetingId}`);
   await fs.mkdir(uploadDir, { recursive: true });
-  const filePath = path.join(uploadDir, fileName);
   const buffer = Buffer.from(await file.arrayBuffer());
-  await fs.writeFile(filePath, buffer);
-  return `/uploads/documents/meeting-${meetingId}/${fileName}`;
+  await fs.writeFile(path.join(uploadDir, blobFileName), buffer);
+  return `/uploads/documents/meeting-${meetingId}/${blobFileName}`;
 }
 
 /**
@@ -186,17 +186,7 @@ export async function POST(request: NextRequest) {
     const blobFileName = `${timestamp}_${sanitizedFileName}`;
     const blobPath = `documents/meeting-${meetingId}/${blobFileName}`;
 
-    // Upload to Vercel Blob (or local filesystem in dev)
-    let fileUrl: string;
-    if (hasVercelBlob) {
-      const blob = await put(blobPath, file, {
-        access: "public",
-        addRandomSuffix: false,
-      });
-      fileUrl = blob.url;
-    } else {
-      fileUrl = await saveFileLocally(file, meetingId);
-    }
+    const fileUrl = await uploadDocumentFile(file, meetingId);
 
     // Create database record with Blob URL
     const document = await DocumentService.create({

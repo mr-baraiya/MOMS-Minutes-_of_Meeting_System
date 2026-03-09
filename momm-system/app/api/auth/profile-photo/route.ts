@@ -1,11 +1,40 @@
 import { NextRequest } from "next/server";
-import { put } from "@vercel/blob";
 import { prisma } from "@/lib/prisma";
 import { getUserFromRequest } from "@/lib/auth";
 import { errorResponse, handleApiError, successResponse } from "@/lib/api-utils";
+import path from "path";
+import { promises as fs } from "fs";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+async function uploadFile(file: File, userId: number): Promise<string> {
+  const extension = file.name.split(".").pop() || "png";
+  const fileName = `user-${userId}-${Date.now()}.${extension}`;
+
+  // Use Vercel Blob in production or when token is available
+  if (process.env.BLOB_READ_WRITE_TOKEN) {
+    try {
+      const { put } = await import("@vercel/blob");
+      const blob = await put(`profile-photos/${fileName}`, file, {
+        access: "public",
+        contentType: file.type,
+      });
+      return blob.url;
+    } catch (err) {
+      // In dev, fall through to local storage if token is invalid
+      if (process.env.NODE_ENV === "production") throw err;
+      console.warn("[profile-photo] Blob upload failed, falling back to local storage:", err);
+    }
+  }
+
+  // Local filesystem fallback (dev only)
+  const uploadDir = path.join(process.cwd(), "public", "uploads", "profile-photos");
+  await fs.mkdir(uploadDir, { recursive: true });
+  const buffer = Buffer.from(await file.arrayBuffer());
+  await fs.writeFile(path.join(uploadDir, fileName), buffer);
+  return `/uploads/profile-photos/${fileName}`;
+}
 
 /**
  * POST /api/auth/profile-photo
@@ -34,20 +63,14 @@ export async function POST(request: NextRequest) {
       return errorResponse("Profile photo must be 5MB or smaller", 400);
     }
 
-    const extension = file.name.split(".").pop() || "png";
-    const blobName = `profile-photos/user-${user.userId}-${Date.now()}.${extension}`;
-
-    const blob = await put(blobName, file, {
-      access: "public",
-      contentType: file.type,
-    });
+    const url = await uploadFile(file, user.userId);
 
     await prisma.user.update({
       where: { id: user.userId },
-      data: { profilePicture: blob.url },
+      data: { profilePicture: url },
     });
 
-    return successResponse({ profilePicture: blob.url }, "Profile photo updated successfully");
+    return successResponse({ profilePicture: url }, "Profile photo updated successfully");
   } catch (error) {
     return handleApiError(error);
   }

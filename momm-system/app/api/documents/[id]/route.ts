@@ -2,6 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { DocumentService } from "@/services/document.service";
 import { getUserFromRequest } from "@/lib/auth";
 import { del } from "@vercel/blob";
+import path from "path";
+import { promises as fs } from "fs";
+
+async function deleteStoredFile(filePath: string): Promise<void> {
+  if (filePath.startsWith("http")) {
+    await del(filePath);
+  } else if (filePath.startsWith("/uploads/")) {
+    try {
+      await fs.unlink(path.join(process.cwd(), "public", filePath));
+    } catch {
+      // ignore – file may already be gone
+    }
+  }
+}
 
 /**
  * GET /api/documents/[id]
@@ -112,13 +126,13 @@ export async function DELETE(
       );
     }
 
-    // Delete file from Vercel Blob
+    // Delete file from storage
     if (document.filePath) {
       try {
-        await del(document.filePath);
+        await deleteStoredFile(document.filePath);
       } catch (error) {
-        console.error("Error deleting blob:", error);
-        // Continue even if blob deletion fails
+        console.error("Error deleting file:", error);
+        // Continue even if file deletion fails
       }
     }
 
