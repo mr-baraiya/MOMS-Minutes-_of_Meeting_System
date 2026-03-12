@@ -6,6 +6,7 @@ import { FileBarChart, Loader2 } from 'lucide-react';
 import { toast, Toaster } from 'react-hot-toast';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { useAuth } from '@/contexts/AuthContext';
 import ReportGenerator from '@/components/reports/ReportGenerator';
 import ReportHistoryTable from '@/components/reports/ReportHistoryTable';
 import ReportPreviewDrawer from '@/components/reports/ReportPreviewDrawer';
@@ -36,6 +37,7 @@ interface Meeting {
 
 export default function ConvenerReportsPage() {
   const { user, loading: authLoading } = useAuthGuard({ allowedRoles: ['convener'] });
+  const { token } = useAuth();
   const [reports, setReports] = useState<Report[]>([]);
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [loading, setLoading] = useState(true);
@@ -76,11 +78,13 @@ export default function ConvenerReportsPage() {
 
   const fetchMeetings = async () => {
     try {
-      // Fetch only convener's own meetings
-      const response = await fetch('/api/meetings?limit=500');
+      // Use the documents/meetings endpoint which returns only meetings organized by this convener
+      const headers: HeadersInit = {};
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      const response = await fetch('/api/documents/meetings', { headers });
       if (response.ok) {
         const data = await response.json();
-        setMeetings(data.data?.data || []);
+        setMeetings(data.meetings || []);
       }
     } catch (error) {
       console.error('Error fetching meetings:', error);

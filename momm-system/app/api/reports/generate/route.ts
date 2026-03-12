@@ -48,10 +48,27 @@ export async function POST(req: NextRequest) {
 
       // If meeting is specified, verify ownership
       if (meetingId) {
+        // Resolve staffId from token or fall back to DB lookup
+        let convenerStaffId = user.staffId;
+        if (!convenerStaffId) {
+          const staffRecord = await prisma.staff.findFirst({
+            where: { userId: user.userId },
+            select: { id: true },
+          });
+          convenerStaffId = staffRecord?.id;
+        }
+
+        if (!convenerStaffId) {
+          return NextResponse.json(
+            { error: 'Convener staff profile not found' },
+            { status: 403 }
+          );
+        }
+
         const meeting = await prisma.meeting.findFirst({
           where: {
             id: meetingId,
-            organizerStaffId: user.staffId,
+            organizerStaffId: convenerStaffId,
           },
         });
 

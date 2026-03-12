@@ -26,15 +26,22 @@ export async function GET(request: NextRequest) {
 
     if (user.role.toUpperCase() === "CONVENER") {
       // Conveners can only upload to their own meetings
-      if (!user.staffId) {
+      let staffId = user.staffId;
+      if (!staffId) {
+        const { prisma } = await import("@/lib/prisma");
+        const staffRecord = await prisma.staff.findFirst({
+          where: { userId: user.userId },
+          select: { id: true },
+        });
+        staffId = staffRecord?.id;
+      }
+      if (!staffId) {
         return NextResponse.json(
           { error: "Staff profile not found" },
           { status: 404 }
         );
       }
-      meetings = await DocumentService.getConvenerMeetings(
-        user.staffId
-      );
+      meetings = await DocumentService.getConvenerMeetings(staffId);
     } else if (user.role.toUpperCase() === "ADMIN") {
       // Admins can upload to any meeting
       const { prisma } = await import("@/lib/prisma");
