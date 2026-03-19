@@ -182,12 +182,58 @@ function AdminMeetingsContent() {
 		setShowConfirmModal(true);
 	};
 
+	const handleDeleteMeeting = async (meeting: MeetingWithCount) => {
+		const result = await Swal.fire({
+			title: 'Delete Meeting?',
+			text: `Are you sure you want to delete "${meeting.meetingTitle}"? This action cannot be undone.`,
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#dc2626',
+			cancelButtonColor: '#6b7280',
+			confirmButtonText: 'Yes, Delete',
+			cancelButtonText: 'Cancel',
+			reverseButtons: true,
+		});
+
+		if (!result.isConfirmed) return;
+
+		try {
+			const response = await fetch(`/api/meetings/${meeting.id}`, {
+				method: 'DELETE',
+			});
+
+			if (response.ok) {
+				await Swal.fire({
+					icon: 'success',
+					title: 'Meeting Deleted',
+					text: 'The meeting has been deleted successfully.',
+					timer: 2000,
+					showConfirmButton: false,
+				});
+				fetchMeetings();
+			} else {
+				await Swal.fire({
+					icon: 'error',
+					title: 'Error',
+					text: 'Failed to delete the meeting.',
+				});
+			}
+		} catch (error) {
+			console.error('Error deleting meeting:', error);
+			await Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: 'An unexpected error occurred while deleting the meeting.',
+			});
+		}
+	};
+
 	const confirmCancelMeeting = async () => {
 		if (!meetingToCancel) return;
 
 		try {
 			const response = await fetch(`/api/meetings/${meetingToCancel.id}`, {
-				method: 'PATCH',
+				method: 'PUT',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ isCancelled: true }),
 			});
@@ -517,6 +563,7 @@ function AdminMeetingsContent() {
 							onViewAttendance={handleViewAttendance}
 							onViewDocuments={handleViewDocuments}
 							onCancelMeeting={handleCancelMeeting}
+							onDeleteMeeting={handleDeleteMeeting}
 							onRefresh={fetchMeetings}
 						/>
 					)}

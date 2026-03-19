@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Eye, Edit, Users, FileText, XCircle, Calendar, MapPin, User, Video, MoreHorizontal } from 'lucide-react';
+import { Eye, Edit, Users, FileText, XCircle, Calendar, MapPin, User, Video, MoreHorizontal, Trash2 } from 'lucide-react';
 import { MeetingWithCount } from '@/types/models';
 
 interface MeetingsTableViewProps {
@@ -14,6 +14,7 @@ interface MeetingsTableViewProps {
 	onViewAttendance: (meeting: MeetingWithCount) => void;
 	onViewDocuments: (meeting: MeetingWithCount) => void;
 	onCancelMeeting: (meeting: MeetingWithCount) => void;
+	onDeleteMeeting: (meeting: MeetingWithCount) => void;
 	onRefresh: () => void;
 }
 
@@ -25,6 +26,7 @@ export default function MeetingsTableView({
 	onViewAttendance,
 	onViewDocuments,
 	onCancelMeeting,
+	onDeleteMeeting,
 	onRefresh,
 }: MeetingsTableViewProps) {
 	const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
@@ -58,7 +60,7 @@ export default function MeetingsTableView({
 		const styles = {
 			upcoming: 'bg-blue-100 text-blue-700 border-blue-200',
 			completed: 'bg-green-100 text-green-700 border-green-200',
-			cancelled: 'bg-gray-100 text-gray-700 border-gray-200',
+			cancelled: 'bg-red-100 text-red-700 border-red-200',
 		};
 		const labels = {
 			upcoming: 'Upcoming',
@@ -289,6 +291,18 @@ export default function MeetingsTableView({
 															</button>
 															</>
 														)}
+														<div className="my-1 border-t border-gray-100" />
+														<button
+															onClick={(e) => {
+																e.stopPropagation();
+																onDeleteMeeting(meeting);
+																setOpenDropdownId(null);
+															}}
+															className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-red-700 hover:bg-red-50 transition-colors font-medium"
+														>
+															<Trash2 size={14} />
+															Delete Meeting
+														</button>
 													</div>
 												)}
 											</div>

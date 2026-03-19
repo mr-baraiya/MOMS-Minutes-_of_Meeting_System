@@ -18,19 +18,8 @@ function LoginRedirectHandler() {
   useEffect(() => {
     if (isAuthenticated && user && !authLoading && !hasRedirected.current) {
       hasRedirected.current = true;
-      
-      // Show a brief message before redirecting
-      Swal.fire({
-        icon: 'info',
-        title: 'You are already signed in',
-        text: `Welcome back, ${user.staff?.name || user.username}! Taking you to your dashboard...`,
-        timer: 2000,
-        timerProgressBar: true,
-        showConfirmButton: false,
-      }).then(() => {
-        const redirect = searchParams.get('redirect') || `/${user.role}/dashboard`;
-        router.push(redirect);
-      });
+      const redirect = searchParams.get('redirect') || `/${user.role}/dashboard`;
+      router.push(redirect);
     }
   }, [isAuthenticated, user, authLoading, searchParams, router]);
 
