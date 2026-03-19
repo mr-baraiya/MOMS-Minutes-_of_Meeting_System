@@ -40,7 +40,6 @@ export default function NewMeetingModal({ onClose, onSuccess, editMeeting }: New
 		!!editMeeting?.meetingLink
 	);
 	const [linkCopied, setLinkCopied] = useState(false);
-	
 	const [formData, setFormData] = useState<FormData>({
 		meetingTitle: '',
 		description: '',
@@ -53,6 +52,10 @@ export default function NewMeetingModal({ onClose, onSuccess, editMeeting }: New
 		organizerStaffId: '',
 		selectedStaff: [],
 	});
+
+	// Helper to get the selected venue object
+	const selectedVenue = venues.find(v => v.id?.toString() === formData.venueId);
+	const isJitsiVenue = selectedVenue && selectedVenue.venueName?.toLowerCase().includes('jitsi');
 
 	const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -395,7 +398,18 @@ export default function NewMeetingModal({ onClose, onSuccess, editMeeting }: New
 											<label className="block text-sm font-medium text-gray-700 mb-2">Venue *</label>
 											<select
 												value={formData.venueId}
-												onChange={(e) => setFormData({ ...formData, venueId: e.target.value })}
+												onChange={(e) => {
+													const venueId = e.target.value;
+													const venue = venues.find(v => v.id?.toString() === venueId);
+													const isJitsi = venue && venue.venueName?.toLowerCase().includes('jitsi');
+													setFormData(f => ({
+														...f,
+														venueId,
+														meetingLink: isJitsi ? (f.meetingLink || (isOnlineMeeting ? generateJitsiLink() : '')) : '',
+													}));
+													// If not Jitsi, turn off online meeting toggle
+													if (!isJitsi) setIsOnlineMeeting(false);
+												}}
 												className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 											>
 												<option value="">Select venue</option>
@@ -423,20 +437,18 @@ export default function NewMeetingModal({ onClose, onSuccess, editMeeting }: New
 									<button
 										type="button"
 										onClick={() => {
+											if (!isJitsiVenue) return;
 											const next = !isOnlineMeeting;
 											setIsOnlineMeeting(next);
-											const jitsiVenue = venues.find(v =>
-												v.venueName?.toLowerCase().includes('jitsi')
-											);
 											setFormData(f => ({
 												...f,
 												meetingLink: next ? (f.meetingLink || generateJitsiLink()) : '',
-												...(next && jitsiVenue ? { venueId: jitsiVenue.id.toString() } : {}),
 											}));
 										}}
 										className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-											isOnlineMeeting ? 'bg-green-500' : 'bg-gray-300'
-										}`}
+											isJitsiVenue && isOnlineMeeting ? 'bg-green-500' : 'bg-gray-300'
+										} ${!isJitsiVenue ? 'opacity-50 cursor-not-allowed' : ''}`}
+										disabled={!isJitsiVenue}
 									>
 										<span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
 											isOnlineMeeting ? 'translate-x-6' : 'translate-x-1'
@@ -444,7 +456,7 @@ export default function NewMeetingModal({ onClose, onSuccess, editMeeting }: New
 									</button>
 								</div>
 
-								{isOnlineMeeting && (
+								{isOnlineMeeting && isJitsiVenue && (
 									<div className="mt-3">
 										<div className="flex items-center gap-2">
 											<div className="flex items-center gap-2 flex-1 px-3 py-2 bg-white border border-green-200 rounded-lg">
@@ -474,7 +486,7 @@ export default function NewMeetingModal({ onClose, onSuccess, editMeeting }: New
 										<p className="text-xs text-gray-400 mt-1.5">Participants with the link can join directly via browser — no install needed.</p>
 									</div>
 								)}
-										</div>
+							</div>
 
 										<div>
 											<label className="block text-sm font-medium text-gray-700 mb-2">Organizer *</label>
