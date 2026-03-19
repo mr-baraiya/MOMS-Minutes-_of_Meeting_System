@@ -48,8 +48,10 @@ export default function ManageAttendancePage() {
   const fetchMeetings = async () => {
     setLoading(true);
     try {
-        // In a real scenario, we would pass filter parameters here
-      const response = await fetch('/api/meetings?limit=20'); 
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      const response = await fetch('/api/meetings?limit=20', {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+      });
       const data = await response.json();
       
       if (data.success) {

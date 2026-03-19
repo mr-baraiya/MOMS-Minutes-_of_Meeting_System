@@ -85,7 +85,10 @@ export default function AdminReportsPage() {
 
   const fetchMeetings = async () => {
     try {
-      const response = await fetch('/api/meetings?limit=500');
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      const response = await fetch('/api/meetings?limit=500', {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+      });
       if (response.ok) {
         const data = await response.json();
         setMeetings(data.data?.data || []);

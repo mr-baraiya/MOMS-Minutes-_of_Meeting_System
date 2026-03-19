@@ -289,15 +289,11 @@ function AdminMeetingsContent() {
 		URL.revokeObjectURL(url);
 	};
 
-	if (authLoading || loading && meetings.length === 0) {
+	if (authLoading || (loading && meetings.length === 0)) {
 		return (
 			<DashboardLayout role="admin">
-				<div className="flex items-center justify-center h-full">
-					<motion.div
-						animate={{ rotate: 360 }}
-						transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-						className="h-12 w-12 border-4 border-slate-200 border-t-blue-700"
-					/>
+				<div className="flex items-center justify-center h-64">
+					<span className="text-gray-400 text-lg">Loading...</span>
 				</div>
 			</DashboardLayout>
 		);
